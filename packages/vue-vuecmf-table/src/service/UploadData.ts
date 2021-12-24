@@ -43,6 +43,20 @@ export default class UploadData extends Base{
 
     }
 
+    /**
+     * 保存单条行数据
+     * @param row  一条行数据
+     */
+    saveRow = (row: AnyObject):void => {
+        this.post(this.import_config.save_api_url,{data:row}).then((data) => {
+            if(data.status == 200 && data.data.code == 0){
+                ElMessage.success(data.data.msg)
+                this.import_config.edit_dlg = false
+            }else if(data.data.code != 0){
+                ElMessage.error(data.data.msg)
+            }
+        })
+    }
 
     /**
      * 下载模板文件

@@ -12,6 +12,7 @@
       :limit="20"
       :operate_width="100"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vf.com/vuecmf/admin/save"
       :expand="true"
       :edit_form="true"
   >

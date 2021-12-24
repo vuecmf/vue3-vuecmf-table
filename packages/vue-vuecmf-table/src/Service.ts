@@ -57,18 +57,19 @@ export default class Service {
         order_sort: "desc",     //排序方式
         select_rows: {},        //已选择所有行数据
         current_select_row: {}, //当前选择的一行数据
-        edit_dlg: false,        //编辑表单对话框
     })
     
     /**
      * 数据导入设置
      */
     import_config = reactive({
+        edit_dlg: false,            //编辑表单对话框
         import_dlg: false,          //是否显示导入对话框
         import_data_form: ref(),    //导入表单ref
         import_file_form: ref(),    //file表单ref
         
         import_api_url: '',         //导入后端API地址
+        save_api_url: '',           //保存数据API地址
         import_file_name: '',       //当前导入文件名
         parse_data_tips: '',        //解析数据时提示
         import_file_error: '',      //导入异常提示语句
@@ -94,6 +95,7 @@ export default class Service {
         this.table_config.page = init_config.page.value
         this.export_config.export_file_name = init_config.export_file_name.value
         this.import_config.import_api_url = init_config.import_server.value
+        this.import_config.save_api_url = init_config.save_server.value
 
         this.loadDataService = new LoadData(this.table_config, init_config.token.value)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)
@@ -273,8 +275,15 @@ export default class Service {
      * @param row
      */
     editRow = (row: AnyObject): void => {
-        this.table_config.edit_dlg = true
+        this.import_config.edit_dlg = true
         this.table_config.current_select_row = row
+    }
+
+    /**
+     * 保存行编辑数据
+     */
+    saveEditRow = (): void => {
+        this.uploadDataService.saveRow(this.table_config.current_select_row)
     }
     
     /**

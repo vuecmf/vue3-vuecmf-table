@@ -210,9 +210,42 @@
 
   <!-- 编辑表单 -->
   <el-dialog v-model="edit_dlg" title="编辑" @close="search">
+    <el-form :inline="true" size="small" :model="current_select_row" class="edit-form-inline">
+      <template :key="index" v-for="(item, index) in form_info">
+        <el-form-item  :label="item.label" v-if="item.type === 'date'">
+          <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'datetime'">
+          <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'input_number'">
+          <el-input-number v-model="current_select_row[item.field_name]" />
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'hidden'">
+          <input type="hidden" v-model="current_select_row[item.field_name]" />
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'textarea'">
+          <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"/>
+        </el-form-item>
 
+        <!--  radio  checkbox  select  select_mul  switch  upload  editor -->
+
+        <el-form-item :label="item.label" v-else-if="item.type === 'password'">
+          <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item :label="item.label" v-else>
+          <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value"></el-input>
+        </el-form-item>
+      </template>
+
+    </el-form>
+    <template #footer>
+      <el-button type="default" size="small"  @click="edit_dlg = false">取消</el-button>
+      <el-button type="primary" size="small"  @click="saveEditRow">保存</el-button>
+    </template>
   </el-dialog>
-
 
 </template>
 
@@ -222,6 +255,7 @@ import {toRefs, defineProps} from "vue"
 
 const props = defineProps([
   "export_file_name",  //导出的文件名称
+  "save_server",  //保存单条数据
   "import_server",  //导入数据的后端API链接
   "token",     //后端需要的token信息
   "selectable",  //行是否可选回调函数
@@ -235,7 +269,7 @@ const props = defineProps([
   "expand"   //是否显示行展开功能
 ])
 
-const {limit, server, page, token, export_file_name, import_server} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server} = toRefs(props)
 
 
 const service = new Service({
@@ -244,7 +278,8 @@ const service = new Service({
   page: page,
   token: token,
   export_file_name: export_file_name,
-  import_server: import_server
+  import_server: import_server,
+  save_server: save_server
 })
 
 
@@ -268,11 +303,12 @@ const {
   columns,
   select_rows, //已选择的所有行数据
   current_select_row, //当前选择的一行数据
-  edit_dlg,  //编辑表单对话框
+
 
 } = service.getConfig('table_config')
 
 const {
+  edit_dlg,  //编辑表单对话框
   import_dlg, //是否显示导入对话框
   import_data_form, //导入表单ref
   import_file_form, //file表单ref
@@ -310,6 +346,7 @@ const currentSelect = service.currentSelect  //当前选择行事件
 const getSelectRows = service.getSelectRows  //获取所有选择的数据
 
 const editRow = service.editRow   //显示行编辑表单
+const saveEditRow = service.saveEditRow  //保存行编辑数据
 
 service.mounted()
 
