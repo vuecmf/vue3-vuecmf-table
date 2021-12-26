@@ -54,6 +54,7 @@
   </el-row>
 
   <el-table
+      ref="vuecmf_table_ref"
       :data="table_data"
       border
       style="width: 100%"
@@ -142,7 +143,6 @@
           </el-table>
         </slot>
 
-
       </template>
     </el-table-column>
 
@@ -190,10 +190,10 @@
     </el-row>
 
     <el-row>
-      <el-col v-if=" import_file_name != '' " class="upload-tips">
+      <el-col v-if=" import_file_name !== '' " class="upload-tips">
         <div>当前选择文件:  {{ import_file_name }}</div>
         <div v-html="parse_data_tips"></div>
-        <div v-if=" import_file_error != '' ">
+        <div v-if=" import_file_error !== '' ">
           <div class="danger" v-html="import_file_error"></div>
         </div>
       </el-col>
@@ -210,32 +210,91 @@
 
   <!-- 编辑表单 -->
   <el-dialog v-model="edit_dlg" title="编辑" @close="search">
-    <el-form :inline="true" size="small" :model="current_select_row" class="edit-form-inline">
+    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" size="small" :model="current_select_row" class="edit-form-inline">
       <template :key="index" v-for="(item, index) in form_info">
-        <el-form-item  :label="item.label" v-if="item.type === 'date'">
+        <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
           <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'datetime'">
+        <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
           <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'input_number'">
+        <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
           <el-input-number v-model="current_select_row[item.field_name]" />
         </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'hidden'">
+        <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name">
           <input type="hidden" v-model="current_select_row[item.field_name]" />
         </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'textarea'">
+        <el-form-item :label="item.label" v-else-if="item.type === 'textarea'" :prop="item.field_name">
           <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"/>
         </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'switch'" :prop="item.field_name">
+          <el-switch v-model="current_select_row[item.field_name]" active-value="10" inactive-value="20" />
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if=" ['radio','checkbox','select','select_mul'].indexOf(item.type) !== -1 " :prop="item.field_name">
+          <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
+            <template v-if="item.type === 'radio'">
+              <el-radio-group v-model="current_select_row[item.field_name]">
+                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-radio>
+              </el-radio-group>
+            </template>
+            <template v-else-if="item.type === 'checkbox'">
+              <el-checkbox-group v-model="current_select_row[item.field_name]">
+                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-checkbox>
+              </el-checkbox-group>
+            </template>
+            <template v-else>
+              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择">
+                <el-option :label="op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
+              </el-select>
+            </template>
+          </template>
 
-        <!--  radio  checkbox  select  select_mul  switch  upload  editor -->
+          <template v-else-if=" typeof relation_info[item.field_id] != 'undefined' ">
+            <template v-if="item.type === 'radio'">
+              <el-radio-group v-model="current_select_row[item.field_name]">
+                <el-radio :label="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ op_val.label }}</el-radio>
+              </el-radio-group>
+            </template>
+            <template v-else-if="item.type === 'checkbox'">
+              <el-checkbox-group v-model="current_select_row[item.field_name]">
+                <el-checkbox :label="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ op_val.label }}</el-checkbox>
+              </el-checkbox-group>
+            </template>
+            <template v-else>
+              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择">
+                <el-option :label="op_val.label" :value="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]"></el-option>
+              </el-select>
+            </template>
+          </template>
 
-        <el-form-item :label="item.label" v-else-if="item.type === 'password'">
+          <template v-else>
+            没有获取到相关内容
+          </template>
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'upload'" :prop="item.field_name">
+          <el-upload
+              :headers="{token:token}"
+              :data="{field_name:item.field_name}"
+              :action="upload_server"
+              :on-preview="previewFile"
+              :on-change="uploadChange"
+              :on-remove="fileRemove"
+              multiple
+              :file-list="current_select_row[item.field_name]"
+          >
+            <el-button size="small" type="primary">上传</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
+        <!--  editor https://leecason.github.io/element-tiptap/  -->
+        </el-form-item>
+
+        <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
           <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item :label="item.label" v-else>
+        <el-form-item :label="item.label" :prop="item.field_name" v-else>
           <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value"></el-input>
         </el-form-item>
       </template>
@@ -254,6 +313,7 @@ import Service from './Service'
 import {toRefs, defineProps} from "vue"
 
 const props = defineProps([
+  "upload_server",  //文件上传后端API地址
   "export_file_name",  //导出的文件名称
   "save_server",  //保存单条数据
   "import_server",  //导入数据的后端API链接
@@ -269,9 +329,10 @@ const props = defineProps([
   "expand"   //是否显示行展开功能
 ])
 
+//获取父组件传入的信息
 const {limit, server, page, token, export_file_name, import_server, save_server} = toRefs(props)
 
-
+//实例化服务类
 const service = new Service({
   limit: limit,
   server: server,
@@ -279,28 +340,31 @@ const service = new Service({
   token: token,
   export_file_name: export_file_name,
   import_server: import_server,
-  save_server: save_server
+  save_server: save_server,
 })
 
-
+//获取配置信息
 const {
-  loading,
+  loading, //是否显示加载进度
   check_column_list, //列显示
 
+  vuecmf_table_ref, //table ref
   filter_form,  //筛选表单
   keywords,  // 关键字搜索
-  field_options,
-  form_info,
+  field_options,  //字段选项信息
+  form_info,    //字段表单信息
+  relation_info,  //字段关联信息
+  form_rules, //表单验证配置
 
   //分页设置
-  page_layout,
-  current_page,
-  page_size,
-  total,
+  page_layout,  //分页显示格式
+  current_page,  //当前页码
+  page_size,   //每页显示条数
+  total,  //列表总记录数
 
   //列数据相关
-  table_data,
-  columns,
+  table_data,  //列表数据
+  columns,  //列头字段信息
   select_rows, //已选择的所有行数据
   current_select_row, //当前选择的一行数据
 
@@ -308,6 +372,7 @@ const {
 } = service.getConfig('table_config')
 
 const {
+  edit_form_ref, //编辑表单ref
   edit_dlg,  //编辑表单对话框
   import_dlg, //是否显示导入对话框
   import_data_form, //导入表单ref
@@ -347,6 +412,9 @@ const getSelectRows = service.getSelectRows  //获取所有选择的数据
 
 const editRow = service.editRow   //显示行编辑表单
 const saveEditRow = service.saveEditRow  //保存行编辑数据
+const previewFile = service.previewFile  //预览文件
+const uploadChange = service.uploadChange  //上传文件状态变动
+const fileRemove = service.fileRemove  //文件移除
 
 service.mounted()
 
@@ -355,13 +423,13 @@ service.mounted()
 <script lang="ts" >
 import { defineComponent } from 'vue'
 
+//引入element-plus图标
 import {
   Download,
   Upload,
   Grid,
   Refresh as IconRefresh,
   QuestionFilled,
-
 } from '@element-plus/icons-vue'
 
 export default defineComponent({
@@ -373,16 +441,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
-/* 列表工具栏 */
-/* 左边工具栏 */
+/* 列表左边工具栏 */
 .btn-group, .table-tools{
   margin-bottom: 10px;
 }
 .btn-group {
   text-align: left; padding-top: 3px;
 }
-/* 右边工具栏 */
+/* 列表右边工具栏 */
 .table-tools {
   text-align: right;
 
@@ -399,6 +465,7 @@ export default defineComponent({
     border-radius: 0px;
     height: 32px;
     line-height: 16px;
+    padding: 9px 12px;
   }
   .el-button:focus {
     border-color: #b3d8ff !important;
@@ -454,16 +521,15 @@ export default defineComponent({
 .upload-tips{
   div{ margin-top: 10px; }
 }
-/*.el-dialog {
-  margin-top: 5vh !important;
-  width: 70vw !important;
-}*/
 .file-form { display: none; }
 .upload-progress{ margin-top: 20px; }
 .import-form{ text-align: left; }
 .download-tpl-btn{ text-align:right; }
 
-
+/* 上传文件 */
+:deep(.el-upload-list__item-name) {
+  white-space: normal;
+}
 
 </style>
 

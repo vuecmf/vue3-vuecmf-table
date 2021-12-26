@@ -6,7 +6,7 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import { ref, onMounted, reactive, toRefs } from "vue"
+import {ref, onMounted, reactive, toRefs, toRaw} from "vue"
 import {ToRefs} from "@vue/reactivity";
 import LoadData from "./service/LoadData";
 import Download from "./service/Download";
@@ -15,6 +15,7 @@ import {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
 import {VuecmfTable} from "./typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject;
+import {ElMessage} from "element-plus";
 
 /**
  * table 服务类
@@ -24,7 +25,7 @@ export default class Service {
     loadDataService: LoadData;      //加载列表数据服务
     downloadService: Download;      //下载数据服务
     uploadDataService: UploadData;  //导入数据服务
-    
+
     /**
      * 列表设置
      */
@@ -43,11 +44,12 @@ export default class Service {
         page_size: 50,   //每页显示条数
 
         //表格相关
-        columns: [],        //字段信息
-        field_options: [],  //字段选项值
-        form_info: [],      //表单信息
-        form_rules: [],     //表单验证规则
-        relation_info: [],  //字段关联信息
+        vuecmf_table_ref: ref(), //table ref
+        columns: [],             //字段信息
+        field_options: [],       //字段选项值
+        form_info: [],           //表单信息
+        form_rules: [],          //表单验证规则
+        relation_info: [],       //字段关联信息
 
         //列数据相关
         table_data: [],         //列表数据
@@ -56,14 +58,16 @@ export default class Service {
         order_field: "",        //排序字段名
         order_sort: "desc",     //排序方式
         select_rows: {},        //已选择所有行数据
-        current_select_row: {}, //当前选择的一行数据
+        current_select_row: ref<AnyObject>(), //当前选择的一行数据
     })
     
     /**
      * 数据导入设置
      */
     import_config = reactive({
+        edit_form_ref: ref(),       //编辑表单ref
         edit_dlg: false,            //编辑表单对话框
+
         import_dlg: false,          //是否显示导入对话框
         import_data_form: ref(),    //导入表单ref
         import_file_form: ref(),    //file表单ref
@@ -142,27 +146,45 @@ export default class Service {
         this.table_config.order_sort = column.order == "descending" ? "desc" : "asc";
         this.search();
     }
-    
+
+    /**
+     * 格式化文件显示
+     * @param name  文件名
+     * @param url  文件链接
+     */
+    private formatFile = (name: string, url: string):string => {
+        const ext = getFileExt(url)
+        if(['gif','jpg','jpeg','png'].indexOf(ext) != -1){
+            return '<img src="' + url + '" style="width:60px"  alt="'+ name +'"/>';
+        }else{
+            return '<a href="' + url + '" target="_blank">' + name + "</a>";
+        }
+    }
+
     /**
      * 格式化字段内容显示
      * @param field_id    字段ID
      * @param field_value 字段值
      */
-    formatter = (field_id:number, field_value: string|number): string => {
-        if(typeof this.table_config.field_options[field_id] != 'undefined'){
-            field_value = this.table_config.field_options[field_id][field_value]
+    formatter = (field_id:number, field_value: string|number|AnyObject): string => {
+        let result = ''
+        if(typeof this.table_config.field_options[field_id] != 'undefined' && typeof field_value != 'object'){
+            result = this.table_config.field_options[field_id][field_value]
         }else if(typeof this.table_config.form_info[field_id] != 'undefined' && this.table_config.form_info[field_id]['type'] == 'upload'){
-            const ext = getFileExt(field_value as string)
-            if(['gif','jpg','jpeg','png'].indexOf(ext) != -1){
-                field_value = '<img src="' + field_value + '" style="width:60px"  alt="'+ field_value +'"/>';
+            if(typeof field_value == 'object'){
+                field_value.forEach((item:AnyObject)=>{
+                    result += this.formatFile(item.name, item.url)
+                })
             }else{
-                field_value = '<a href="' + field_value + '" target="_blank">' + field_value + "</a>";
+                result += this.formatFile(field_value as string, field_value as string)
             }
         }else if(typeof field_value == 'string' && field_value.indexOf('http') === 0){
-            field_value = '<a href="' + field_value + '" target="_blank">' + field_value + "</a>";
+            result = '<a href="' + field_value + '" target="_blank">' + field_value + "</a>";
+        }else{
+            result = field_value as string
         }
 
-        return field_value as string;
+        return result;
     }
     
     /**
@@ -246,7 +268,7 @@ export default class Service {
      */
     resizeWin = ():void => {
         //如果页数不够page-count，sizes 将不会显示
-        if (document.body.offsetWidth < 768) {
+        if (this.table_config.vuecmf_table_ref.value.$el.offsetWidth < 768) {
             this.table_config.page_layout = "total, prev, pager, next";
         } else {
             this.table_config.page_layout = "total, sizes, prev, pager, next, jumper";
@@ -276,6 +298,33 @@ export default class Service {
      */
     editRow = (row: AnyObject): void => {
         this.import_config.edit_dlg = true
+        //将上传控件的 字符串值转换成 数组列表
+        Object.keys(row).forEach((key)=>{
+            row[key] = row[key].toString()
+            Object.values(this.table_config.form_info).forEach((item)=>{
+                if(key == item['field_name'] && item['type'] == 'upload'){
+                    const arr = row[key].split(',')
+                    const file_list:AnyObject[] = []
+                    if(arr.length > 0){
+                        arr.forEach((file:string) => {
+                            const arr2 = file.split('/')
+                            const file_name = arr2[arr2.length-1]
+                            if(file_name != ''){
+                                file_list.push({
+                                    name: file_name,
+                                    url: file,
+                                    field_name: key
+                                })
+                            }
+
+                        })
+                    }
+
+                    row[key] = file_list
+                }
+            })
+        })
+
         this.table_config.current_select_row = row
     }
 
@@ -283,7 +332,92 @@ export default class Service {
      * 保存行编辑数据
      */
     saveEditRow = (): void => {
-        this.uploadDataService.saveRow(this.table_config.current_select_row)
+        const row:AnyObject | undefined = toRaw(this.table_config.current_select_row)
+
+        //将上传控件的列表数据转换成逗号分隔的字符串
+        if(typeof row != 'undefined'){
+            Object.keys(row).forEach((key) => {
+                Object.values(this.table_config.form_info).forEach((item) => {
+                    if (key == item['field_name'] && item['type'] == 'upload') {
+                        if(typeof row[key] == 'object'){
+                            if(row[key].length == 0){
+                                row[key] = ''
+                            }else{
+                                const arr:Array<string> = []
+                                row[key].forEach((val:AnyObject)=>{
+                                    if(typeof val.url != 'undefined') arr.push(val.url)
+                                })
+                                row[key] = arr.join(',')
+                            }
+                        }
+                    }
+                })
+            })
+
+            this.import_config.edit_form_ref.validate((valid: boolean) => {
+                if (valid) {
+                    this.uploadDataService.saveRow(row)
+                } else {
+                    ElMessage.error('表单数据验证未通过！')
+                }
+            })
+            this.editRow(row)  //恢复行数据，如上传控件的 上传列表数据
+        }
+    }
+
+    /**
+     * 预览文件
+     * @param file 文件信息
+     */
+    previewFile = (file:AnyObject):void => {
+        window.open(file.url)
+    }
+
+    /**
+     * 上传文件处理
+     * @param file  当前上传的文件信息
+     * @param fileList 上传的文件列表
+     */
+    uploadChange = (file:AnyObject, fileList:AnyObject[]):void => {
+        if(file.status == 'success'){
+            //取出字段名
+            let field_name = ''
+            if(file.response.code != 0){
+                const arr = file.response.msg.split('|')
+                field_name = arr[0].replace('异常：', '')
+            }else{
+                field_name = file.response.data.field_name
+            }
+
+            fileList.forEach((item) => {
+                item.field_name = field_name
+                if(typeof item.response != 'undefined'){
+                    if(item.response.code != 0){
+                        item.status = 'fail'
+                        item.name += item.response.msg
+                    }else{
+                        item.url = item.response.data.url
+                    }
+                }
+            })
+
+            if(typeof this.table_config.current_select_row != 'undefined'){
+                this.table_config.current_select_row[field_name] = fileList
+            }
+
+            console.log( this.table_config.current_select_row)
+        }
+    }
+
+    /**
+     * 移除文件
+     * @param file
+     * @param fileList
+     */
+    fileRemove = (file:AnyObject, fileList:AnyObject[]):void => {
+        if(typeof this.table_config.current_select_row != 'undefined'){
+            this.table_config.current_select_row[file.field_name] = fileList
+        }
     }
     
     /**

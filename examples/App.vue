@@ -5,16 +5,17 @@
       export_file_name="管理员列表"
       :selectable="selectable"
       :checkbox="true"
-      ref="vcTable"
-      server="http://www.vf.com/vuecmf/admin/index"
       :token="token"
       page="page"
       :limit="20"
       :operate_width="100"
+      :expand="false"
+      :edit_form="true"
+      server="http://www.vf.com/vuecmf/admin/index"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"
-      :expand="true"
-      :edit_form="true"
+      upload_server="http://www.vf.com/vuecmf/upload"
+
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -52,7 +53,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '99df72792bac9a29b37817852e914f8a'
+     const token = '647e5aa97a62d0a426c168ebce55955c'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){

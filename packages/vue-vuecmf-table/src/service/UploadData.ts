@@ -103,6 +103,12 @@ export default class UploadData extends Base{
      * @param fileEvent  文件选择事件对象
      */
     importExcel = (fileEvent: Event):boolean => {
+        if(typeof fileEvent == 'undefined' ||
+            typeof fileEvent.target == 'undefined' ||
+            typeof fileEvent.target.files == 'undefined'){
+            return false
+        }
+
         const fileObj = fileEvent.target.files[0]
         if(fileObj.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             && fileObj.type != 'application/vnd.ms-excel'){

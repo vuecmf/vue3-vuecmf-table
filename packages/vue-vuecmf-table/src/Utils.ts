@@ -1,18 +1,34 @@
+// +----------------------------------------------------------------------
+// | Copyright (c) 2020~2021 http://www.vuecmf.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
+// +----------------------------------------------------------------------
+// | Author: emei8 <2278667823@qq.com>
+// +----------------------------------------------------------------------
 
 import FileSaver from 'file-saver'
 import XLSX, {BookType, WorkBook, WorkSheet, WritingOptions} from 'xlsx'
 import {VuecmfTable} from "./typings/VuecmfTable";
 import AnyObject = VuecmfTable.AnyObject;
 
-//字符串转ArrayBuffer
-const stringToBuffer = (s:any) => {
+
+/**
+ * 字符串转ArrayBuffer
+ * @param s
+ */
+const stringToBuffer = (s:string) => {
     const buf = new ArrayBuffer(s.length);
     const view = new Uint8Array(buf);
     for (let i=0; i < s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
 }
 
-// 将一个sheet转成最终的excel文件的blob对象
+/**
+ * 将一个sheet转成最终的excel文件的blob对象
+ * @param sheet
+ * @param file_type
+ * @param sheet_name
+ */
 const sheet2blob = (sheet:WorkSheet, file_type:BookType, sheet_name?: string) => {
     sheet_name = sheet_name || 'sheet1';
 
@@ -102,7 +118,10 @@ export function dateFormat(dateObj: AnyObject, fmt: string):string {
     return fmt;
 }
 
-/* 获取文件的扩展名 */
+/**
+ * 获取文件的扩展名
+ * @param filename
+ */
 export function getFileExt(filename: string): string {
     if (filename == '' || filename == null) return '';
     const file_arr = filename.split('.');
