@@ -3,14 +3,16 @@
 
   <vuecmf-table
       export_file_name="管理员列表"
+      height="400px"
       :selectable="selectable"
       :checkbox="true"
       :token="token"
       page="page"
       :limit="20"
       :operate_width="100"
+      :show_detail="true"
       :expand="false"
-      :edit_form="true"
+      :edit_form="false"
       server="http://www.vf.com/vuecmf/admin/index"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"
@@ -24,7 +26,7 @@
 
     <!-- 列表每行 自定义按钮操作 -->
     <template #rowAction="{ row, index}">
-      <el-button size="mini" type="danger" @click.prevent="edit(row, index)">删除</el-button>
+      <el-button size="mini" type="danger" @click.prevent="del(row, index)">删除</el-button>
     </template>
 
     <!-- 每行中的每个字段内容 自定义格式化内容显示： 可获取参数有 { row, field } -->
@@ -53,7 +55,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '647e5aa97a62d0a426c168ebce55955c'
+     const token = 'd3a777784046e111e6d982a34c32b073'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -72,7 +74,7 @@ export default defineComponent({
      }
 
      //行 删除 按钮操作
-    const edit = (row:any, index:number):void => {
+    const del = (row:any, index:number):void => {
        console.log(row, index)
     }
 
@@ -85,7 +87,7 @@ export default defineComponent({
        token,
        selectable,
        add,
-       edit,
+       del,
        changeUser,
      }
   }

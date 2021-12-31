@@ -6,8 +6,8 @@ import './registerServiceWorker'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
-
+import VuecmfEditor from 'vue-vuecmf-editor'
 import VuecmfTable from "../packages/index"
 
-createApp(App).use(ElementPlus).use(VuecmfTable).mount('#app')
+createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
 

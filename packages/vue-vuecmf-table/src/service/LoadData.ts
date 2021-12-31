@@ -85,11 +85,13 @@ export default class LoadData extends Base {
         this.table_config.form_rules = data.data.data.form_rules
         this.table_config.relation_info = data.data.data.relation_info
 
-        this.table_config.columns.forEach((val: AnyObject) => {
-            if (val.show == true) {
-                this.table_config.check_column_list.push(val.label)
-            }
-        })
+        if(typeof this.table_config.columns != 'undefined'){
+            this.table_config.columns.forEach((val: AnyObject) => {
+                if (val.show == true) {
+                    this.table_config.check_column_list.push(val.label)
+                }
+            })
+        }
 
         return true
     }

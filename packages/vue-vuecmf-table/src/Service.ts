@@ -30,9 +30,10 @@ export default class Service {
      * 列表设置
      */
     table_config = reactive({
-        loading: false,  //加载状态
-        api_url: '',     //后端API地址
-        page: 'page',    //当前页码的参数名
+        loading: false,     //加载状态
+        api_url: '',        //后端API地址
+        page: 'page',       //当前页码的参数名
+        detail_dlg: false,  //是否显示详情窗口
 
         //筛选相关
         filter_form: {}, //筛选表单
@@ -268,10 +269,12 @@ export default class Service {
      */
     resizeWin = ():void => {
         //如果页数不够page-count，sizes 将不会显示
-        if (this.table_config.vuecmf_table_ref.value.$el.offsetWidth < 768) {
-            this.table_config.page_layout = "total, prev, pager, next";
-        } else {
-            this.table_config.page_layout = "total, sizes, prev, pager, next, jumper";
+        if(typeof this.table_config.vuecmf_table_ref != 'undefined'){
+            if (this.table_config.vuecmf_table_ref.$el.offsetWidth < 768) {
+                this.table_config.page_layout = "total, prev, pager, next";
+            } else {
+                this.table_config.page_layout = "total, sizes, prev, pager, next, jumper";
+            }
         }
     }
 
@@ -290,6 +293,15 @@ export default class Service {
      */
     getSelectRows = (selection: AnyObject): void => {
         this.table_config.select_rows = selection;
+    }
+
+    /**
+     * 显示行详情
+     * @param row
+     */
+    detailRow = (row: AnyObject): void => {
+        this.table_config.current_select_row = row
+        this.table_config.detail_dlg = true
     }
 
     /**
@@ -417,6 +429,16 @@ export default class Service {
     fileRemove = (file:AnyObject, fileList:AnyObject[]):void => {
         if(typeof this.table_config.current_select_row != 'undefined'){
             this.table_config.current_select_row[file.field_name] = fileList
+        }
+    }
+
+    /**
+     * 获取编辑器内容
+     * @param content
+     */
+    getEditorContent = (content:string, id: string):void => {
+        if(typeof this.table_config.current_select_row != 'undefined') {
+            this.table_config.current_select_row[id] = content
         }
     }
     

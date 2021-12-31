@@ -122,6 +122,7 @@
     <!-- 行操作 -->
     <el-table-column fixed="right" label="操作" :width="operate_width" v-if="operate_width">
       <template #default="scope" >
+        <el-button size="mini" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
         <el-button size="mini" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
         <slot name="rowAction" :row="scope.row" :index="scope.$index"></slot>
       </template>
@@ -288,9 +289,13 @@
           </el-upload>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
-        <!--  editor https://leecason.github.io/element-tiptap/  -->
+          <vuecmf-editor
+              :id="item.field_name"
+              :content="current_select_row[item.field_name]"
+              @on-change="getEditorContent"
+              height="300px"
+          ></vuecmf-editor>
         </el-form-item>
-
         <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
           <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off"></el-input>
         </el-form-item>
@@ -306,6 +311,21 @@
     </template>
   </el-dialog>
 
+  <!-- 行详情 -->
+  <el-dialog v-model="detail_dlg" title="详情" >
+    <table>
+      <tr :key="index" v-for=" (item, index) in columns ">
+        <th>{{ item.label }}:</th>
+        <td>
+          <div v-html="formatter(item.field_id, current_select_row[item.prop])"></div>
+        </td>
+      </tr>
+    </table>
+    <template #footer>
+      <div style="text-align: center"><el-button type="default" size="small"  @click="detail_dlg = false">关闭</el-button></div>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script lang="ts" setup>
@@ -313,20 +333,21 @@ import Service from './Service'
 import {toRefs, defineProps} from "vue"
 
 const props = defineProps([
-  "upload_server",  //文件上传后端API地址
-  "export_file_name",  //导出的文件名称
-  "save_server",  //保存单条数据
-  "import_server",  //导入数据的后端API链接
-  "token",     //后端需要的token信息
-  "selectable",  //行是否可选回调函数
-  "checkbox",  //是否显示行选择复选框
-  "server",   //加载列表数据的后端API链接
-  "page",  //当前页码的参数名
-  "limit",  //每页显示条数
-  "height",  //列表表格高度
-  "operate_width",  //操作列的宽度
-  "edit_form", //是否显示行编辑功能
-  "expand"   //是否显示行展开功能
+  "export_file_name",   //导出的文件名称
+  "server",             //加载列表数据的后端API链接
+  "upload_server",      //文件上传后端API地址
+  "save_server",        //保存单条数据
+  "import_server",      //导入数据的后端API链接
+  "token",              //后端需要的token信息
+  "selectable",         //行是否可选回调函数
+  "checkbox",           //是否显示行选择复选框
+  "page",               //当前页码的参数名
+  "limit",              //每页显示条数
+  "height",             //列表表格高度
+  "operate_width",      //操作列的宽度
+  "show_detail",        //是否显示行详情按钮
+  "edit_form",          //是否显示行编辑按钮
+  "expand"              //是否显示行展开功能
 ])
 
 //获取父组件传入的信息
@@ -345,43 +366,44 @@ const service = new Service({
 
 //获取配置信息
 const {
-  loading, //是否显示加载进度
-  check_column_list, //列显示
+  loading,            //是否显示加载进度
+  check_column_list,  //列显示
+  detail_dlg,         //是否显示详情窗口
 
-  vuecmf_table_ref, //table ref
-  filter_form,  //筛选表单
-  keywords,  // 关键字搜索
-  field_options,  //字段选项信息
-  form_info,    //字段表单信息
-  relation_info,  //字段关联信息
-  form_rules, //表单验证配置
+  vuecmf_table_ref,   //table ref
+  filter_form,        //筛选表单
+  keywords,           // 关键字搜索
+  field_options,      //字段选项信息
+  form_info,          //字段表单信息
+  relation_info,      //字段关联信息
+  form_rules,         //表单验证配置
 
   //分页设置
-  page_layout,  //分页显示格式
-  current_page,  //当前页码
-  page_size,   //每页显示条数
-  total,  //列表总记录数
+  page_layout,        //分页显示格式
+  current_page,       //当前页码
+  page_size,          //每页显示条数
+  total,              //列表总记录数
 
   //列数据相关
-  table_data,  //列表数据
-  columns,  //列头字段信息
-  select_rows, //已选择的所有行数据
+  table_data,         //列表数据
+  columns,            //列头字段信息
+  select_rows,        //已选择的所有行数据
   current_select_row, //当前选择的一行数据
 
 
 } = service.getConfig('table_config')
 
 const {
-  edit_form_ref, //编辑表单ref
-  edit_dlg,  //编辑表单对话框
-  import_dlg, //是否显示导入对话框
-  import_data_form, //导入表单ref
-  import_file_form, //file表单ref
-  parse_data_tips, //解析数据时提示
-  import_file_name, //当前导入文件名
-  import_file_error, //导入异常提示语句
+  edit_form_ref,      //编辑表单ref
+  edit_dlg,           //编辑表单对话框
+  import_dlg,         //是否显示导入对话框
+  import_data_form,   //导入表单ref
+  import_file_form,   //file表单ref
+  parse_data_tips,    //解析数据时提示
+  import_file_name,   //当前导入文件名
+  import_file_error,  //导入异常提示语句
   is_import_disabled, //开始按钮是否禁用
-  import_percentage, //导入进度百分比
+  import_percentage,  //导入进度百分比
 
 } = service.getConfig('import_config')
 
@@ -393,28 +415,31 @@ const {
 
 
 //事件方法
-const search = service.search  //搜索
-const toggleColumn = service.toggleColumn //显示或隐藏列
-const sort = service.sort  //排序
-const handleSizeChange = service.handleSizeChange //修改每页显示条数
+const search = service.search                           //搜索
+const toggleColumn = service.toggleColumn               //显示或隐藏列
+const sort = service.sort                               //排序
+const handleSizeChange = service.handleSizeChange       //修改每页显示条数
 const handleCurrentChange = service.handleCurrentChange //切换当前页码
-const formatter = service.formatter  //格式化字段显示
+const formatter = service.formatter                     //格式化字段显示
 
-const downloadExport = service.downloadExport  //导出文件
+const downloadExport = service.downloadExport           //导出文件
 
-const downloadTemplate = service.downloadTemplate  //下载导入模板文件
-const triggerUpload = service.triggerUpload  //触发上传
-const importExcel = service.importExcel   //读取文件并解析数据
-const startImportData = service.startImportData //开始上传
+const downloadTemplate = service.downloadTemplate       //下载导入模板文件
+const triggerUpload = service.triggerUpload             //触发上传
+const importExcel = service.importExcel                 //读取文件并解析数据
+const startImportData = service.startImportData         //开始上传
 
-const currentSelect = service.currentSelect  //当前选择行事件
-const getSelectRows = service.getSelectRows  //获取所有选择的数据
+const currentSelect = service.currentSelect             //当前选择行事件
+const getSelectRows = service.getSelectRows             //获取所有选择的数据
+const detailRow = service.detailRow                     //显示行详情内容
 
-const editRow = service.editRow   //显示行编辑表单
-const saveEditRow = service.saveEditRow  //保存行编辑数据
-const previewFile = service.previewFile  //预览文件
-const uploadChange = service.uploadChange  //上传文件状态变动
-const fileRemove = service.fileRemove  //文件移除
+const editRow = service.editRow                         //显示行编辑表单
+const saveEditRow = service.saveEditRow                 //保存行编辑数据
+const previewFile = service.previewFile                 //预览文件
+const uploadChange = service.uploadChange               //上传文件状态变动
+const fileRemove = service.fileRemove                   //文件移除
+const getEditorContent = service.getEditorContent       //获取编辑器内容
+
 
 service.mounted()
 
