@@ -52,6 +52,7 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
       import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
       save_server="http://www.vuecmf.com/vuecmf/admin/save"
       upload_server="http://www.vuecmf.com/vuecmf/upload"
+	  @exception="vuecmfException"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -114,6 +115,11 @@ export default defineComponent({
     const changeUser = (val:string):void => {
        console.log('修改后值=', val)
     }
+	
+	//列表加载数据异常处理事件
+	const vuecmfException = (err_msg: string, code: number):void => {
+		console.log(err_msg, code)
+	}
 
      return {
        token,
@@ -121,6 +127,7 @@ export default defineComponent({
        add,
        del,
        changeUser,
+	   vuecmfException
      }
   }
 });
