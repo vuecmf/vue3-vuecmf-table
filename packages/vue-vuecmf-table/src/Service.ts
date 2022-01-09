@@ -92,7 +92,7 @@ export default class Service {
         export_file_name: ''        //导入文件名
     })
 
-    constructor(init_config: AnyObject) {
+    constructor(init_config: AnyObject, emit:EmitFn<EE[]>) {
         console.log('vuecmf-talbe service init')
 
         this.table_config.page_size = init_config.limit.value
@@ -102,7 +102,7 @@ export default class Service {
         this.import_config.import_api_url = init_config.import_server.value
         this.import_config.save_api_url = init_config.save_server.value
 
-        this.loadDataService = new LoadData(this.table_config, init_config.token.value)
+        this.loadDataService = new LoadData(this.table_config, init_config.token.value, emit)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)
 
         this.uploadDataService = new UploadData(

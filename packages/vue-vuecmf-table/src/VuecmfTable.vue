@@ -330,7 +330,10 @@
 
 <script lang="ts" setup>
 import Service from './Service'
-import {toRefs, defineProps} from "vue"
+import {toRefs, defineProps, defineEmits} from "vue"
+
+//异常错误提示回调处理函数
+const emit = defineEmits(['exception'])
 
 const props = defineProps([
   "export_file_name",   //导出的文件名称
@@ -362,7 +365,7 @@ const service = new Service({
   export_file_name: export_file_name,
   import_server: import_server,
   save_server: save_server,
-})
+},emit)
 
 //获取配置信息
 const {

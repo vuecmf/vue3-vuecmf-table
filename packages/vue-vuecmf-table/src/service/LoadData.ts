@@ -9,20 +9,22 @@
 import Base from "./Base"
 import {VuecmfTable} from "../typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject
-import { ElMessage } from 'element-plus'
 
 /**
  * 列表加载数据相关服务类
  */
 export default class LoadData extends Base {
     private table_config: AnyObject;  //列表配置信息
+    emit: EmitFn<EE[]>|null;          //异常信息回调处理函数
 
     constructor(
         table_config: AnyObject,  //列表配置信息
         token: string,            //token信息
+        emit:EmitFn<EE[]>         //异常信息回调处理函数
     ) {
         super(token);
         this.table_config = table_config
+        this.emit = emit
     }
 
     /**
@@ -104,7 +106,7 @@ export default class LoadData extends Base {
         if (data.data.code != 0 || typeof data.data.data.data == 'undefined') {
             let msg = "接口异常，无法拉取数据！";
             if (typeof data.data.msg != 'undefined') msg = msg + data.data.msg;
-            ElMessage.error(msg)
+            this.emit('exception', msg, data.data.code)
         }else{
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
