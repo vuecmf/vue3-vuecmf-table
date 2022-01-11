@@ -1,6 +1,6 @@
 # vue3-vuecmf-table
 
-> 基于vue3、Element Plus和TypeScript的多功能列表组件，内置搜索、筛选、分页、行展开、详情、编辑、导出和导入EXCEL等功能
+> 基于vue3、Element Plus和TypeScript的多功能列表组件，支持树形列表数据，内置搜索、筛选、分页、行展开、详情、编辑、导出和导入EXCEL等功能
 
 - 示例演示： http://www.vuecmf.com
 
@@ -32,6 +32,7 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
 ```
 
 ## 模板中使用组件
+
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -134,6 +135,10 @@ export default defineComponent({
 </script>
 
 ```
+若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
+default_expand_all属性（是否全部展开）
+
+
 详细使用见 源码中 examples目录中示例
 
 ## 后端返回JSON 数据样例：

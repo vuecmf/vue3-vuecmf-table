@@ -13,11 +13,12 @@
       :show_detail="true"
       :expand="false"
       :edit_form="false"
-      server="http://www.vf.com/vuecmf/admin/index"
+      server="http://www.vf.com/vuecmf/admin"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"
       upload_server="http://www.vf.com/vuecmf/upload"
-
+      row_key="id"
+      default_expand_all="true"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -55,7 +56,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'd3a777784046e111e6d982a34c32b073'
+     const token = '40f1e841f996e657b40b9225d7af9b7b'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){

@@ -65,6 +65,8 @@
       :height="height"
       @select="currentSelect"
       @selection-change="getSelectRows"
+      :row-key="row_key"
+      :default-expand-all="default_expand_all"
   >
     <!-- 行选择 -->
     <el-table-column fixed type="selection" :selectable="selectable" width="50" v-if="checkbox"></el-table-column>
@@ -149,7 +151,7 @@
 
   </el-table>
 
-  <div class="pagination">
+  <div class="pagination" v-if=" typeof row_key === 'undefined' || row_key === ''">
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -336,6 +338,8 @@ import {toRefs, defineProps, defineEmits} from "vue"
 const emit = defineEmits(['exception'])
 
 const props = defineProps([
+  "row_key",            //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
+  "default_expand_all", //列表数据为树形时（即包含 children 字段时）是否全部展开
   "export_file_name",   //导出的文件名称
   "server",             //加载列表数据的后端API链接
   "upload_server",      //文件上传后端API地址
@@ -354,7 +358,7 @@ const props = defineProps([
 ])
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, row_key, default_expand_all} = toRefs(props)
 
 //实例化服务类
 const service = new Service({
