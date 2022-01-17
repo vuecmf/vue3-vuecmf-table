@@ -28,6 +28,18 @@ export default class LoadData extends Base {
     }
 
     /**
+     * 删除行数据
+     * @param row
+     */
+    delRow = (row: AnyObject):AnyObject => {
+        return this.post(this.table_config.del_api_url, {
+            data: row
+        }).then(function (res) {
+            return res
+        });
+    }
+
+    /**
      * 拉取数据
      * @param current_page  当前页码
      * @param page_size  每次拉取条数

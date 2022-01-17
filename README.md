@@ -47,12 +47,17 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
       :limit="20"
       :operate_width="100"
       :show_detail="true"
-      :expand="true"
-      :edit_form="false"
-      server="http://www.vuecmf.com/vuecmf/admin/index"
-      import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vuecmf.com/vuecmf/admin/save"
-      upload_server="http://www.vuecmf.com/vuecmf/upload"
+      :expand="false"
+      :add_form="true"
+      :edit_form="true"
+      server="http://www.vf.com/vuecmf/admin"
+      import_server="http://www.vf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vf.com/vuecmf/admin/save"
+      upload_server="http://www.vf.com/vuecmf/upload"
+      del_server="http://www.vf.com/vuecmf/admin/delete"
+      row_key="id"
+      default_expand_all="true"
+	  
 	  @exception="vuecmfException"
   >
     <!-- 表格头部左边 自定义按钮操作 -->

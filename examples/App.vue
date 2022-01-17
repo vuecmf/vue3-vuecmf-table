@@ -12,22 +12,24 @@
       :operate_width="100"
       :show_detail="true"
       :expand="false"
-      :edit_form="false"
+      :add_form="true"
+      :edit_form="true"
       server="http://www.vf.com/vuecmf/admin"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"
       upload_server="http://www.vf.com/vuecmf/upload"
+      del_server="http://www.vf.com/vuecmf/admin/delete"
       row_key="id"
       default_expand_all="true"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
-      <el-button size="mini" type="primary" @click.prevent="add(selectRows)" >添加</el-button>
+      <el-button size="mini" type="danger" @click.prevent="mulDel(selectRows)" >批量删除</el-button>
     </template>
 
     <!-- 列表每行 自定义按钮操作 -->
     <template #rowAction="{ row, index}">
-      <el-button size="mini" type="danger" @click.prevent="del(row, index)">删除</el-button>
+      <el-button size="mini" type="info" @click.prevent="lock(row, index)">禁用</el-button>
     </template>
 
     <!-- 每行中的每个字段内容 自定义格式化内容显示： 可获取参数有 { row, field } -->
@@ -56,7 +58,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '40f1e841f996e657b40b9225d7af9b7b'
+     const token = '4db30ef8908082b8224e777ff87d50d2'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -74,8 +76,8 @@ export default defineComponent({
         })
      }
 
-     //行 删除 按钮操作
-    const del = (row:any, index:number):void => {
+     //行 禁用 按钮操作
+    const lock = (row:any, index:number):void => {
        console.log(row, index)
     }
 
@@ -88,7 +90,7 @@ export default defineComponent({
        token,
        selectable,
        add,
-       del,
+       lock,
        changeUser,
      }
   }

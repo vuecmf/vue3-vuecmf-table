@@ -2,6 +2,7 @@
 
   <el-row :gutter="10" >
     <el-col :xs="24" :sm="8" :md="10" :lg="12" :xl="12"  class="btn-group">
+      <el-button size="mini" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
       <slot name="headerAction" :selectRows="select_rows"></slot>
     </el-col>
     <el-col :xs="24" :sm="16" :md="14" :lg="12" :xl="12" class="table-tools">
@@ -126,6 +127,12 @@
       <template #default="scope" >
         <el-button size="mini" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
         <el-button size="mini" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
+        <el-popconfirm title="确定要执行此删除操作?" @confirm="delRow(scope.row)" v-if=" del_server !== '' ">
+          <template #reference>
+            <el-button size="mini" type="danger" >删除</el-button>
+          </template>
+        </el-popconfirm>
+
         <slot name="rowAction" :row="scope.row" :index="scope.$index"></slot>
       </template>
     </el-table-column>
@@ -212,7 +219,7 @@
   </el-dialog>
 
   <!-- 编辑表单 -->
-  <el-dialog v-model="edit_dlg" title="编辑" @close="search">
+  <el-dialog v-model="edit_dlg" :title="form_title" @close="search">
     <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" size="small" :model="current_select_row" class="edit-form-inline">
       <template :key="index" v-for="(item, index) in form_info">
         <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
@@ -317,7 +324,7 @@
   <el-dialog v-model="detail_dlg" title="详情" >
     <table>
       <tr :key="index" v-for=" (item, index) in columns ">
-        <th>{{ item.label }}:</th>
+        <th align="right">{{ item.label }}:</th>
         <td>
           <div v-html="formatter(item.field_id, current_select_row[item.prop])"></div>
         </td>
@@ -345,6 +352,7 @@ const props = defineProps([
   "upload_server",      //文件上传后端API地址
   "save_server",        //保存单条数据
   "import_server",      //导入数据的后端API链接
+  "del_server",         //删除行数据的后端API链接
   "token",              //后端需要的token信息
   "selectable",         //行是否可选回调函数
   "checkbox",           //是否显示行选择复选框
@@ -353,12 +361,13 @@ const props = defineProps([
   "height",             //列表表格高度
   "operate_width",      //操作列的宽度
   "show_detail",        //是否显示行详情按钮
+  "add_form",           //是否显示新增按钮
   "edit_form",          //是否显示行编辑按钮
   "expand"              //是否显示行展开功能
 ])
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, row_key, default_expand_all} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, row_key, default_expand_all} = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -369,6 +378,7 @@ const service = new Service({
   export_file_name: export_file_name,
   import_server: import_server,
   save_server: save_server,
+  del_server: del_server
 },emit)
 
 //获取配置信息
@@ -401,6 +411,7 @@ const {
 } = service.getConfig('table_config')
 
 const {
+  form_title,         //表单标题
   edit_form_ref,      //编辑表单ref
   edit_dlg,           //编辑表单对话框
   import_dlg,         //是否显示导入对话框
@@ -440,7 +451,9 @@ const currentSelect = service.currentSelect             //当前选择行事件
 const getSelectRows = service.getSelectRows             //获取所有选择的数据
 const detailRow = service.detailRow                     //显示行详情内容
 
+const addRow = service.addRow                           //添加一行数据
 const editRow = service.editRow                         //显示行编辑表单
+const delRow = service.delRow                           //删除行数据
 const saveEditRow = service.saveEditRow                 //保存行编辑数据
 const previewFile = service.previewFile                 //预览文件
 const uploadChange = service.uploadChange               //上传文件状态变动

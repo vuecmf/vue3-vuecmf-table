@@ -34,6 +34,7 @@ export default class Service {
         api_url: '',        //后端API地址
         page: 'page',       //当前页码的参数名
         detail_dlg: false,  //是否显示详情窗口
+        del_api_url: '',    //删除行数据API地址
 
         //筛选相关
         filter_form: {}, //筛选表单
@@ -66,6 +67,7 @@ export default class Service {
      * 数据导入设置
      */
     import_config = reactive({
+        form_title: '编辑',          //表单标题
         edit_form_ref: ref(),       //编辑表单ref
         edit_dlg: false,            //编辑表单对话框
 
@@ -97,6 +99,7 @@ export default class Service {
 
         this.table_config.page_size = init_config.limit.value
         this.table_config.api_url = init_config.server.value
+        this.table_config.del_api_url = init_config.del_server.value
         this.table_config.page = init_config.page.value
         this.export_config.export_file_name = init_config.export_file_name.value
         this.import_config.import_api_url = init_config.import_server.value
@@ -305,10 +308,26 @@ export default class Service {
     }
 
     /**
+     * 显示新增表单
+     */
+    addRow = (): void => {
+        const row:AnyObject = {}
+        Object.values(this.table_config.form_info).forEach((item)=>{
+            row[item['field_name']] = ''
+        })
+
+        this.table_config.current_select_row = row
+        this.import_config.form_title = '新增'
+        this.import_config.edit_dlg = true
+    }
+
+
+    /**
      * 显示行编辑表单
      * @param row
      */
     editRow = (row: AnyObject): void => {
+        this.import_config.form_title = '编辑'
         this.import_config.edit_dlg = true
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
@@ -376,6 +395,27 @@ export default class Service {
             this.editRow(row)  //恢复行数据，如上传控件的 上传列表数据
         }
     }
+
+
+    /**
+     * 删除行数据
+     * @param row
+     */
+    delRow = (row: AnyObject):void => {
+        this.loadDataService.delRow(row).then((res: AnyObject) => {
+            if(res.status == 200){
+                if(res.data.code == 0){
+                    ElMessage.success(res.data.msg)
+                    this.search()
+                }else{
+                    ElMessage.error(res.data.msg)
+                }
+            }else{
+                ElMessage.error('删除失败'+ res.statusText)
+            }
+        })
+    }
+
 
     /**
      * 预览文件
