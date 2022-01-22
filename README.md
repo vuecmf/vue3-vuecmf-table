@@ -113,8 +113,11 @@ export default defineComponent({
      }
 
      //行 删除 按钮操作
-    const del = (row:any, index:number):void => {
+    const del = (row:any, index:number, service: any):void => {
        console.log(row, index)
+	   service.delRow() //调用组件中的服务类实例中方法
+      
+       console.log('service = ', service)
     }
 
     //行中输入框修改事件

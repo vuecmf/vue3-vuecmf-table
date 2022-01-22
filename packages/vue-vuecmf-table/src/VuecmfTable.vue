@@ -133,7 +133,7 @@
           </template>
         </el-popconfirm>
 
-        <slot name="rowAction" :row="scope.row" :index="scope.$index"></slot>
+        <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
       </template>
     </el-table-column>
 

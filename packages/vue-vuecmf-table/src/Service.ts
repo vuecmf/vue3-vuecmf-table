@@ -174,6 +174,7 @@ export default class Service {
         let result = ''
         if(typeof this.table_config.field_options[field_id] != 'undefined' && typeof field_value != 'object'){
             result = this.table_config.field_options[field_id][field_value]
+            if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
         }else if(typeof this.table_config.form_info[field_id] != 'undefined' && this.table_config.form_info[field_id]['type'] == 'upload'){
             if(typeof field_value == 'object'){
                 field_value.forEach((item:AnyObject)=>{

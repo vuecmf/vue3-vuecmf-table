@@ -14,11 +14,11 @@
       :expand="false"
       :add_form="true"
       :edit_form="true"
-      server="http://www.vf.com/vuecmf/admin"
-      import_server="http://www.vf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vf.com/vuecmf/admin/save"
-      upload_server="http://www.vf.com/vuecmf/upload"
-      del_server="http://www.vf.com/vuecmf/admin/delete"
+      server="http://www.vf.com/vuecmf/roles"
+      import_server="http://www.vf.com/vuecmf/roles/saveAll"
+      save_server="http://www.vf.com/vuecmf/roles/save"
+      upload_server="http://www.vf.com/roles/upload"
+      del_server="http://www.vf.com/vuecmf/roles/delete"
       row_key="id"
       default_expand_all="true"
   >
@@ -28,8 +28,8 @@
     </template>
 
     <!-- 列表每行 自定义按钮操作 -->
-    <template #rowAction="{ row, index}">
-      <el-button size="mini" type="info" @click.prevent="lock(row, index)">禁用</el-button>
+    <template #rowAction="{ row, index, service}">
+      <el-button size="mini" type="info" @click.prevent="lock(row, index, service)">禁用</el-button>
     </template>
 
     <!-- 每行中的每个字段内容 自定义格式化内容显示： 可获取参数有 { row, field } -->
@@ -52,13 +52,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent, nextTick} from 'vue';
 
 
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '4db30ef8908082b8224e777ff87d50d2'
+     const token = '68b149269ef4d07440464016d78199bb'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -76,9 +76,13 @@ export default defineComponent({
         })
      }
 
-     //行 禁用 按钮操作
-    const lock = (row:any, index:number):void => {
+    //行 禁用 按钮操作, row = 行数据， index = 行索引， service = 组件的服务类实例
+    const lock = (row:any, index:number, service: any):void => {
        console.log(row, index)
+
+       service.delRow() //调用组件中的服务类实例中方法
+
+       console.log('service = ', service)
     }
 
     //行中输入框修改事件
