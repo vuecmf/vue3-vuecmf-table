@@ -9,7 +9,7 @@
       :token="token"
       page="page"
       :limit="20"
-      :operate_width="100"
+      :operate_width="145"
       :show_detail="true"
       :expand="false"
       :add_form="true"
@@ -58,7 +58,7 @@ import {defineComponent, nextTick} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '68b149269ef4d07440464016d78199bb'
+     const token = '49b0a501be872db795d313ade278e2d8'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){

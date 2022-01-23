@@ -79,7 +79,7 @@
                        :label="item.label"
                        :sortable="item.sortable"
                        :fixed= "item.fixed"
-                       :width="item.width"
+                       :min-width="item.width"
                        :key="index"
       >
         <!-- 列头自定义 -->
@@ -123,7 +123,7 @@
     </template>
 
     <!-- 行操作 -->
-    <el-table-column fixed="right" label="操作" :width="operate_width" v-if="operate_width">
+    <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
         <el-button size="mini" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
         <el-button size="mini" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
@@ -485,6 +485,11 @@ export default defineComponent({
 });
 </script>
 
+<style lang="scss">
+.cell{
+  .el-button{ margin: 3px;}
+}
+</style>
 <style lang="scss" scoped>
 /* 列表左边工具栏 */
 .btn-group, .table-tools{
