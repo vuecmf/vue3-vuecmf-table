@@ -57,8 +57,9 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
       del_server="http://www.vf.com/vuecmf/admin/delete"
       row_key="id"
       default_expand_all="true"
-	  
+	 
 	  @exception="vuecmfException"
+	  @callback="tableCallback"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -129,6 +130,11 @@ export default defineComponent({
 	const vuecmfException = (err_msg: string, code: number):void => {
 		console.log(err_msg, code)
 	}
+	
+	//表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+    const tableCallback = (tableService:any) => {
+       console.log('表格组件中service类实例g', tableService)
+    }
 
      return {
        token,
@@ -136,7 +142,8 @@ export default defineComponent({
        add,
        del,
        changeUser,
-	   vuecmfException
+	   vuecmfException,
+	   tableCallback
      }
   }
 });

@@ -68,6 +68,7 @@
       @selection-change="getSelectRows"
       :row-key="row_key"
       :default-expand-all="default_expand_all"
+
   >
     <!-- 行选择 -->
     <el-table-column fixed type="selection" :selectable="selectable" width="50" v-if="checkbox"></el-table-column>
@@ -342,7 +343,7 @@ import Service from './Service'
 import {toRefs, defineProps, defineEmits} from "vue"
 
 //异常错误提示回调处理函数
-const emit = defineEmits(['exception'])
+const emit = defineEmits(['exception', 'callback'])
 
 const props = defineProps([
   "row_key",            //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
@@ -363,7 +364,8 @@ const props = defineProps([
   "show_detail",        //是否显示行详情按钮
   "add_form",           //是否显示新增按钮
   "edit_form",          //是否显示行编辑按钮
-  "expand"              //是否显示行展开功能
+  "expand",             //是否显示行展开功能
+
 ])
 
 //获取父组件传入的信息
@@ -380,6 +382,7 @@ const service = new Service({
   save_server: save_server,
   del_server: del_server
 },emit)
+
 
 //获取配置信息
 const {

@@ -115,6 +115,9 @@ export default class Service {
             init_config.token.value
         )
 
+        //表格回调函数传入服务类实例 , 作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+        emit('callback', this)
+
     }
     
     /**
@@ -496,6 +499,8 @@ export default class Service {
             window.onresize = () => {
                 this.resizeWin()
             }
+
+
 
         })
     }

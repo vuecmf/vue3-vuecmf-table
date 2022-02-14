@@ -20,7 +20,8 @@
       upload_server="http://www.vf.com/roles/upload"
       del_server="http://www.vf.com/vuecmf/roles/delete"
       row_key="id"
-      default_expand_all="true"
+      :default_expand_all="true"
+      @callback="tableCallback"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -58,7 +59,7 @@ import {defineComponent, nextTick} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '49b0a501be872db795d313ade278e2d8'
+     const token = '1d42ed2d0aecd24095937a4ec91460f1'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -90,12 +91,18 @@ export default defineComponent({
        console.log('修改后值=', val)
     }
 
+    //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+    const tableCallback = (tableService:any) => {
+       console.log('表格组件中service类实例g', tableService)
+    }
+
      return {
        token,
        selectable,
        add,
        lock,
        changeUser,
+       tableCallback
      }
   }
 });
