@@ -1,4 +1,23 @@
+const AutoImport = require('unplugin-auto-import/webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+
+
 module.exports = {
+    configureWebpack: config => {
+        const plugins = [];
+        plugins.push(
+            AutoImport({
+                resolvers: [ElementPlusResolver()],
+            }),
+            Components({
+                resolvers: [ElementPlusResolver()],
+            }),
+        )
+
+        // 合并plugins
+        config.plugins = [...config.plugins, ...plugins];
+    },
     // 将 examples 目录添加为新的页面
     pages: {
         index: {

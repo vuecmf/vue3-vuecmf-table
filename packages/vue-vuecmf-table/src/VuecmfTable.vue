@@ -2,13 +2,13 @@
 
   <el-row :gutter="10" >
     <el-col :xs="24" :sm="8" :md="10" :lg="12" :xl="12"  class="btn-group">
-      <el-button size="mini" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
+      <el-button :size="size" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
       <slot name="headerAction" :selectRows="select_rows"></slot>
     </el-col>
     <el-col :xs="24" :sm="16" :md="14" :lg="12" :xl="12" class="table-tools">
       <el-row justify="end">
-            <el-input size="small" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
-            <el-button type="default" size="small" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
+            <el-input :size="size" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
+            <el-button type="default" :size="size" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
 
             <!--<el-button type="default" size="small" title="日历"><i class="fa fa-calendar"></i></el-button>
             <el-button type="default" size="small" title="透视" @click="pivot"><i class="fa fa-table"></i></el-button>
@@ -16,7 +16,7 @@
             <el-button type="default" size="small" title="看板"><i class="fa fa-th-large"></i></el-button>-->
 
             <el-dropdown trigger="click" >
-              <el-button type="default" size="small" title="列">
+              <el-button type="default" :size="size" title="列">
                 <el-icon><grid /></el-icon>
               </el-button>
               <template #dropdown>
@@ -33,10 +33,10 @@
 
             </el-dropdown>
 
-            <el-button type="default" size="small"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
+            <el-button type="default" :size="size"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
 
             <el-dropdown trigger="click" @command="downloadExport">
-              <el-button type="default" size="small" title="导出">
+              <el-button type="default" :size="size" title="导出">
                 <el-icon><download /></el-icon>
               </el-button>
               <template #dropdown>
@@ -59,9 +59,8 @@
       :data="table_data"
       border
       style="width: 100%"
-      size="small"
+      :size="size"
       @sort-change="sort"
-      v-loading="loading"
       :stripe="true"
       :height="height"
       @select="currentSelect"
@@ -94,7 +93,7 @@
           </el-tooltip>
           <div>
             <template v-if="item.filter">
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] != 'undefined'" size="small">
+              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] != 'undefined'" :size="size">
                 <el-option
                     v-for="(option_val,option_key) in field_options[item.field_id]"
                     :key="option_key"
@@ -103,11 +102,11 @@
                 >
                 </el-option>
               </el-select>
-              <el-date-picker size="small" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+              <el-date-picker :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
               </el-date-picker>
               <el-input
                   v-model="filter_form[item.prop]"
-                  size="small"  clearable
+                  :size="size"  clearable
                   placeholder="输入关键字搜索" v-else />
             </template>
           </div>
@@ -126,11 +125,11 @@
     <!-- 行操作 -->
     <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
-        <el-button size="mini" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
-        <el-button size="mini" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
+        <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
+        <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
         <el-popconfirm title="确定要执行此删除操作?" @confirm="delRow(scope.row)" v-if=" del_server !== '' ">
           <template #reference>
-            <el-button size="mini" type="danger" >删除</el-button>
+            <el-button :size="size" type="danger" >删除</el-button>
           </template>
         </el-popconfirm>
 
@@ -143,7 +142,7 @@
       <template #default="props">
         <!-- 表格行展开自定义 -->
         <slot name="rowExpand" :row="props.row" :index="props.$index">
-          <el-table border :data="props.row.expand_data.table_list" size="small" :stripe="true" >
+          <el-table border :data="props.row.expand_data.table_list" :size="size" :stripe="true" >
 
             <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
               <template #default="expand_scope">
@@ -191,12 +190,12 @@
       <el-col :span="12" class="import-form">
         <form ref="import_data_form">
           <input type="file" ref="import_file_form" class="file-form" @change="importExcel"  accept=".xlsx, .xls">
-          <el-button  type="primary" @click="triggerUpload" size="small">选择文件</el-button>
+          <el-button  type="primary" @click="triggerUpload" :size="size">选择文件</el-button>
         </form>
       </el-col>
 
       <el-col :span="12" class="download-tpl-btn">
-        <el-button  type="success"  @click="downloadTemplate" size="small" >下载模板</el-button>
+        <el-button  type="success"  @click="downloadTemplate" :size="size">下载模板</el-button>
       </el-col>
     </el-row>
 
@@ -221,7 +220,7 @@
 
   <!-- 编辑表单 -->
   <el-dialog v-model="edit_dlg" :title="form_title" @close="search">
-    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" size="small" :model="current_select_row" class="edit-form-inline">
+    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
       <template :key="index" v-for="(item, index) in form_info">
         <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
           <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期">
@@ -295,7 +294,7 @@
               multiple
               :file-list="current_select_row[item.field_name]"
           >
-            <el-button size="small" type="primary">上传</el-button>
+            <el-button :size="size" type="primary">上传</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
@@ -316,8 +315,8 @@
 
     </el-form>
     <template #footer>
-      <el-button type="default" size="small"  @click="edit_dlg = false">取消</el-button>
-      <el-button type="primary" size="small"  @click="saveEditRow">保存</el-button>
+      <el-button type="default" :size="size"  @click="edit_dlg = false">取消</el-button>
+      <el-button type="primary" :size="size"  @click="saveEditRow">保存</el-button>
     </template>
   </el-dialog>
 
@@ -332,7 +331,7 @@
       </tr>
     </table>
     <template #footer>
-      <div style="text-align: center"><el-button type="default" size="small"  @click="detail_dlg = false">关闭</el-button></div>
+      <div style="text-align: center"><el-button type="default" :size="size"  @click="detail_dlg = false">关闭</el-button></div>
     </template>
   </el-dialog>
 
@@ -341,6 +340,7 @@
 <script lang="ts" setup>
 import Service from './Service'
 import {toRefs, defineProps, defineEmits} from "vue"
+
 
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'callback'])
@@ -365,7 +365,7 @@ const props = defineProps([
   "add_form",           //是否显示新增按钮
   "edit_form",          //是否显示行编辑按钮
   "expand",             //是否显示行展开功能
-
+  "size",               //按钮及表单统一大小 large, default, small
 ])
 
 //获取父组件传入的信息
@@ -386,7 +386,6 @@ const service = new Service({
 
 //获取配置信息
 const {
-  loading,            //是否显示加载进度
   check_column_list,  //列显示
   detail_dlg,         //是否显示详情窗口
 
@@ -480,6 +479,7 @@ import {
   QuestionFilled,
 } from '@element-plus/icons-vue'
 
+
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
@@ -506,6 +506,22 @@ export default defineComponent({
   text-align: right;
 
   .el-input--small{
+    width: auto;
+    :deep(.el-input__inner) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
+  .el-input--default{
+    width: auto;
+    :deep(.el-input__inner) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
+  .el-input--large{
     width: auto;
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;

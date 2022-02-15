@@ -30,7 +30,7 @@ export default class Service {
      * 列表设置
      */
     table_config = reactive({
-        loading: false,     //加载状态
+        loadingService: {}, //加载状态服务
         api_url: '',        //后端API地址
         page: 'page',       //当前页码的参数名
         detail_dlg: false,  //是否显示详情窗口
@@ -139,7 +139,7 @@ export default class Service {
      * 搜索|刷新
      */
     search = ():void => {
-        this.table_config.loading = true
+        this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.value})
         this.import_config.import_dlg = false
         this.loadDataService.reloadPage()
     }

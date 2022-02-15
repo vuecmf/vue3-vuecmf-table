@@ -14,29 +14,30 @@
       :expand="false"
       :add_form="true"
       :edit_form="true"
-      server="http://www.vf.com/vuecmf/roles"
-      import_server="http://www.vf.com/vuecmf/roles/saveAll"
-      save_server="http://www.vf.com/vuecmf/roles/save"
-      upload_server="http://www.vf.com/roles/upload"
-      del_server="http://www.vf.com/vuecmf/roles/delete"
+      server="http://www.vf.com/vuecmf/admin"
+      import_server="http://www.vf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vf.com/vuecmf/admin/save"
+      upload_server="http://www.vf.com/admin/upload"
+      del_server="http://www.vf.com/vuecmf/admin/delete"
       row_key="id"
       :default_expand_all="true"
       @callback="tableCallback"
+      size="default"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
-      <el-button size="mini" type="danger" @click.prevent="mulDel(selectRows)" >批量删除</el-button>
+      <el-button size="default" type="danger" @click.prevent="mulDel(selectRows)" >批量删除</el-button>
     </template>
 
     <!-- 列表每行 自定义按钮操作 -->
     <template #rowAction="{ row, index, service}">
-      <el-button size="mini" type="info" @click.prevent="lock(row, index, service)">禁用</el-button>
+      <el-button size="default" type="info" @click.prevent="lock(row, index, service)">禁用</el-button>
     </template>
 
     <!-- 每行中的每个字段内容 自定义格式化内容显示： 可获取参数有 { row, field } -->
     <template #formatRow="{ row, field }">
           <span v-if=" field == 'username' ">
-              <el-input v-model="row[field]" @change="changeUser" size="small" clearable></el-input>
+              <el-input v-model="row[field]" @change="changeUser" size="default" clearable></el-input>
           </span>
     </template>
 
@@ -53,13 +54,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, nextTick} from 'vue';
+import {defineComponent} from 'vue';
 
 
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '1d42ed2d0aecd24095937a4ec91460f1'
+     const token = '66d52fda3ea4f026df3d32ea461fdfe3'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
