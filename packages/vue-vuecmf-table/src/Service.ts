@@ -139,7 +139,7 @@ export default class Service {
      * 搜索|刷新
      */
     search = ():void => {
-        this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.value})
+        this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
         this.import_config.import_dlg = false
         this.loadDataService.reloadPage()
     }
