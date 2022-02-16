@@ -302,7 +302,7 @@
               :id="item.field_name"
               :content="current_select_row[item.field_name]"
               @on-change="getEditorContent"
-              height="300px"
+              :size="size"
           ></vuecmf-editor>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
@@ -345,28 +345,114 @@ import {toRefs, defineProps, defineEmits} from "vue"
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'callback'])
 
-const props = defineProps([
-  "row_key",            //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
-  "default_expand_all", //列表数据为树形时（即包含 children 字段时）是否全部展开
-  "export_file_name",   //导出的文件名称
-  "server",             //加载列表数据的后端API链接
-  "upload_server",      //文件上传后端API地址
-  "save_server",        //保存单条数据
-  "import_server",      //导入数据的后端API链接
-  "del_server",         //删除行数据的后端API链接
-  "token",              //后端需要的token信息
-  "selectable",         //行是否可选回调函数
-  "checkbox",           //是否显示行选择复选框
-  "page",               //当前页码的参数名
-  "limit",              //每页显示条数
-  "height",             //列表表格高度
-  "operate_width",      //操作列的宽度
-  "show_detail",        //是否显示行详情按钮
-  "add_form",           //是否显示新增按钮
-  "edit_form",          //是否显示行编辑按钮
-  "expand",             //是否显示行展开功能
-  "size",               //按钮及表单统一大小 large, default, small
-])
+const props = defineProps({
+  //加载列表数据的后端API链接
+  server: {
+    type: String,
+    default: ''
+  },
+  //文件上传后端API地址
+  upload_server: {
+    type: String,
+    default: ''
+  },
+  //保存单条数据
+  save_server: {
+    type: String,
+    default: ''
+  },
+  //导入数据的后端API链接
+  import_server: {
+    type: String,
+    default: ''
+  },
+  //删除行数据的后端API链接
+  del_server: {
+    type: String,
+    default: ''
+  },
+  //后端需要的token信息
+  token: {
+    type: String,
+    default: ''
+  },
+  //当前页码的参数名
+  page: {
+    type: String,
+    default: 'page'
+  },
+  //每页显示条数
+  limit: {
+    type: Number,
+    default: 20,
+  },
+
+  //列表表格高度
+  height: {
+    type: String,
+    default: '300px'
+  },
+  //列表中的按钮及表单样式大小 large, default, small
+  size: {
+    type: String,
+    default: 'default',
+    validator: function (value:string) {
+      return ['default', 'large', 'small'].indexOf(value) !== -1
+    }
+  },
+  //操作列的宽度
+  operate_width: {
+    type: Number,
+    default: 80
+  },
+  //是否显示行详情按钮
+  show_detail: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示新增按钮
+  add_form: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示行编辑按钮
+  edit_form: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示行选择复选框
+  checkbox: {
+    type: Boolean,
+    default: false
+  },
+  //是否显示行展开功能
+  expand: {
+    type: Boolean,
+    default: false
+  },
+  //行是否可选回调函数
+  selectable: {
+    type: Function,
+    default: () => true
+  },
+
+  //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
+  row_key: {
+    type: String,
+    default: ''
+  },
+  //列表数据为树形时（即包含 children 字段时）是否全部展开
+  default_expand_all: {
+    type: Boolean,
+    default: true
+  },
+
+  //导出的文件名称
+  export_file_name: {
+    type: String,
+    default: (new Date()).valueOf().toString()
+  },
+})
 
 //获取父组件传入的信息
 const {limit, server, page, token, export_file_name, import_server, save_server, del_server, row_key, default_expand_all} = toRefs(props)
@@ -505,7 +591,7 @@ export default defineComponent({
 .table-tools {
   text-align: right;
 
-  .el-input--small{
+  .el-input--small, .el-input--default, .el-input--large{
     width: auto;
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;
@@ -513,29 +599,23 @@ export default defineComponent({
     }
   }
 
-  .el-input--default{
-    width: auto;
-    :deep(.el-input__inner) {
-      border-top-right-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
+  .el-button--default{
+    padding: 9px;
   }
 
-  .el-input--large{
-    width: auto;
-    :deep(.el-input__inner) {
-      border-top-right-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
+  .el-button--small{
+    padding: 4px;
+  }
+
+  .el-button--large{
+    padding: 12px;
   }
 
   .el-button {
     margin-left: -1px !important;
     border-radius: 0px;
-    height: 32px;
-    line-height: 16px;
-    padding: 9px 12px;
   }
+
   .el-button:focus {
     border-color: #b3d8ff !important;
   }

@@ -15,7 +15,7 @@ import {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
 import {VuecmfTable} from "./typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject;
-import {ElMessage} from "element-plus";
+import {ElMessage,ElLoading} from "element-plus";
 
 /**
  * table 服务类

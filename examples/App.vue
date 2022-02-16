@@ -2,6 +2,7 @@
   <h3>vuecmf-table demo</h3>
 
   <vuecmf-table
+      size="default"
       export_file_name="管理员列表"
       height="400px"
       :selectable="selectable"
@@ -9,7 +10,7 @@
       :token="token"
       page="page"
       :limit="20"
-      :operate_width="145"
+      :operate_width="158"
       :show_detail="true"
       :expand="false"
       :add_form="true"
@@ -20,9 +21,7 @@
       upload_server="http://www.vf.com/admin/upload"
       del_server="http://www.vf.com/vuecmf/admin/delete"
       row_key="id"
-      :default_expand_all="true"
       @callback="tableCallback"
-      size="default"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -60,7 +59,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '66d52fda3ea4f026df3d32ea461fdfe3'
+     const token = 'c797c37ea200765f256be203cbb6680f'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
