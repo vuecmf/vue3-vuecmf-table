@@ -52,9 +52,6 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).mount('#app')
       save_server="http://www.vuecmf.com/vuecmf/admin/save"
       upload_server="http://www.vuecmf.com/vuecmf/upload"
       del_server="http://www.vuecmf.com/vuecmf/admin/delete"
-      row_key="id"
-      default_expand_all="true"
-	 
       @exception="vuecmfException"
       @callback="tableCallback"
   >
@@ -148,7 +145,8 @@ export default defineComponent({
 
 ```
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
-default_expand_all属性（是否全部展开）
+default_expand_all属性（是否全部展开）;
+若列表为非树形时，不要设置 row_key 属性，否则列表的分页条不会显示。 
 
 
 详细使用见 源码中 examples目录中示例

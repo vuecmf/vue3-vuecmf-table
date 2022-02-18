@@ -158,7 +158,7 @@
 
   </el-table>
 
-  <div class="pagination" v-if=" typeof row_key === 'undefined' || row_key === ''">
+  <div class="pagination" v-if=" typeof row_key == 'undefined' || row_key == '' || row_key == null">
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -574,11 +574,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.cell{
-  .el-button{ margin: 3px;}
-}
-</style>
 <style lang="scss" scoped>
 /* 列表左边工具栏 */
 .btn-group, .table-tools{
@@ -659,8 +654,9 @@ export default defineComponent({
 
 /* 列表 */
 .pagination {
+  display: flex;
+  justify-content: center;
   margin: 10px auto;
-  text-align: center;
 }
 
 /* 导出对话框 */
@@ -682,3 +678,8 @@ export default defineComponent({
 
 </style>
 
+<style lang="scss">
+.cell{
+  .el-button{ margin: 3px;}
+}
+</style>

@@ -20,7 +20,6 @@
       save_server="http://www.vf.com/vuecmf/admin/save"
       upload_server="http://www.vf.com/admin/upload"
       del_server="http://www.vf.com/vuecmf/admin/delete"
-      row_key="id"
       @callback="tableCallback"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
@@ -59,7 +58,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'c797c37ea200765f256be203cbb6680f'
+     const token = 'd27067889324bbc0c522f712a40f8e98'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
