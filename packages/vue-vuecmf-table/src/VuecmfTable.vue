@@ -2,13 +2,13 @@
 
   <el-row :gutter="10" >
     <el-col :xs="24" :sm="8" :md="10" :lg="12" :xl="12"  class="btn-group">
-      <el-button size="mini" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
+      <el-button :size="size" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
       <slot name="headerAction" :selectRows="select_rows"></slot>
     </el-col>
     <el-col :xs="24" :sm="16" :md="14" :lg="12" :xl="12" class="table-tools">
       <el-row justify="end">
-            <el-input size="small" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
-            <el-button type="default" size="small" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
+            <el-input :size="size" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
+            <el-button type="default" :size="size" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
 
             <!--<el-button type="default" size="small" title="日历"><i class="fa fa-calendar"></i></el-button>
             <el-button type="default" size="small" title="透视" @click="pivot"><i class="fa fa-table"></i></el-button>
@@ -16,7 +16,7 @@
             <el-button type="default" size="small" title="看板"><i class="fa fa-th-large"></i></el-button>-->
 
             <el-dropdown trigger="click" >
-              <el-button type="default" size="small" title="列">
+              <el-button type="default" :size="size" title="列">
                 <el-icon><grid /></el-icon>
               </el-button>
               <template #dropdown>
@@ -33,10 +33,10 @@
 
             </el-dropdown>
 
-            <el-button type="default" size="small"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
+            <el-button type="default" :size="size"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
 
             <el-dropdown trigger="click" @command="downloadExport">
-              <el-button type="default" size="small" title="导出">
+              <el-button type="default" :size="size" title="导出">
                 <el-icon><download /></el-icon>
               </el-button>
               <template #dropdown>
@@ -59,15 +59,15 @@
       :data="table_data"
       border
       style="width: 100%"
-      size="small"
+      :size="size"
       @sort-change="sort"
-      v-loading="loading"
       :stripe="true"
       :height="height"
       @select="currentSelect"
       @selection-change="getSelectRows"
       :row-key="row_key"
       :default-expand-all="default_expand_all"
+
   >
     <!-- 行选择 -->
     <el-table-column fixed type="selection" :selectable="selectable" width="50" v-if="checkbox"></el-table-column>
@@ -93,7 +93,7 @@
           </el-tooltip>
           <div>
             <template v-if="item.filter">
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] != 'undefined'" size="small">
+              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] != 'undefined'" :size="size">
                 <el-option
                     v-for="(option_val,option_key) in field_options[item.field_id]"
                     :key="option_key"
@@ -102,11 +102,11 @@
                 >
                 </el-option>
               </el-select>
-              <el-date-picker size="small" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+              <el-date-picker :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
               </el-date-picker>
               <el-input
                   v-model="filter_form[item.prop]"
-                  size="small"  clearable
+                  :size="size"  clearable
                   placeholder="输入关键字搜索" v-else />
             </template>
           </div>
@@ -125,11 +125,11 @@
     <!-- 行操作 -->
     <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
-        <el-button size="mini" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
-        <el-button size="mini" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
+        <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
+        <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
         <el-popconfirm title="确定要执行此删除操作?" @confirm="delRow(scope.row)" v-if=" del_server !== '' ">
           <template #reference>
-            <el-button size="mini" type="danger" >删除</el-button>
+            <el-button :size="size" type="danger" >删除</el-button>
           </template>
         </el-popconfirm>
 
@@ -142,7 +142,7 @@
       <template #default="props">
         <!-- 表格行展开自定义 -->
         <slot name="rowExpand" :row="props.row" :index="props.$index">
-          <el-table border :data="props.row.expand_data.table_list" size="small" :stripe="true" >
+          <el-table border :data="props.row.expand_data.table_list" :size="size" :stripe="true" >
 
             <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
               <template #default="expand_scope">
@@ -158,7 +158,7 @@
 
   </el-table>
 
-  <div class="pagination" v-if=" typeof row_key === 'undefined' || row_key === ''">
+  <div class="pagination" v-if=" typeof row_key == 'undefined' || row_key == '' || row_key == null">
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -190,12 +190,12 @@
       <el-col :span="12" class="import-form">
         <form ref="import_data_form">
           <input type="file" ref="import_file_form" class="file-form" @change="importExcel"  accept=".xlsx, .xls">
-          <el-button  type="primary" @click="triggerUpload" size="small">选择文件</el-button>
+          <el-button  type="primary" @click="triggerUpload" :size="size">选择文件</el-button>
         </form>
       </el-col>
 
       <el-col :span="12" class="download-tpl-btn">
-        <el-button  type="success"  @click="downloadTemplate" size="small" >下载模板</el-button>
+        <el-button  type="success"  @click="downloadTemplate" :size="size">下载模板</el-button>
       </el-col>
     </el-row>
 
@@ -220,7 +220,7 @@
 
   <!-- 编辑表单 -->
   <el-dialog v-model="edit_dlg" :title="form_title" @close="search">
-    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" size="small" :model="current_select_row" class="edit-form-inline">
+    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
       <template :key="index" v-for="(item, index) in form_info">
         <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
           <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期">
@@ -294,7 +294,7 @@
               multiple
               :file-list="current_select_row[item.field_name]"
           >
-            <el-button size="small" type="primary">上传</el-button>
+            <el-button :size="size" type="primary">上传</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
@@ -302,7 +302,7 @@
               :id="item.field_name"
               :content="current_select_row[item.field_name]"
               @on-change="getEditorContent"
-              height="300px"
+              :size="size"
           ></vuecmf-editor>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
@@ -315,8 +315,8 @@
 
     </el-form>
     <template #footer>
-      <el-button type="default" size="small"  @click="edit_dlg = false">取消</el-button>
-      <el-button type="primary" size="small"  @click="saveEditRow">保存</el-button>
+      <el-button type="default" :size="size"  @click="edit_dlg = false">取消</el-button>
+      <el-button type="primary" :size="size"  @click="saveEditRow">保存</el-button>
     </template>
   </el-dialog>
 
@@ -331,7 +331,7 @@
       </tr>
     </table>
     <template #footer>
-      <div style="text-align: center"><el-button type="default" size="small"  @click="detail_dlg = false">关闭</el-button></div>
+      <div style="text-align: center"><el-button type="default" :size="size"  @click="detail_dlg = false">关闭</el-button></div>
     </template>
   </el-dialog>
 
@@ -341,30 +341,118 @@
 import Service from './Service'
 import {toRefs, defineProps, defineEmits} from "vue"
 
-//异常错误提示回调处理函数
-const emit = defineEmits(['exception'])
 
-const props = defineProps([
-  "row_key",            //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
-  "default_expand_all", //列表数据为树形时（即包含 children 字段时）是否全部展开
-  "export_file_name",   //导出的文件名称
-  "server",             //加载列表数据的后端API链接
-  "upload_server",      //文件上传后端API地址
-  "save_server",        //保存单条数据
-  "import_server",      //导入数据的后端API链接
-  "del_server",         //删除行数据的后端API链接
-  "token",              //后端需要的token信息
-  "selectable",         //行是否可选回调函数
-  "checkbox",           //是否显示行选择复选框
-  "page",               //当前页码的参数名
-  "limit",              //每页显示条数
-  "height",             //列表表格高度
-  "operate_width",      //操作列的宽度
-  "show_detail",        //是否显示行详情按钮
-  "add_form",           //是否显示新增按钮
-  "edit_form",          //是否显示行编辑按钮
-  "expand"              //是否显示行展开功能
-])
+//异常错误提示回调处理函数
+const emit = defineEmits(['exception', 'callback'])
+
+const props = defineProps({
+  //加载列表数据的后端API链接
+  server: {
+    type: String,
+    default: ''
+  },
+  //文件上传后端API地址
+  upload_server: {
+    type: String,
+    default: ''
+  },
+  //保存单条数据
+  save_server: {
+    type: String,
+    default: ''
+  },
+  //导入数据的后端API链接
+  import_server: {
+    type: String,
+    default: ''
+  },
+  //删除行数据的后端API链接
+  del_server: {
+    type: String,
+    default: ''
+  },
+  //后端需要的token信息
+  token: {
+    type: String,
+    default: ''
+  },
+  //当前页码的参数名
+  page: {
+    type: String,
+    default: 'page'
+  },
+  //每页显示条数
+  limit: {
+    type: Number,
+    default: 20,
+  },
+
+  //列表表格高度
+  height: {
+    type: String,
+    default: '300px'
+  },
+  //列表中的按钮及表单样式大小 large, default, small
+  size: {
+    type: String,
+    default: 'default',
+    validator: function (value:string) {
+      return ['default', 'large', 'small'].indexOf(value) !== -1
+    }
+  },
+  //操作列的宽度
+  operate_width: {
+    type: Number,
+    default: 80
+  },
+  //是否显示行详情按钮
+  show_detail: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示新增按钮
+  add_form: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示行编辑按钮
+  edit_form: {
+    type: Boolean,
+    default: true
+  },
+  //是否显示行选择复选框
+  checkbox: {
+    type: Boolean,
+    default: false
+  },
+  //是否显示行展开功能
+  expand: {
+    type: Boolean,
+    default: false
+  },
+  //行是否可选回调函数
+  selectable: {
+    type: Function,
+    default: () => true
+  },
+
+  //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
+  row_key: {
+    type: String,
+    default: ''
+  },
+  //列表数据为树形时（即包含 children 字段时）是否全部展开
+  default_expand_all: {
+    type: Boolean,
+    default: true
+  },
+
+  //导出的文件名称
+  export_file_name: {
+    type: String,
+    default: (new Date()).valueOf().toString()
+  },
+})
 
 //获取父组件传入的信息
 const {limit, server, page, token, export_file_name, import_server, save_server, del_server, row_key, default_expand_all} = toRefs(props)
@@ -381,9 +469,9 @@ const service = new Service({
   del_server: del_server
 },emit)
 
+
 //获取配置信息
 const {
-  loading,            //是否显示加载进度
   check_column_list,  //列显示
   detail_dlg,         //是否显示详情窗口
 
@@ -477,6 +565,7 @@ import {
   QuestionFilled,
 } from '@element-plus/icons-vue'
 
+
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
@@ -485,11 +574,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.cell{
-  .el-button{ margin: 3px;}
-}
-</style>
 <style lang="scss" scoped>
 /* 列表左边工具栏 */
 .btn-group, .table-tools{
@@ -502,7 +586,7 @@ export default defineComponent({
 .table-tools {
   text-align: right;
 
-  .el-input--small{
+  .el-input--small, .el-input--default, .el-input--large{
     width: auto;
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;
@@ -510,13 +594,23 @@ export default defineComponent({
     }
   }
 
+  .el-button--default{
+    padding: 9px;
+  }
+
+  .el-button--small{
+    padding: 4px;
+  }
+
+  .el-button--large{
+    padding: 12px;
+  }
+
   .el-button {
     margin-left: -1px !important;
     border-radius: 0px;
-    height: 32px;
-    line-height: 16px;
-    padding: 9px 12px;
   }
+
   .el-button:focus {
     border-color: #b3d8ff !important;
   }
@@ -560,8 +654,9 @@ export default defineComponent({
 
 /* 列表 */
 .pagination {
+  display: flex;
+  justify-content: center;
   margin: 10px auto;
-  text-align: center;
 }
 
 /* 导出对话框 */
@@ -583,3 +678,8 @@ export default defineComponent({
 
 </style>
 
+<style lang="scss">
+.cell{
+  .el-button{ margin: 3px;}
+}
+</style>

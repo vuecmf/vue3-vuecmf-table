@@ -20,15 +20,11 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
 
-/* 导入element plus 组件库 */
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-
 /*导入vuecmf editor和vuecmf table组件*/
 import VuecmfEditor from 'vue-vuecmf-editor'
 import VuecmfTable from "vue3-vuecmf-table"
 
-createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
+createApp(App).use(VuecmfTable).use(VuecmfEditor).mount('#app')
 ```
 
 ## 模板中使用组件
@@ -38,6 +34,7 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
   <h3>vuecmf-table demo</h3>
 
   <vuecmf-table
+      size="default"
       export_file_name="管理员列表"
       height="400px"
       :selectable="selectable"
@@ -50,15 +47,13 @@ createApp(App).use(ElementPlus).use(VuecmfTable).use(VuecmfEditor).mount('#app')
       :expand="false"
       :add_form="true"
       :edit_form="true"
-      server="http://www.vf.com/vuecmf/admin"
-      import_server="http://www.vf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vf.com/vuecmf/admin/save"
-      upload_server="http://www.vf.com/vuecmf/upload"
-      del_server="http://www.vf.com/vuecmf/admin/delete"
-      row_key="id"
-      default_expand_all="true"
-	  
-	  @exception="vuecmfException"
+      server="http://www.vuecmf.com/vuecmf/admin"
+      import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vuecmf.com/vuecmf/admin/save"
+      upload_server="http://www.vuecmf.com/vuecmf/upload"
+      del_server="http://www.vuecmf.com/vuecmf/admin/delete"
+      @exception="vuecmfException"
+      @callback="tableCallback"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -125,10 +120,15 @@ export default defineComponent({
        console.log('修改后值=', val)
     }
 	
-	//列表加载数据异常处理事件
-	const vuecmfException = (err_msg: string, code: number):void => {
-		console.log(err_msg, code)
-	}
+    //列表加载数据异常处理事件
+    const vuecmfException = (err_msg: string, code: number):void => {
+       console.log(err_msg, code)
+    }
+	
+    //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+    const tableCallback = (tableService:any) => {
+       console.log('表格组件中service类实例g', tableService)
+    }
 
      return {
        token,
@@ -136,7 +136,8 @@ export default defineComponent({
        add,
        del,
        changeUser,
-	   vuecmfException
+       vuecmfException,
+       tableCallback
      }
   }
 });
@@ -144,7 +145,8 @@ export default defineComponent({
 
 ```
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
-default_expand_all属性（是否全部展开）
+default_expand_all属性（是否全部展开）;
+若列表为非树形时，不要设置 row_key 属性，否则列表的分页条不会显示。 
 
 
 详细使用见 源码中 examples目录中示例

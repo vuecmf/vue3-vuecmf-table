@@ -122,7 +122,7 @@ export default class LoadData extends Base {
         }else{
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
-            this.table_config.loading = false
+            this.table_config.loadingService.close()
         }
         return true
     }
