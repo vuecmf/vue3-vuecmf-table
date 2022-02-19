@@ -337,7 +337,9 @@ export default class Service {
         Object.keys(row).forEach((key)=>{
             row[key] = row[key].toString()
             Object.values(this.table_config.form_info).forEach((item)=>{
-                if(key == item['field_name'] && item['type'] == 'upload'){
+                if(key == item['field_name'] && item['type'] == 'password'){
+                    row[key] = ''
+                }else if(key == item['field_name'] && item['type'] == 'upload'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []
                     if(arr.length > 0){
