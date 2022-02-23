@@ -176,8 +176,41 @@ export default class Service {
     formatter = (field_id:number, field_value: string|number|AnyObject): string => {
         let result = ''
         if(typeof this.table_config.field_options[field_id] != 'undefined' && typeof field_value != 'object'){
-            result = this.table_config.field_options[field_id][field_value]
+            if(typeof field_value == 'string'){
+                const id_arr = field_value.split(',')
+                const rs: never[] = []
+                id_arr.forEach((id) => {
+                    rs.push(this.table_config.field_options[field_id][id])
+                })
+                result = rs.join('<br>')
+            }else{
+                result = this.table_config.field_options[field_id][field_value]
+            }
+
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
+        }else if(typeof this.table_config.relation_info[field_id] != 'undefined' && typeof field_value != 'object'){
+            if(typeof field_value == 'string'){
+                const id_arr = field_value.split(',')
+                const rs: never[] = []
+                id_arr.forEach((id) => {
+                    if(typeof this.table_config.relation_info[field_id][id] == 'object'){
+                        rs.push(this.table_config.relation_info[field_id][id]['label'])
+                    }else{
+                        rs.push(this.table_config.relation_info[field_id][id])
+                    }
+
+                })
+                result = rs.join('<br>')
+            }else{
+                if(typeof this.table_config.relation_info[field_id][field_value] == 'object'){
+                    result = this.table_config.relation_info[field_id][field_value]['label']
+                }else{
+                    result = this.table_config.relation_info[field_id][field_value]
+                }
+            }
+
+            if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
+
         }else if(typeof this.table_config.form_info[field_id] != 'undefined' && this.table_config.form_info[field_id]['type'] == 'upload'){
             if(typeof field_value == 'object'){
                 field_value.forEach((item:AnyObject)=>{
@@ -339,6 +372,8 @@ export default class Service {
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
+                }else if(key == item['field_name'] && item['type'] == 'select_mul'){
+                    row[key] = row[key].split(',')
                 }else if(key == item['field_name'] && item['type'] == 'upload'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []

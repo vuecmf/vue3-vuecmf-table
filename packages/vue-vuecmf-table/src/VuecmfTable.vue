@@ -102,6 +102,15 @@
                 >
                 </el-option>
               </el-select>
+              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info[item.field_id] != 'undefined'" :size="size">
+                <el-option
+                    v-for="(option_val,option_key) in relation_info[item.field_id]"
+                    :key="option_key"
+                    :label="option_val"
+                    :value="option_key"
+                >
+                </el-option>
+              </el-select>
               <el-date-picker :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
               </el-date-picker>
               <el-input
@@ -213,8 +222,8 @@
     </el-row>
 
     <template #footer>
-      <el-button type="default" size="small"  @click="search">关闭</el-button>
-      <el-button type="primary" size="small"  @click="startImportData" :disabled=" is_import_disabled ">开始</el-button>
+      <el-button type="default" :size="size"  @click="search">关闭</el-button>
+      <el-button type="primary" :size="size"  @click="startImportData" :disabled=" is_import_disabled ">开始</el-button>
     </template>
   </el-dialog>
 
@@ -264,17 +273,17 @@
           <template v-else-if=" typeof relation_info[item.field_id] != 'undefined' ">
             <template v-if="item.type === 'radio'">
               <el-radio-group v-model="current_select_row[item.field_name]">
-                <el-radio :label="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ op_val.label }}</el-radio>
+                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
               </el-radio-group>
             </template>
             <template v-else-if="item.type === 'checkbox'">
               <el-checkbox-group v-model="current_select_row[item.field_name]">
-                <el-checkbox :label="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ op_val.label }}</el-checkbox>
+                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
               </el-checkbox-group>
             </template>
             <template v-else>
               <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择">
-                <el-option :label="op_val.label" :value="op_val[item.field_name]" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]"></el-option>
+                <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]"></el-option>
               </el-select>
             </template>
           </template>
