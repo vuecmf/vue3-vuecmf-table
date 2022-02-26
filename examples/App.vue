@@ -58,7 +58,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'c1bde7450160abc1520b5b4a728b69b5'
+     const token = '95ddb672052541a4e8c4b68aa8233e39'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -93,7 +93,21 @@ export default defineComponent({
     //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
     const tableCallback = (tableService:any) => {
        console.log('表格组件中service类实例g', tableService)
+
+      //关联字段下拉列表数据过滤
+       /*tableService.table_config.field_filter = {
+         model_id: 8
+       }*/
+
+      //设置表单中组件的change事件回调函数， 如在联动下拉框中使用
+      tableService.import_config.changeEvent = (form_field_name: string, sel_val: string|Array<string|number>, linkage: any):void => {
+        console.log('form_field_name=', form_field_name)
+        console.log('sel_val=', sel_val)
+        console.log('linkage=', linkage)
+      }
+
     }
+
 
      return {
        token,

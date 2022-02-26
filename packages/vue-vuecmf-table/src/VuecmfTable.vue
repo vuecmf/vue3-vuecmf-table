@@ -93,7 +93,7 @@
           </el-tooltip>
           <div>
             <template v-if="item.filter">
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] != 'undefined'" :size="size">
+              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
                 <el-option
                     v-for="(option_val,option_key) in field_options[item.field_id]"
                     :key="option_key"
@@ -102,11 +102,11 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info[item.field_id] != 'undefined'" :size="size">
+              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
                 <el-option
-                    v-for="(option_val,option_key) in relation_info[item.field_id]"
+                    v-for="(option_val,option_key) in relation_info.options[item.field_id]"
                     :key="option_key"
-                    :label="option_val"
+                    :label="typeof option_val == 'object'? option_val.label : option_val"
                     :value="option_key"
                 >
                 </el-option>
@@ -232,11 +232,11 @@
     <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
       <template :key="index" v-for="(item, index) in form_info">
         <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
-          <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期">
+          <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
           </el-date-picker>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
-          <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间">
+          <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间" clearable >
           </el-date-picker>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
@@ -264,26 +264,26 @@
               </el-checkbox-group>
             </template>
             <template v-else>
-              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择">
+              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
                 <el-option :label="op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
               </el-select>
             </template>
           </template>
 
-          <template v-else-if=" typeof relation_info[item.field_id] != 'undefined' ">
+          <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
             <template v-if="item.type === 'radio'">
-              <el-radio-group v-model="current_select_row[item.field_name]">
-                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
+              <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
               </el-radio-group>
             </template>
             <template v-else-if="item.type === 'checkbox'">
-              <el-checkbox-group v-model="current_select_row[item.field_name]">
-                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
+              <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
               </el-checkbox-group>
             </template>
             <template v-else>
-              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择">
-                <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info[item.field_id]"></el-option>
+              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
               </el-select>
             </template>
           </template>
@@ -315,10 +315,10 @@
           ></vuecmf-editor>
         </el-form-item>
         <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
-          <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off"></el-input>
+          <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
         </el-form-item>
         <el-form-item :label="item.label" :prop="item.field_name" v-else>
-          <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value"></el-input>
+          <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
         </el-form-item>
       </template>
 
@@ -520,6 +520,8 @@ const {
   is_import_disabled, //开始按钮是否禁用
   import_percentage,  //导入进度百分比
 
+  changeEvent,        //表单中的组件change事件回调函数
+
 } = service.getConfig('import_config')
 
 const {
@@ -557,8 +559,8 @@ const uploadChange = service.uploadChange               //上传文件状态变�
 const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
 
-
 service.mounted()
+
 
 </script>
 

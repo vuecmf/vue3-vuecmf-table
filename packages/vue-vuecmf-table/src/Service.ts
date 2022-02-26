@@ -37,8 +37,9 @@ export default class Service {
         del_api_url: '',    //删除行数据API地址
 
         //筛选相关
-        filter_form: {}, //筛选表单
-        keywords: '',    //搜索关键词
+        field_filter: {},   //拉取字段信息的筛选表单
+        filter_form: {},    //列表筛选表单
+        keywords: '',       //列表搜索关键词
 
         //分页设置
         page_layout: "total, sizes, prev, pager, next, jumper", //分页条展示形式
@@ -67,6 +68,7 @@ export default class Service {
      * 数据导入设置
      */
     import_config = reactive({
+        save_data_type: 'new',      //保存数据类型 new(新增), edit(编辑)
         form_title: '编辑',          //表单标题
         edit_form_ref: ref(),       //编辑表单ref
         edit_dlg: false,            //编辑表单对话框
@@ -74,6 +76,8 @@ export default class Service {
         import_dlg: false,          //是否显示导入对话框
         import_data_form: ref(),    //导入表单ref
         import_file_form: ref(),    //file表单ref
+
+        changeEvent: () => null,    //表单中的组件change事件回调函数
         
         import_api_url: '',         //导入后端API地址
         save_api_url: '',           //保存数据API地址
@@ -188,24 +192,24 @@ export default class Service {
             }
 
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
-        }else if(typeof this.table_config.relation_info[field_id] != 'undefined' && typeof field_value != 'object'){
+        }else if(typeof this.table_config.relation_info.options == 'object' && typeof this.table_config.relation_info.options[field_id] != 'undefined' && typeof field_value != 'object'){
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
                 const rs: never[] = []
                 id_arr.forEach((id) => {
-                    if(typeof this.table_config.relation_info[field_id][id] == 'object'){
-                        rs.push(this.table_config.relation_info[field_id][id]['label'])
+                    if(typeof this.table_config.relation_info.options[field_id][id] == 'object'){
+                        rs.push(this.table_config.relation_info.options[field_id][id]['label'])
                     }else{
-                        rs.push(this.table_config.relation_info[field_id][id])
+                        rs.push(this.table_config.relation_info.options[field_id][id])
                     }
 
                 })
                 result = rs.join('<br>')
             }else{
-                if(typeof this.table_config.relation_info[field_id][field_value] == 'object'){
-                    result = this.table_config.relation_info[field_id][field_value]['label']
+                if(typeof this.table_config.relation_info.options[field_id][field_value] == 'object'){
+                    result = this.table_config.relation_info.options[field_id][field_value]['label']
                 }else{
-                    result = this.table_config.relation_info[field_id][field_value]
+                    result = this.table_config.relation_info.options[field_id][field_value]
                 }
             }
 
@@ -348,14 +352,29 @@ export default class Service {
      * 显示新增表单
      */
     addRow = (): void => {
+        this.import_config.save_data_type = 'new'
+        //清除历史验证信息
+        if(typeof this.import_config.edit_form_ref != 'undefined'){
+            this.import_config.edit_form_ref.resetFields()
+        }
+
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
-            row[item['field_name']] = ''
+            row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
+            //默认值设置
+            Object.values(this.table_config.columns).forEach((fieldInfo) => {
+                if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
+                    const form_val = this.table_config.filter_form[item['field_name']]
+                    row[item['field_name']] = typeof form_val == 'number' ? form_val.toString() : form_val
+                }
+            })
+
         })
 
         this.table_config.current_select_row = row
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
+
     }
 
 
@@ -364,6 +383,12 @@ export default class Service {
      * @param row
      */
     editRow = (row: AnyObject): void => {
+        this.import_config.save_data_type = 'edit'
+        //清除历史验证信息
+        if(typeof this.import_config.edit_form_ref != 'undefined'){
+            this.import_config.edit_form_ref.resetFields()
+        }
+
         this.import_config.form_title = '编辑'
         this.import_config.edit_dlg = true
         //将上传控件的 字符串值转换成 数组列表
@@ -374,6 +399,8 @@ export default class Service {
                     row[key] = ''
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){
                     row[key] = row[key].split(',')
+                }else if(key == item['field_name'] && item['type'] == 'input_number'){
+                    row[key] = parseInt(row[key])
                 }else if(key == item['field_name'] && item['type'] == 'upload'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []
@@ -398,6 +425,7 @@ export default class Service {
         })
 
         this.table_config.current_select_row = row
+
     }
 
     /**
@@ -433,7 +461,9 @@ export default class Service {
                     ElMessage.error('表单数据验证未通过！')
                 }
             })
-            this.editRow(row)  //恢复行数据，如上传控件的 上传列表数据
+
+            //恢复行数据，如上传控件的 上传列表数据
+            if(this.import_config.save_data_type != 'new') this.editRow(row)
         }
     }
 

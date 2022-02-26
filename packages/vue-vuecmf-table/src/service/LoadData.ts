@@ -50,7 +50,7 @@ export default class LoadData extends Base {
         if (action != undefined && action == "getField") {
             //拉取表格字段信息
             return this.post(this.table_config.api_url, {
-                data: { action: action }
+                data: { action: action, filter: this.table_config.field_filter }
             }).then(function (data) {
                 return callback(data);
             });
@@ -103,6 +103,10 @@ export default class LoadData extends Base {
             this.table_config.columns.forEach((val: AnyObject) => {
                 if (val.show == true) {
                     this.table_config.check_column_list.push(val.label)
+                }
+                //初始化搜索表单值
+                if(val.filter == true){
+                    this.table_config.filter_form[val.prop] = typeof this.table_config.relation_info.options == 'object' && typeof this.table_config.relation_info.options[val.field_id] == 'object' ? []:''
                 }
             })
         }
