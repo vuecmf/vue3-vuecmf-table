@@ -20,11 +20,12 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
 
-/*导入vuecmf editor和vuecmf table组件*/
+/*导入vuecmf editor、vuecmf dialog和vuecmf table组件*/
 import VuecmfEditor from 'vue-vuecmf-editor'
+import VuecmfDialog from 'vue-vuecmf-dialog'
 import VuecmfTable from "vue3-vuecmf-table"
 
-createApp(App).use(VuecmfTable).use(VuecmfEditor).mount('#app')
+createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app')
 ```
 
 ## 模板中使用组件

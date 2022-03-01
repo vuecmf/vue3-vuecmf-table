@@ -181,168 +181,175 @@
   </div>
 
   <!-- 下载数据 -->
-  <el-dialog
+  <vuecmf-dialog
       title="正在下载数据，请稍后..."
-      v-model="show_download_dlg"
+      :model_value="show_download_dlg"
       width="30%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
+      :close_on_click_modal="false"
+      :close_on_press_escape="false"
+      :show_close="false"
+      @updateVisible="showDownloadDlg"
   >
-    <span class="danger">{{ download_error }}</span>
-    <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage"></el-progress>
-  </el-dialog>
+    <template #content>
+      <span class="danger">{{ download_error }}</span>
+      <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage"></el-progress>
+    </template>
+  </vuecmf-dialog>
 
   <!-- 导入数据 -->
-  <el-dialog v-model="import_dlg" title="导入" custom-class="import-dlg" @close="search">
-    <el-row justify="space-between">
-      <el-col :span="12" class="import-form">
-        <form ref="import_data_form">
-          <input type="file" ref="import_file_form" class="file-form" @change="importExcel"  accept=".xlsx, .xls">
-          <el-button  type="primary" @click="triggerUpload" :size="size">选择文件</el-button>
-        </form>
-      </el-col>
+  <vuecmf-dialog :model_value="import_dlg" title="导入" custom_class="import-dlg" @close="search" @updateVisible="showImportDlg">
+    <template #content>
+      <el-row justify="space-between">
+        <el-col :span="12" class="import-form">
+          <form ref="import_data_form">
+            <input type="file" ref="import_file_form" class="file-form" @change="importExcel"  accept=".xlsx, .xls">
+            <el-button  type="primary" @click="triggerUpload" :size="size">选择文件</el-button>
+          </form>
+        </el-col>
 
-      <el-col :span="12" class="download-tpl-btn">
-        <el-button  type="success"  @click="downloadTemplate" :size="size">下载模板</el-button>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col v-if=" import_file_name !== '' " class="upload-tips">
-        <div>当前选择文件:  {{ import_file_name }}</div>
-        <div v-html="parse_data_tips"></div>
-        <div v-if=" import_file_error !== '' ">
-          <div class="danger" v-html="import_file_error"></div>
-        </div>
-      </el-col>
-      <el-col class="upload-progress">
-        <el-progress  :text-inside="true"  status="success"  :stroke-width="18" :percentage="import_percentage"></el-progress>
-      </el-col>
-    </el-row>
-
+        <el-col :span="12" class="download-tpl-btn">
+          <el-button  type="success"  @click="downloadTemplate" :size="size">下载模板</el-button>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col v-if=" import_file_name !== '' " class="upload-tips">
+          <div>当前选择文件:  {{ import_file_name }}</div>
+          <div v-html="parse_data_tips"></div>
+          <div v-if=" import_file_error !== '' ">
+            <div class="danger" v-html="import_file_error"></div>
+          </div>
+        </el-col>
+        <el-col class="upload-progress">
+          <el-progress  :text-inside="true"  status="success"  :stroke-width="18" :percentage="import_percentage"></el-progress>
+        </el-col>
+      </el-row>
+    </template>
     <template #footer>
       <el-button type="default" :size="size"  @click="search">关闭</el-button>
       <el-button type="primary" :size="size"  @click="startImportData" :disabled=" is_import_disabled ">开始</el-button>
     </template>
-  </el-dialog>
+  </vuecmf-dialog>
 
   <!-- 编辑表单 -->
-  <el-dialog v-model="edit_dlg" :title="form_title" @close="search">
-    <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
-      <template :key="index" v-for="(item, index) in form_info">
-        <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
-          <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
-          <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间" clearable >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
-          <el-input-number v-model="current_select_row[item.field_name]" />
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name">
-          <input type="hidden" v-model="current_select_row[item.field_name]" />
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'textarea'" :prop="item.field_name">
-          <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"/>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'switch'" :prop="item.field_name">
-          <el-switch v-model="current_select_row[item.field_name]" active-value="10" inactive-value="20" />
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if=" ['radio','checkbox','select','select_mul'].indexOf(item.type) !== -1 " :prop="item.field_name">
-          <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
-            <template v-if="item.type === 'radio'">
-              <el-radio-group v-model="current_select_row[item.field_name]">
-                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-radio>
-              </el-radio-group>
+  <vuecmf-dialog :model_value="edit_dlg" :title="form_title" @close="search" @updateVisible="showEditDlg">
+    <template #content>
+      <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
+        <template :key="index" v-for="(item, index) in form_info">
+          <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
+            <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
+            <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间" clearable >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
+            <el-input-number v-model="current_select_row[item.field_name]" />
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name">
+            <input type="hidden" v-model="current_select_row[item.field_name]" />
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'textarea'" :prop="item.field_name">
+            <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"/>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'switch'" :prop="item.field_name">
+            <el-switch v-model="current_select_row[item.field_name]" active-value="10" inactive-value="20" />
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if=" ['radio','checkbox','select','select_mul'].indexOf(item.type) !== -1 " :prop="item.field_name">
+            <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
+              <template v-if="item.type === 'radio'">
+                <el-radio-group v-model="current_select_row[item.field_name]">
+                  <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-radio>
+                </el-radio-group>
+              </template>
+              <template v-else-if="item.type === 'checkbox'">
+                <el-checkbox-group v-model="current_select_row[item.field_name]">
+                  <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-checkbox>
+                </el-checkbox-group>
+              </template>
+              <template v-else>
+                <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
+                  <el-option :label="op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
+                </el-select>
+              </template>
             </template>
-            <template v-else-if="item.type === 'checkbox'">
-              <el-checkbox-group v-model="current_select_row[item.field_name]">
-                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-checkbox>
-              </el-checkbox-group>
+
+            <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
+              <template v-if="item.type === 'radio'">
+                <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                  <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
+                </el-radio-group>
+              </template>
+              <template v-else-if="item.type === 'checkbox'">
+                <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                  <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
+                </el-checkbox-group>
+              </template>
+              <template v-else>
+                <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                  <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
+                </el-select>
+              </template>
             </template>
+
             <template v-else>
-              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
-                <el-option :label="op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
-              </el-select>
+              没有获取到相关内容
             </template>
-          </template>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'upload'" :prop="item.field_name">
+            <el-upload
+                :headers="{token:token}"
+                :data="{field_name:item.field_name}"
+                :action="upload_server"
+                :on-preview="previewFile"
+                :on-change="uploadChange"
+                :on-remove="fileRemove"
+                multiple
+                :file-list="current_select_row[item.field_name]"
+            >
+              <el-button :size="size" type="primary">上传</el-button>
+            </el-upload>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
+            <vuecmf-editor
+                :id="item.field_name"
+                :content="current_select_row[item.field_name]"
+                @on-change="getEditorContent"
+                :size="size"
+            ></vuecmf-editor>
+          </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
+            <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
+          </el-form-item>
+          <el-form-item :label="item.label" :prop="item.field_name" v-else>
+            <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
+          </el-form-item>
+        </template>
 
-          <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
-            <template v-if="item.type === 'radio'">
-              <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
-                <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
-              </el-radio-group>
-            </template>
-            <template v-else-if="item.type === 'checkbox'">
-              <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
-                <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
-              </el-checkbox-group>
-            </template>
-            <template v-else>
-              <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
-                <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
-              </el-select>
-            </template>
-          </template>
-
-          <template v-else>
-            没有获取到相关内容
-          </template>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'upload'" :prop="item.field_name">
-          <el-upload
-              :headers="{token:token}"
-              :data="{field_name:item.field_name}"
-              :action="upload_server"
-              :on-preview="previewFile"
-              :on-change="uploadChange"
-              :on-remove="fileRemove"
-              multiple
-              :file-list="current_select_row[item.field_name]"
-          >
-            <el-button :size="size" type="primary">上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
-          <vuecmf-editor
-              :id="item.field_name"
-              :content="current_select_row[item.field_name]"
-              @on-change="getEditorContent"
-              :size="size"
-          ></vuecmf-editor>
-        </el-form-item>
-        <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
-          <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
-        </el-form-item>
-        <el-form-item :label="item.label" :prop="item.field_name" v-else>
-          <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
-        </el-form-item>
-      </template>
-
-    </el-form>
+      </el-form>
+    </template>
     <template #footer>
       <el-button type="default" :size="size"  @click="edit_dlg = false">取消</el-button>
       <el-button type="primary" :size="size"  @click="saveEditRow">保存</el-button>
     </template>
-  </el-dialog>
+  </vuecmf-dialog>
 
   <!-- 行详情 -->
-  <el-dialog v-model="detail_dlg" title="详情" >
-    <table>
-      <tr :key="index" v-for=" (item, index) in columns ">
-        <th align="right">{{ item.label }}:</th>
-        <td>
-          <div v-html="formatter(item.field_id, current_select_row[item.prop])"></div>
-        </td>
-      </tr>
-    </table>
+  <vuecmf-dialog :model_value="detail_dlg" title="详情" @updateVisible="showDetailDlg">
+    <template #content>
+      <table>
+        <tr :key="index" v-for=" (item, index) in columns ">
+          <th align="right">{{ item.label }}:</th>
+          <td>
+            <div v-html="formatter(item.field_id, current_select_row[item.prop])"></div>
+          </td>
+        </tr>
+      </table>
+    </template>
     <template #footer>
       <div style="text-align: center"><el-button type="default" :size="size"  @click="detail_dlg = false">关闭</el-button></div>
     </template>
-  </el-dialog>
+  </vuecmf-dialog>
 
 </template>
 
@@ -524,7 +531,7 @@ const {
 
 } = service.getConfig('import_config')
 
-const {
+let {
   show_download_dlg, //下载进度提示框的显示与隐藏
   percentage,        //下载进度
   download_error,    //下载错误提示
@@ -558,6 +565,11 @@ const previewFile = service.previewFile                 //预览文件
 const uploadChange = service.uploadChange               //上传文件状态变动
 const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
+
+const showDownloadDlg = () => show_download_dlg.value = false
+const showImportDlg = () => import_dlg.value = false
+const showEditDlg = () => edit_dlg.value = false
+const showDetailDlg = () => detail_dlg.value = false
 
 service.mounted()
 
