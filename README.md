@@ -48,6 +48,7 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
       :expand="false"
       :add_form="true"
       :edit_form="true"
+      :expand_action="true"
       server="http://www.vuecmf.com/vuecmf/admin"
       import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
       save_server="http://www.vuecmf.com/vuecmf/admin/save"

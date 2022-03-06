@@ -1,6 +1,6 @@
 <template>
 
-  <el-row :gutter="10" >
+  <el-row :gutter="0" >
     <el-col :xs="24" :sm="8" :md="10" :lg="12" :xl="12"  class="btn-group">
       <el-button :size="size" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
       <slot name="headerAction" :selectRows="select_rows"></slot>
@@ -134,16 +134,33 @@
     <!-- 行操作 -->
     <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
-        <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
-        <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
-        <el-popconfirm title="确定要执行此删除操作?" @confirm="delRow(scope.row)" v-if=" del_server !== '' ">
-          <template #reference>
-            <el-button :size="size" type="danger" >删除</el-button>
-          </template>
-        </el-popconfirm>
+        <template v-if="expand_action">
+            <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
+            <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
+            <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if=" del_server !== '' ">删除</el-button>
 
-        <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+            <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+
+        </template>
+        <template v-else>
+          <el-dropdown :size="size" >
+            <el-button type="success">
+              操作 <el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-dropdown-item>
+                <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-dropdown-item>
+                <el-dropdown-item @click.prevent="delRow(scope.row)" v-if=" del_server !== '' ">删除</el-dropdown-item>
+
+                <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
       </template>
+
     </el-table-column>
 
     <!-- 行展开 -->
@@ -276,17 +293,17 @@
 
             <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
-                <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
-                <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
-                <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val, relation_info.linkage[item.field_id]) })">
+                <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
                 </el-select>
               </template>
@@ -356,6 +373,8 @@
 <script lang="ts" setup>
 import Service from './Service'
 import {toRefs, defineProps, defineEmits} from "vue"
+import {VuecmfTable} from "./typings/VuecmfTable";
+import AnyObject = VuecmfTable.AnyObject;
 
 
 //异常错误提示回调处理函数
@@ -451,6 +470,11 @@ const props = defineProps({
     type: Function,
     default: () => true
   },
+  //表单加载前的回调函数
+  load_form:{
+    type: Function,
+    default: (tableService: AnyObject, select_row: AnyObject) => Promise.resolve(true)
+  },
 
   //树形数据唯一键字段，列表数据为树形时（即包含 children 字段时）此项必须设置
   row_key: {
@@ -468,10 +492,17 @@ const props = defineProps({
     type: String,
     default: (new Date()).valueOf().toString()
   },
+
+  //是否展开行操作
+  expand_action: {
+    type: Boolean,
+    default: true
+  }
+
 })
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, del_server, row_key, default_expand_all} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, load_form} = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -482,7 +513,8 @@ const service = new Service({
   export_file_name: export_file_name,
   import_server: import_server,
   save_server: save_server,
-  del_server: del_server
+  del_server: del_server,
+  load_form: load_form
 },emit)
 
 
@@ -586,13 +618,14 @@ import {
   Grid,
   Refresh as IconRefresh,
   QuestionFilled,
+  ArrowDown,
 } from '@element-plus/icons-vue'
 
 
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    Download, Upload, Grid, IconRefresh, QuestionFilled
+    Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown
   }
 });
 </script>
@@ -704,5 +737,8 @@ export default defineComponent({
 <style lang="scss">
 .cell{
   .el-button{ margin: 3px;}
+}
+.el-message-box__btns{
+  justify-content: center;
 }
 </style>

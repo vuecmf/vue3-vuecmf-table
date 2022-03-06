@@ -15,7 +15,7 @@ import {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
 import {VuecmfTable} from "./typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject;
-import {ElMessage,ElLoading} from "element-plus";
+import {ElMessage,ElLoading, ElMessageBox} from "element-plus";
 
 /**
  * table 服务类
@@ -77,6 +77,9 @@ export default class Service {
         import_data_form: ref(),    //导入表单ref
         import_file_form: ref(),    //file表单ref
 
+        //表单加载前的回调函数
+        loadForm: (tableService: AnyObject, select_row: AnyObject) => true,
+
         changeEvent: () => null,    //表单中的组件change事件回调函数
         
         import_api_url: '',         //导入后端API地址
@@ -108,6 +111,7 @@ export default class Service {
         this.export_config.export_file_name = init_config.export_file_name.value
         this.import_config.import_api_url = init_config.import_server.value
         this.import_config.save_api_url = init_config.save_server.value
+        this.import_config.loadForm = init_config.load_form.value
 
         this.loadDataService = new LoadData(this.table_config, init_config.token.value, emit)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)
@@ -375,6 +379,9 @@ export default class Service {
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
 
+        this.import_config.loadForm(this, row)
+
+
     }
 
 
@@ -389,11 +396,9 @@ export default class Service {
             this.import_config.edit_form_ref.resetFields()
         }
 
-        this.import_config.form_title = '编辑'
-        this.import_config.edit_dlg = true
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
-            row[key] = row[key].toString()
+            row[key] = typeof row[key] == 'number' ? row[key].toString() : row[key]
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
@@ -425,6 +430,10 @@ export default class Service {
         })
 
         this.table_config.current_select_row = row
+        this.import_config.form_title = '编辑'
+        this.import_config.edit_dlg = true
+
+        this.import_config.loadForm(this, row)
 
     }
 
@@ -473,17 +482,31 @@ export default class Service {
      * @param row
      */
     delRow = (row: AnyObject):void => {
-        this.loadDataService.delRow(row).then((res: AnyObject) => {
-            if(res.status == 200){
-                if(res.data.code == 0){
-                    ElMessage.success(res.data.msg)
-                    this.search()
-                }else{
-                    ElMessage.error(res.data.msg)
-                }
-            }else{
-                ElMessage.error('删除失败'+ res.statusText)
+        ElMessageBox.confirm(
+            '确定要执行此删除操作?',
+            '警告',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                draggable: true,
+                center: true,
             }
+        ).then(() => {
+            this.loadDataService.delRow(row).then((res: AnyObject) => {
+                if(res.status == 200){
+                    if(res.data.code == 0){
+                        ElMessage.success(res.data.msg)
+                        this.search()
+                    }else{
+                        ElMessage.error(res.data.msg)
+                    }
+                }else{
+                    ElMessage.error('删除失败'+ res.statusText)
+                }
+            })
+        }).catch(() => {
+            return false
         })
     }
 

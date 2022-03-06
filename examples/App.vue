@@ -15,6 +15,7 @@
       :expand="false"
       :add_form="true"
       :edit_form="true"
+      :expand_action="true"
       server="http://www.vf.com/vuecmf/admin"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"
@@ -58,7 +59,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '9ec940209ca698884233c6ce3e9519f7'
+     const token = 'd098030934205c7c0d58dcaf03d3fafe'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
