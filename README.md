@@ -29,6 +29,8 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
 ```
 
 ## 模板中使用组件
+注意：1.8.0版本开始，show_detail、add_form 和 edit_form 属性被移除，新增加
+detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属性，具体使用见下面实例
 
 ```
 <template>
@@ -43,34 +45,34 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
       :token="token"
       page="page"
       :limit="20"
-      :operate_width="100"
-      :show_detail="true"
+      :operate_width="158"
       :expand="false"
-      :add_form="true"
-      :edit_form="true"
+      :detail_btn_visible="detailBtnVisible"
+      :add_btn_visible="addBtnVisible"
+      :edit_btn_visible="editBtnVisible"
+      :del_btn_visible="delBtnVisible"
       :expand_action="true"
-      server="http://www.vuecmf.com/vuecmf/admin"
-      import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vuecmf.com/vuecmf/admin/save"
-      upload_server="http://www.vuecmf.com/vuecmf/upload"
-      del_server="http://www.vuecmf.com/vuecmf/admin/delete"
-      @exception="vuecmfException"
+      server="http://www.vf.com/vuecmf/admin"
+      import_server="http://www.vf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vf.com/vuecmf/admin/save"
+      upload_server="http://www.vf.com/admin/upload"
+      del_server="http://www.vf.com/vuecmf/admin/delete"
       @callback="tableCallback"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
-      <el-button size="mini" type="primary" @click.prevent="add(selectRows)" >添加</el-button>
+      <el-button size="default" type="danger" @click.prevent="mulDel(selectRows)" >批量删除</el-button>
     </template>
 
     <!-- 列表每行 自定义按钮操作 -->
-    <template #rowAction="{ row, index}">
-      <el-button size="mini" type="danger" @click.prevent="del(row, index)">删除</el-button>
+    <template #rowAction="{ row, index, service}">
+      <el-button size="default" type="info" @click.prevent="lock(row, index, service)">禁用</el-button>
     </template>
 
     <!-- 每行中的每个字段内容 自定义格式化内容显示： 可获取参数有 { row, field } -->
     <template #formatRow="{ row, field }">
           <span v-if=" field == 'username' ">
-              <el-input v-model="row[field]" @change="changeUser" size="small" clearable></el-input>
+              <el-input v-model="row[field]" @change="changeUser" size="default" clearable></el-input>
           </span>
     </template>
 
@@ -81,17 +83,19 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
       </div>
     </template>
 
+
   </vuecmf-table>
 
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
+
 
 export default defineComponent({
-  name: 'vuecmf-table-demo',
+  name: 'App',
   setup(){
-     const token = 'd3a777784046e111e6d982a34c32b073'
+     const token = '77f0f0181317bd575073bc9e7d9d62d1'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -109,11 +113,12 @@ export default defineComponent({
         })
      }
 
-     //行 删除 按钮操作
-    const del = (row:any, index:number, service: any):void => {
+    //行 禁用 按钮操作, row = 行数据， index = 行索引， service = 组件的服务类实例
+    const lock = (row:any, index:number, service: any):void => {
        console.log(row, index)
-	   service.delRow() //调用组件中的服务类实例中方法
-      
+
+       service.delRow() //调用组件中的服务类实例中方法
+
        console.log('service = ', service)
     }
 
@@ -121,25 +126,60 @@ export default defineComponent({
     const changeUser = (val:string):void => {
        console.log('修改后值=', val)
     }
-	
-    //列表加载数据异常处理事件
-    const vuecmfException = (err_msg: string, code: number):void => {
-       console.log(err_msg, code)
-    }
-	
+
     //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
     const tableCallback = (tableService:any) => {
        console.log('表格组件中service类实例g', tableService)
+
+      //关联字段下拉列表数据过滤
+       /*tableService.table_config.field_filter = {
+         model_id: 8
+       }*/
+
+      //设置表单中组件的change事件回调函数， 例如在联动下拉框中使用
+      tableService.import_config.changeEvent = (form_field_name: string, sel_val: string|Array<string|number>, linkage: any):void => {
+        console.log('form_field_name=', form_field_name)
+        console.log('sel_val=', sel_val)
+        console.log('linkage=', linkage)
+      }
+
+    }
+
+    //是否显示行详情按钮, 默认true
+    const detailBtnVisible = (row: any): boolean => {
+       console.log('row', row)
+       return true
+    }
+
+    //是否显示添加按钮, 默认true
+    const addBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
+    }
+
+    //是否显示行编辑按钮，默认true
+    const editBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
+    }
+
+    //是否显示行删除按钮，默认true
+    const delBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
     }
 
      return {
        token,
        selectable,
        add,
-       del,
+       lock,
        changeUser,
-       vuecmfException,
-       tableCallback
+       tableCallback,
+       detailBtnVisible,
+       addBtnVisible,
+       editBtnVisible,
+       delBtnVisible
      }
   }
 });

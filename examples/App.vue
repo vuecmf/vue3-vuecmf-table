@@ -11,10 +11,11 @@
       page="page"
       :limit="20"
       :operate_width="158"
-      :show_detail="true"
       :expand="false"
-      :add_form="true"
-      :edit_form="true"
+      :detail_btn_visible="detailBtnVisible"
+      :add_btn_visible="addBtnVisible"
+      :edit_btn_visible="editBtnVisible"
+      :del_btn_visible="delBtnVisible"
       :expand_action="true"
       server="http://www.vf.com/vuecmf/admin"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
@@ -59,7 +60,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'd098030934205c7c0d58dcaf03d3fafe'
+     const token = '77f0f0181317bd575073bc9e7d9d62d1'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -100,7 +101,7 @@ export default defineComponent({
          model_id: 8
        }*/
 
-      //设置表单中组件的change事件回调函数， 如在联动下拉框中使用
+      //设置表单中组件的change事件回调函数， 例如在联动下拉框中使用
       tableService.import_config.changeEvent = (form_field_name: string, sel_val: string|Array<string|number>, linkage: any):void => {
         console.log('form_field_name=', form_field_name)
         console.log('sel_val=', sel_val)
@@ -109,6 +110,29 @@ export default defineComponent({
 
     }
 
+    //是否显示行详情按钮, 默认true
+    const detailBtnVisible = (row: any): boolean => {
+       console.log('row', row)
+       return true
+    }
+
+    //是否显示添加按钮, 默认true
+    const addBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
+    }
+
+    //是否显示行编辑按钮，默认true
+    const editBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
+    }
+
+    //是否显示行删除按钮，默认true
+    const delBtnVisible = (row: any): boolean => {
+      console.log('row', row)
+      return true
+    }
 
      return {
        token,
@@ -116,7 +140,11 @@ export default defineComponent({
        add,
        lock,
        changeUser,
-       tableCallback
+       tableCallback,
+       detailBtnVisible,
+       addBtnVisible,
+       editBtnVisible,
+       delBtnVisible
      }
   }
 });

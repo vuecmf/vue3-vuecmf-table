@@ -135,9 +135,9 @@
     <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
         <template v-if="expand_action">
-            <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-button>
-            <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-button>
-            <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if=" del_server !== '' ">删除</el-button>
+            <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
+            <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-button>
+            <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-button>
 
             <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
 
@@ -149,9 +149,9 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="show_detail">详情</el-dropdown-item>
-                <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_form">编辑</el-dropdown-item>
-                <el-dropdown-item @click.prevent="delRow(scope.row)" v-if=" del_server !== '' ">删除</el-dropdown-item>
+                <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="del_btn_visible(scope.row)">详情</el-dropdown-item>
+                <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-dropdown-item>
+                <el-dropdown-item @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-dropdown-item>
 
                 <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
 
@@ -441,19 +441,24 @@ const props = defineProps({
     default: 80
   },
   //是否显示行详情按钮
-  show_detail: {
-    type: Boolean,
-    default: true
+  detail_btn_visible: {
+    type: Function,
+    default: (select_row: AnyObject) => true
   },
   //是否显示新增按钮
-  add_form: {
-    type: Boolean,
-    default: true
+  add_btn_visible: {
+    type: Function,
+    default: (select_row: AnyObject) => true
   },
   //是否显示行编辑按钮
-  edit_form: {
-    type: Boolean,
-    default: true
+  edit_btn_visible: {
+    type: Function,
+    default: (select_row: AnyObject) => true
+  },
+  //是否显示行删除按钮
+  del_btn_visible:{
+    type: Function,
+    default: (select_row: AnyObject) => true
   },
   //是否显示行选择复选框
   checkbox: {
