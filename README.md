@@ -48,7 +48,7 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
       :operate_width="158"
       :expand="false"
       :detail_btn_visible="detailBtnVisible"
-      :add_btn_visible="addBtnVisible"
+      :add_btn_visible="true"
       :edit_btn_visible="editBtnVisible"
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
@@ -151,12 +151,6 @@ export default defineComponent({
        return true
     }
 
-    //是否显示添加按钮, 默认true
-    const addBtnVisible = (row: any): boolean => {
-      console.log('row', row)
-      return true
-    }
-
     //是否显示行编辑按钮，默认true
     const editBtnVisible = (row: any): boolean => {
       console.log('row', row)
@@ -177,7 +171,6 @@ export default defineComponent({
        changeUser,
        tableCallback,
        detailBtnVisible,
-       addBtnVisible,
        editBtnVisible,
        delBtnVisible
      }

@@ -2,7 +2,7 @@
 
   <el-row :gutter="0" >
     <el-col :xs="24" :sm="8" :md="10" :lg="12" :xl="12"  class="btn-group">
-      <el-button :size="size" type="primary" @click.prevent="addRow" v-if=" add_form == true ">新增</el-button>
+      <el-button :size="size" type="primary" @click.prevent="addRow" v-if="add_btn_visible">新增</el-button>
       <slot name="headerAction" :selectRows="select_rows"></slot>
     </el-col>
     <el-col :xs="24" :sm="16" :md="14" :lg="12" :xl="12" class="table-tools">
@@ -447,8 +447,8 @@ const props = defineProps({
   },
   //是否显示新增按钮
   add_btn_visible: {
-    type: Function,
-    default: (select_row: AnyObject) => true
+    type: Boolean,
+    default: true
   },
   //是否显示行编辑按钮
   edit_btn_visible: {
