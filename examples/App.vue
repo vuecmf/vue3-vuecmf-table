@@ -22,7 +22,8 @@
       save_server="http://www.vf.com/vuecmf/admin/save"
       upload_server="http://www.vf.com/admin/upload"
       del_server="http://www.vf.com/vuecmf/admin/delete"
-      @callback="tableCallback"
+      @beforeLoadTable="beforeLoadTable"
+      @afterLoadTable="afterLoadTable"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -55,7 +56,6 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-
 
 export default defineComponent({
   name: 'App',
@@ -92,8 +92,8 @@ export default defineComponent({
        console.log('修改后值=', val)
     }
 
-    //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
-    const tableCallback = (tableService:any) => {
+    //表格数据加载前回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+    const beforeLoadTable = (tableService:any) => {
        console.log('表格组件中service类实例g', tableService)
 
       //关联字段下拉列表数据过滤
@@ -109,6 +109,12 @@ export default defineComponent({
       }
 
     }
+
+    //表格字段加载完后
+    const afterLoadTable = (table_config: any) => {
+       console.log(table_config)
+    }
+
 
     //是否显示行详情按钮, 默认true
     const detailBtnVisible = (row: any): boolean => {
@@ -134,7 +140,8 @@ export default defineComponent({
        add,
        lock,
        changeUser,
-       tableCallback,
+       beforeLoadTable,
+       afterLoadTable,
        detailBtnVisible,
        editBtnVisible,
        delBtnVisible

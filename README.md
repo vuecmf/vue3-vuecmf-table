@@ -32,6 +32,9 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
 注意：1.8.0版本开始，show_detail、add_form 和 edit_form 属性被移除，新增加
 detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属性，具体使用见下面实例
 
+1.9.0版本开始callback事件移除，增加 beforeLoadTable 和 afterLoadTable 事件
+
+
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -57,7 +60,8 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
       save_server="http://www.vf.com/vuecmf/admin/save"
       upload_server="http://www.vf.com/admin/upload"
       del_server="http://www.vf.com/vuecmf/admin/delete"
-      @callback="tableCallback"
+      @beforeLoadTable="beforeLoadTable"
+      @afterLoadTable="afterLoadTable"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -91,11 +95,10 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
 <script lang="ts">
 import {defineComponent} from 'vue';
 
-
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '77f0f0181317bd575073bc9e7d9d62d1'
+     const token = 'e4e882a6c6750937e874e3ace7cde31d'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -127,8 +130,8 @@ export default defineComponent({
        console.log('修改后值=', val)
     }
 
-    //表格回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
-    const tableCallback = (tableService:any) => {
+    //表格数据加载前回调函数，作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
+    const beforeLoadTable = (tableService:any) => {
        console.log('表格组件中service类实例g', tableService)
 
       //关联字段下拉列表数据过滤
@@ -144,6 +147,12 @@ export default defineComponent({
       }
 
     }
+
+    //表格字段加载完后
+    const afterLoadTable = (table_config: any) => {
+       console.log(table_config)
+    }
+
 
     //是否显示行详情按钮, 默认true
     const detailBtnVisible = (row: any): boolean => {
@@ -169,7 +178,8 @@ export default defineComponent({
        add,
        lock,
        changeUser,
-       tableCallback,
+       beforeLoadTable,
+       afterLoadTable,
        detailBtnVisible,
        editBtnVisible,
        delBtnVisible
@@ -177,6 +187,9 @@ export default defineComponent({
   }
 });
 </script>
+
+
+
 
 ```
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置

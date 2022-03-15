@@ -124,8 +124,8 @@ export default class Service {
             init_config.token.value
         )
 
-        //表格回调函数传入服务类实例 , 作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据
-        emit('callback', this)
+        //表格数据加载前回调处理，传入服务类实例 , 作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据，如过滤表单设置
+        emit('beforeLoadTable', this)
 
     }
     

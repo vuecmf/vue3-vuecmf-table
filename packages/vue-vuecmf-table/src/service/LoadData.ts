@@ -112,6 +112,8 @@ export default class LoadData extends Base {
             })
         }
 
+        this.emit('afterLoadTable', this.table_config)
+
         return true
     }
 
