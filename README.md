@@ -235,6 +235,9 @@ default_expand_all属性（是否全部展开）;
         "relation_info":[
 
         ],
+        "action_type_info":[
+        
+        ],
         "form_rules":{
             "username":[
                 {

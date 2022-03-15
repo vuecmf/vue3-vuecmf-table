@@ -53,6 +53,7 @@ export default class Service {
         form_info: [],           //表单信息
         form_rules: [],          //表单验证规则
         relation_info: [],       //字段关联信息
+        action_type_info:[],     //列表动作类型信息
 
         //列数据相关
         table_data: [],         //列表数据

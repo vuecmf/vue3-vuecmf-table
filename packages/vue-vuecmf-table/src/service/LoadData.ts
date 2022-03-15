@@ -98,6 +98,7 @@ export default class LoadData extends Base {
         this.table_config.form_info = data.data.data.form_info
         this.table_config.form_rules = data.data.data.form_rules
         this.table_config.relation_info = data.data.data.relation_info
+        this.table_config.action_type_info = data.data.data.action_type_info
 
         if(typeof this.table_config.columns != 'undefined'){
             this.table_config.columns.forEach((val: AnyObject) => {
