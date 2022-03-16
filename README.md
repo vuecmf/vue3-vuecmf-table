@@ -188,9 +188,6 @@ export default defineComponent({
 });
 </script>
 
-
-
-
 ```
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
 default_expand_all属性（是否全部展开）;
@@ -247,9 +244,6 @@ default_expand_all属性（是否全部展开）;
         },
         "relation_info":[
 
-        ],
-        "action_type_info":[
-        
         ],
         "form_rules":{
             "username":[

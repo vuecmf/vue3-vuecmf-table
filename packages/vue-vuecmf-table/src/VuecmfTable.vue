@@ -250,7 +250,7 @@
   <!-- 编辑表单 -->
   <vuecmf-dialog :model_value="edit_dlg" :title="form_title" @close="search" @updateVisible="showEditDlg">
     <template #content>
-      <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :size="size" :model="current_select_row" class="edit-form-inline">
+      <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :label-width="form_label_width + 'px'" :size="size" :model="current_select_row" class="edit-form-inline">
         <template :key="index" v-for="(item, index) in form_info">
           <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
             <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
@@ -535,6 +535,7 @@ const {
   form_info,          //字段表单信息
   relation_info,      //字段关联信息
   form_rules,         //表单验证配置
+  form_label_width,   //表单标签名称宽度
 
   //分页设置
   page_layout,        //分页显示格式

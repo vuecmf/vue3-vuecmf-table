@@ -60,7 +60,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'e4e882a6c6750937e874e3ace7cde31d'
+     const token = 'eb1e6015d98ffffa09088f426c0419d1'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){

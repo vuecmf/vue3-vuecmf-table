@@ -98,7 +98,6 @@ export default class LoadData extends Base {
         this.table_config.form_info = data.data.data.form_info
         this.table_config.form_rules = data.data.data.form_rules
         this.table_config.relation_info = data.data.data.relation_info
-        this.table_config.action_type_info = data.data.data.action_type_info
 
         if(typeof this.table_config.columns != 'undefined'){
             this.table_config.columns.forEach((val: AnyObject) => {
@@ -111,6 +110,18 @@ export default class LoadData extends Base {
                 }
             })
         }
+
+        //若有表单设置信息，取出各表单标签长度，计算表单标签宽度
+        if(typeof this.table_config.form_info != 'undefined'){
+            let label_length:number[] = []
+            Object.values(this.table_config.form_info).forEach((form_item: AnyObject) => {
+                label_length.push(form_item.label.length)
+            })
+            label_length = label_length.sort(function (a,b){ return b - a })
+            const max_len = label_length[0]
+            this.table_config.form_label_width = max_len as number * 18 + 8
+        }
+
 
         this.emit('afterLoadTable', this.table_config)
 
