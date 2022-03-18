@@ -60,7 +60,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'eb1e6015d98ffffa09088f426c0419d1'
+     const token = 'a0ed1b4bc4a782e6aa6f50828d926b9d'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -98,7 +98,7 @@ export default defineComponent({
 
       //关联字段下拉列表数据过滤
        /*tableService.table_config.field_filter = {
-         model_id: 8
+         model_id: 0
        }*/
 
       //设置表单中组件的change事件回调函数， 例如在联动下拉框中使用

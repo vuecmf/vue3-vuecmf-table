@@ -104,7 +104,7 @@
               </el-select>
               <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
                 <el-option
-                    v-for="(option_val,option_key) in relation_info.options[item.field_id]"
+                    v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
                     :key="option_key"
                     :label="typeof option_val == 'object'? option_val.label : option_val"
                     :value="option_key"

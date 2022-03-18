@@ -34,6 +34,7 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
 
 1.9.0版本开始callback事件移除，增加 beforeLoadTable 和 afterLoadTable 事件
 
+1.10.0版本开始，后端api获取的字段信息中 relation_info 中增加 full_options项，供列表中关联字段值转换显示内容用
 
 ```
 <template>
@@ -243,7 +244,9 @@ default_expand_all属性（是否全部展开）;
             ... 此处省略
         },
         "relation_info":[
-
+            full_options: {},
+            linkage: {},
+            options: {}
         ],
         "form_rules":{
             "username":[

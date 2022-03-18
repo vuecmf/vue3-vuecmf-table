@@ -197,24 +197,24 @@ export default class Service {
             }
 
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
-        }else if(typeof this.table_config.relation_info.options == 'object' && typeof this.table_config.relation_info.options[field_id] != 'undefined' && typeof field_value != 'object'){
+        }else if(typeof this.table_config.relation_info.full_options == 'object' && typeof this.table_config.relation_info.full_options[field_id] != 'undefined' && typeof field_value != 'object'){
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
                 const rs: never[] = []
                 id_arr.forEach((id) => {
-                    if(typeof this.table_config.relation_info.options[field_id][id] == 'object'){
-                        rs.push(this.table_config.relation_info.options[field_id][id]['label'])
+                    if(typeof this.table_config.relation_info.full_options[field_id][id] == 'object'){
+                        rs.push(this.table_config.relation_info.full_options[field_id][id]['label'])
                     }else{
-                        rs.push(this.table_config.relation_info.options[field_id][id])
+                        rs.push(this.table_config.relation_info.full_options[field_id][id])
                     }
 
                 })
                 result = rs.join('<br>')
             }else{
-                if(typeof this.table_config.relation_info.options[field_id][field_value] == 'object'){
-                    result = this.table_config.relation_info.options[field_id][field_value]['label']
+                if(typeof this.table_config.relation_info.full_options[field_id][field_value] == 'object'){
+                    result = this.table_config.relation_info.full_options[field_id][field_value]['label']
                 }else{
-                    result = this.table_config.relation_info.options[field_id][field_value]
+                    result = this.table_config.relation_info.full_options[field_id][field_value]
                 }
             }
 
