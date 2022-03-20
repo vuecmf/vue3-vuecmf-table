@@ -403,7 +403,7 @@ export default class Service {
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
-                }else if(key == item['field_name'] && item['type'] == 'select_mul'){
+                }else if(key == item['field_name'] && item['type'] == 'select_mul' && typeof row[key] == 'string'){
                     row[key] = row[key].split(',')
                 }else if(key == item['field_name'] && item['type'] == 'input_number'){
                     row[key] = parseInt(row[key])
@@ -475,6 +475,7 @@ export default class Service {
             //恢复行数据，如上传控件的 上传列表数据
             if(this.import_config.save_data_type != 'new') this.editRow(row)
         }
+
     }
 
 

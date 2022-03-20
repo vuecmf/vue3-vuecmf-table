@@ -119,7 +119,7 @@ export default class LoadData extends Base {
             })
             label_length = label_length.sort(function (a,b){ return b - a })
             const max_len = label_length[0]
-            this.table_config.form_label_width = max_len as number * 18 + 8
+            this.table_config.form_label_width = max_len as number * 18 + 16
         }
 
 
