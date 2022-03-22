@@ -85,6 +85,7 @@ export default class Service {
         
         import_api_url: '',         //导入后端API地址
         save_api_url: '',           //保存数据API地址
+        upload_api_url: '',         //上传文件API地址
         import_file_name: '',       //当前导入文件名
         parse_data_tips: '',        //解析数据时提示
         import_file_error: '',      //导入异常提示语句
@@ -113,6 +114,7 @@ export default class Service {
         this.import_config.import_api_url = init_config.import_server.value
         this.import_config.save_api_url = init_config.save_server.value
         this.import_config.loadForm = init_config.load_form.value
+        this.import_config.upload_api_url = process.env.VUE_APP_BASE_API + init_config.upload_server.value
 
         this.loadDataService = new LoadData(this.table_config, init_config.token.value, emit)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)

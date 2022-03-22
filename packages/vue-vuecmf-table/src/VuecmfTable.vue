@@ -317,7 +317,7 @@
             <el-upload
                 :headers="{token:token}"
                 :data="{field_name:item.field_name}"
-                :action="upload_server"
+                :action="upload_api_url"
                 :on-preview="previewFile"
                 :on-change="uploadChange"
                 :on-remove="fileRemove"
@@ -507,7 +507,7 @@ const props = defineProps({
 })
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, del_server, load_form} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form} = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -519,6 +519,7 @@ const service = new Service({
   import_server: import_server,
   save_server: save_server,
   del_server: del_server,
+  upload_server: upload_server,
   load_form: load_form
 },emit)
 
@@ -564,6 +565,7 @@ const {
   import_file_error,  //导入异常提示语句
   is_import_disabled, //开始按钮是否禁用
   import_percentage,  //导入进度百分比
+  upload_api_url,     //上传文件API
 
   changeEvent,        //表单中的组件change事件回调函数
 
