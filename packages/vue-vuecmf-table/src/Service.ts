@@ -313,6 +313,7 @@ export default class Service {
      */
     startImportData = ():void => {
         this.uploadDataService.startImportData()
+        setTimeout(() => this.loadDataService.loadTableField(), 300) //加载列表表头字段
     }
     
     /**
@@ -477,6 +478,8 @@ export default class Service {
             //恢复行数据，如上传控件的 上传列表数据
             if(this.import_config.save_data_type != 'new') this.editRow(row)
         }
+
+        setTimeout(() => this.loadDataService.loadTableField(), 300) //加载列表表头字段
 
     }
 
