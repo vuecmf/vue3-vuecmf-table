@@ -315,6 +315,7 @@
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'upload'" :prop="item.field_name">
             <el-upload
+                :ref="setUploadRef"
                 :headers="{token:token}"
                 :data="{field_name:item.field_name}"
                 :action="upload_api_url"
@@ -605,11 +606,13 @@ const previewFile = service.previewFile                 //预览文件
 const uploadChange = service.uploadChange               //上传文件状态变动
 const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
+const setUploadRef = service.setUploadRef               //设置文件上传ref
 
 const showDownloadDlg = () => show_download_dlg.value = false
 const showImportDlg = () => import_dlg.value = false
 const showEditDlg = () => edit_dlg.value = false
 const showDetailDlg = () => detail_dlg.value = false
+
 
 service.mounted()
 

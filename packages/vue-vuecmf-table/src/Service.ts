@@ -6,7 +6,7 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import {ref, onMounted, reactive, toRefs, toRaw} from "vue"
+import {ref, onMounted, reactive, toRefs, toRaw, Ref} from "vue"
 import {ToRefs} from "@vue/reactivity";
 import LoadData from "./service/LoadData";
 import Download from "./service/Download";
@@ -25,6 +25,8 @@ export default class Service {
     loadDataService: LoadData;      //加载列表数据服务
     downloadService: Download;      //下载数据服务
     uploadDataService: UploadData;  //导入数据服务
+
+    uploadRefs:Ref[] = []
 
     /**
      * 列表设置
@@ -364,11 +366,19 @@ export default class Service {
         //清除历史验证信息
         if(typeof this.import_config.edit_form_ref != 'undefined'){
             this.import_config.edit_form_ref.resetFields()
+            this.uploadRefs.forEach((upload_ref) => {
+                upload_ref.clearFiles()
+            })
         }
 
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
-            row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
+            if(item['type'] == 'upload'){
+                row[item['field_name']] = []
+            }else{
+                row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
+            }
+
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
@@ -398,6 +408,9 @@ export default class Service {
         //清除历史验证信息
         if(typeof this.import_config.edit_form_ref != 'undefined'){
             this.import_config.edit_form_ref.resetFields()
+            this.uploadRefs.forEach((upload_ref) => {
+                upload_ref.clearFiles()
+            })
         }
 
         //将上传控件的 字符串值转换成 数组列表
@@ -476,7 +489,11 @@ export default class Service {
             })
 
             //恢复行数据，如上传控件的 上传列表数据
-            if(this.import_config.save_data_type != 'new') this.editRow(row)
+            if(this.import_config.save_data_type != 'new'){
+                this.editRow(row)
+            } else{
+                this.import_config.edit_form_ref.resetFields()
+            }
         }
 
         setTimeout(() => this.loadDataService.loadTableField(), 300) //加载列表表头字段
@@ -559,6 +576,12 @@ export default class Service {
             }
 
             console.log( this.table_config.current_select_row)
+        }
+    }
+
+    setUploadRef = (el: Ref) => {
+        if(el){
+            this.uploadRefs.push(el)
         }
     }
 
