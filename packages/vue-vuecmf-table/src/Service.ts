@@ -423,7 +423,7 @@ export default class Service {
                     row[key] = row[key].split(',')
                 }else if(key == item['field_name'] && item['type'] == 'input_number'){
                     row[key] = parseInt(row[key])
-                }else if(key == item['field_name'] && item['type'] == 'upload'){
+                }else if(key == item['field_name'] && item['type'] == 'upload' && typeof row[key] == 'string'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []
                     if(arr.length > 0){
@@ -544,12 +544,15 @@ export default class Service {
         window.open(file.url)
     }
 
+
     /**
-     * 上传文件处理
+     * 文件上传成功处理
+     * @param response
      * @param file  当前上传的文件信息
-     * @param fileList 上传的文件列表
+     * @param fileList  上传的文件列表
      */
-    uploadSuccess = (file:AnyObject, fileList:AnyObject[]):void => {
+    uploadSuccess = (response: AnyObject, file:AnyObject, fileList:AnyObject[]):void => {
+        console.log(response)
         if(file.status == 'success'){
             //取出字段名
             let field_name = ''
