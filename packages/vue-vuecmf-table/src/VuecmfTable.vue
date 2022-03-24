@@ -320,12 +320,19 @@
                 :data="{field_name:item.field_name}"
                 :action="upload_api_url"
                 :on-preview="previewFile"
-                :on-change="uploadChange"
+                :on-success="uploadSuccess"
                 :on-remove="fileRemove"
                 multiple
                 :file-list="current_select_row[item.field_name]"
             >
               <el-button :size="size" type="primary">上传</el-button>
+
+              <!--                <ul class="el-upload-list el-upload-list&#45;&#45;picture" v-if="current_select_row[item.field_name].length > 0">
+                                <li class="el-upload-list__item is-success" :tabindex="file_index" :key="file_index" v-for="(file_item, file_index) in current_select_row[item.field_name]">
+                                  <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name">
+                                </li>
+                              </ul>-->
+
             </el-upload>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
@@ -603,7 +610,7 @@ const editRow = service.editRow                         //显示行编辑表单
 const delRow = service.delRow                           //删除行数据
 const saveEditRow = service.saveEditRow                 //保存行编辑数据
 const previewFile = service.previewFile                 //预览文件
-const uploadChange = service.uploadChange               //上传文件状态变动
+const uploadSuccess = service.uploadSuccess             //上传文件成功
 const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
 const setUploadRef = service.setUploadRef               //设置文件上传ref

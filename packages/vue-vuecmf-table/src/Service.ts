@@ -465,15 +465,16 @@ export default class Service {
             Object.keys(row).forEach((key) => {
                 Object.values(this.table_config.form_info).forEach((item) => {
                     if (key == item['field_name'] && item['type'] == 'upload') {
-                        if(typeof row[key] == 'object'){
-                            if(row[key].length == 0){
+                        if(typeof row[key + '_new_upload'] == 'object'){
+                            if(row[key + '_new_upload'].length == 0){
                                 row[key] = ''
                             }else{
                                 const arr:Array<string> = []
-                                row[key].forEach((val:AnyObject)=>{
+                                row[key + '_new_upload'].forEach((val:AnyObject)=>{
                                     if(typeof val.url != 'undefined') arr.push(val.url)
                                 })
                                 row[key] = arr.join(',')
+                                delete row[key + '_new_upload']
                             }
                         }
                     }
@@ -548,7 +549,7 @@ export default class Service {
      * @param file  当前上传的文件信息
      * @param fileList 上传的文件列表
      */
-    uploadChange = (file:AnyObject, fileList:AnyObject[]):void => {
+    uploadSuccess = (file:AnyObject, fileList:AnyObject[]):void => {
         if(file.status == 'success'){
             //取出字段名
             let field_name = ''
@@ -572,7 +573,7 @@ export default class Service {
             })
 
             if(typeof this.table_config.current_select_row != 'undefined'){
-                this.table_config.current_select_row[field_name] = fileList
+                this.table_config.current_select_row[field_name + '_new_upload'] = fileList
             }
 
             console.log( this.table_config.current_select_row)
