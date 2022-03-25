@@ -242,7 +242,7 @@
       </el-row>
     </template>
     <template #footer>
-      <el-button type="default" :size="size"  @click="search">关闭</el-button>
+      <el-button type="default" :size="size"  @click=" import_dlg = false ">关闭</el-button>
       <el-button type="primary" :size="size"  @click="startImportData" :disabled=" is_import_disabled ">开始</el-button>
     </template>
   </vuecmf-dialog>
