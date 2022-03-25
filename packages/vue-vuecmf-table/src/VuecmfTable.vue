@@ -753,7 +753,7 @@ export default defineComponent({
 
 <style lang="scss">
 .cell{
-  .el-button{ margin: 3px;}
+  .el-button{ margin: 3px !important;}
 }
 .el-message-box__btns{
   justify-content: center;
