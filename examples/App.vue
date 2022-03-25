@@ -17,11 +17,11 @@
       :edit_btn_visible="editBtnVisible"
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
-      server="http://www.vf.com/vuecmf/admin"
-      import_server="http://www.vf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vf.com/vuecmf/admin/save"
-      upload_server="http://www.vf.com/admin/upload"
-      del_server="http://www.vf.com/vuecmf/admin/delete"
+      server="http://www.vf.com/vuecmf/photo"
+      import_server="http://www.vf.com/vuecmf/photo/saveAll"
+      save_server="http://www.vf.com/vuecmf/photo/save"
+      upload_server="http://www.vf.com/vuecmf/upload"
+      del_server="http://www.vf.com/vuecmf/photo/delete"
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
   >
@@ -60,7 +60,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'a0ed1b4bc4a782e6aa6f50828d926b9d'
+     const token = 'f21245bea58ebb45def5d11ffc84f5c3'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){

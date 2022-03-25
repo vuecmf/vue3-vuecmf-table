@@ -248,7 +248,7 @@
   </vuecmf-dialog>
 
   <!-- 编辑表单 -->
-  <vuecmf-dialog :model_value="edit_dlg" :title="form_title" @close="search" @updateVisible="showEditDlg">
+  <vuecmf-dialog :model_value="edit_dlg" :title="form_title"  @close="search" @updateVisible="showEditDlg">
     <template #content>
       <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :label-width="form_label_width + 'px'" :size="size" :model="current_select_row" class="edit-form-inline">
         <template :key="index" v-for="(item, index) in form_info">
@@ -313,7 +313,7 @@
               没有获取到相关内容
             </template>
           </el-form-item>
-          <el-form-item :label="item.label" v-else-if="item.type === 'upload'" :prop="item.field_name">
+          <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
             <el-upload
                 :ref="setUploadRef"
                 :headers="{token:token}"
@@ -322,16 +322,13 @@
                 :on-preview="previewFile"
                 :on-success="uploadSuccess"
                 :on-remove="fileRemove"
+                :list-type=" item.type === 'upload_image' ? 'picture-card' : 'text' "
+                :accept=" item.type === 'upload_image' ? 'image/*' : '' "
                 multiple
                 :file-list="current_select_row[item.field_name]"
             >
-              <el-button :size="size" type="primary">上传</el-button>
-
-              <!--                <ul class="el-upload-list el-upload-list&#45;&#45;picture" v-if="current_select_row[item.field_name].length > 0">
-                                <li class="el-upload-list__item is-success" :tabindex="file_index" :key="file_index" v-for="(file_item, file_index) in current_select_row[item.field_name]">
-                                  <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name">
-                                </li>
-                              </ul>-->
+              <el-icon v-if="item.type === 'upload_image'"><Plus /></el-icon>
+              <el-button :size="size" type="primary" v-else>上传</el-button>
 
             </el-upload>
           </el-form-item>
@@ -366,7 +363,7 @@
         <tr :key="index" v-for=" (item, index) in columns ">
           <th align="right">{{ item.label }}:</th>
           <td>
-            <div v-html="formatter(item.field_id, current_select_row[item.prop])"></div>
+            <div v-html="formatter(item.field_id, detail_data[item.prop])"></div>
           </td>
         </tr>
       </table>
@@ -536,6 +533,7 @@ const service = new Service({
 const {
   check_column_list,  //列显示
   detail_dlg,         //是否显示详情窗口
+  detail_data,        //详情内容
 
   vuecmf_table_ref,   //table ref
   filter_form,        //筛选表单
@@ -637,13 +635,14 @@ import {
   Refresh as IconRefresh,
   QuestionFilled,
   ArrowDown,
+  Plus,
 } from '@element-plus/icons-vue'
 
 
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown
+    Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown, Plus
   }
 });
 </script>

@@ -36,6 +36,7 @@ export default class Service {
         api_url: '',        //后端API地址
         page: 'page',       //当前页码的参数名
         detail_dlg: false,  //是否显示详情窗口
+        detail_data: {},    //详情内容
         del_api_url: '',    //删除行数据API地址
 
         //筛选相关
@@ -116,7 +117,7 @@ export default class Service {
         this.import_config.import_api_url = init_config.import_server.value
         this.import_config.save_api_url = init_config.save_server.value
         this.import_config.loadForm = init_config.load_form.value
-        this.import_config.upload_api_url = process.env.VUE_APP_BASE_API + init_config.upload_server.value
+        this.import_config.upload_api_url = init_config.upload_server.value
 
         this.loadDataService = new LoadData(this.table_config, init_config.token.value, emit)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)
@@ -173,12 +174,17 @@ export default class Service {
      * @param url  文件链接
      */
     private formatFile = (name: string, url: string):string => {
-        const ext = getFileExt(url)
-        if(['gif','jpg','jpeg','png'].indexOf(ext) != -1){
-            return '<img src="' + url + '" style="width:60px"  alt="'+ name +'"/>';
-        }else{
-            return '<a href="' + url + '" target="_blank">' + name + "</a>";
-        }
+        const arr = url.split(',')
+        const res: string[] = []
+        arr.forEach((file_url) => {
+            const ext = getFileExt(file_url)
+            if(['gif','jpg','jpeg','png'].indexOf(ext) != -1){
+                res.push('<img src="' + file_url + '" style="width:60px"  alt="'+ name +'"/>');
+            }else{
+                res.push('<a href="' + file_url + '" target="_blank">' + name + "</a>");
+            }
+        })
+        return res.join('<br>')
     }
 
     /**
@@ -186,9 +192,10 @@ export default class Service {
      * @param field_id    字段ID
      * @param field_value 字段值
      */
-    formatter = (field_id:number, field_value: string|number|AnyObject): string => {
-        let result = ''
-        if(typeof this.table_config.field_options[field_id] != 'undefined' && typeof field_value != 'object'){
+    formatter = (field_id:number, field_value: string|number|AnyObject): string|AnyObject => {
+        let result:string|AnyObject = ''
+        if(typeof this.table_config.field_options[field_id] != 'undefined'){
+            //字段选项类型处理
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
                 const rs: never[] = []
@@ -196,12 +203,16 @@ export default class Service {
                     rs.push(this.table_config.field_options[field_id][id])
                 })
                 result = rs.join('<br>')
-            }else{
+            }else if(typeof field_value == 'number'){
                 result = this.table_config.field_options[field_id][field_value]
+            }else{
+                result = field_value
             }
-
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
-        }else if(typeof this.table_config.relation_info.full_options == 'object' && typeof this.table_config.relation_info.full_options[field_id] != 'undefined' && typeof field_value != 'object'){
+
+        }else if(typeof this.table_config.relation_info.full_options == 'object' &&
+            typeof this.table_config.relation_info.full_options[field_id] != 'undefined'){
+            //关联字段类型处理
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
                 const rs: never[] = []
@@ -214,28 +225,45 @@ export default class Service {
 
                 })
                 result = rs.join('<br>')
-            }else{
+            }else if(typeof field_value == 'number'){
                 if(typeof this.table_config.relation_info.full_options[field_id][field_value] == 'object'){
                     result = this.table_config.relation_info.full_options[field_id][field_value]['label']
                 }else{
                     result = this.table_config.relation_info.full_options[field_id][field_value]
                 }
+            }else{
+                result = field_value
             }
 
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
 
-        }else if(typeof this.table_config.form_info[field_id] != 'undefined' && this.table_config.form_info[field_id]['type'] == 'upload'){
-            if(typeof field_value == 'object'){
-                field_value.forEach((item:AnyObject)=>{
-                    result += this.formatFile(item.name, item.url)
-                })
-            }else{
-                result += this.formatFile(field_value as string, field_value as string)
-            }
-        }else if(typeof field_value == 'string' && field_value.indexOf('http') === 0){
-            result = '<a href="' + field_value + '" target="_blank">' + field_value + "</a>";
         }else{
-            result = field_value as string
+            //获取字段对应表单信息
+            let flag = true
+            Object.values(this.table_config.form_info).forEach((field_info: AnyObject) => {
+                if(field_info.field_id == field_id && (field_info.type == 'upload_image' || field_info.type == 'upload_file')){
+                    flag = false
+                    //字段内容是文件类型的处理
+                    if(typeof field_value == 'object'){
+                        field_value.forEach((item:AnyObject)=>{
+                            result += this.formatFile(item.name, item.url)
+                        })
+                    }else{
+                        result += this.formatFile(field_value as string, field_value as string)
+                    }
+                }
+            })
+
+            //其他类型字段处理
+            if(flag){
+                if(typeof field_value == 'string' && field_value.indexOf('http') === 0){
+                    //字段内容是链接地址的处理
+                    result = '<a href="' + field_value + '" target="_blank">' + field_value + "</a>";
+                }else{
+                    result = field_value as string
+                }
+            }
+
         }
 
         return result;
@@ -285,7 +313,7 @@ export default class Service {
         this.export_config.show_download_dlg = true
         this.export_config.percentage = 0
         this.export_config.download_error = ''
-        this.downloadService.exportFile(type, 1, this.table_config.columns, this.table_config.field_options)
+        this.downloadService.exportFile(type, 1, this.table_config.columns, this.table_config.field_options, this.table_config.relation_info)
     }
     
     /**
@@ -299,7 +327,7 @@ export default class Service {
      * 第一步：触发上传
      */
     triggerUpload = ():void => {
-        this.uploadDataService.triggerUpload(this.table_config.field_options, this.table_config.form_info)
+        this.uploadDataService.triggerUpload(this.table_config.field_options, this.table_config.form_info, this.table_config.relation_info)
     }
     
     /**
@@ -354,8 +382,21 @@ export default class Service {
      * @param row
      */
     detailRow = (row: AnyObject): void => {
-        this.table_config.current_select_row = row
+        this.table_config.detail_data = row
         this.table_config.detail_dlg = true
+    }
+
+
+    /**
+     * 重置FORM表单，清除历史验证等信息
+     */
+    private resetForm = ():void => {
+        if(typeof this.import_config.edit_form_ref != 'undefined'){
+            this.import_config.edit_form_ref.resetFields()
+            this.uploadRefs.forEach((upload_ref) => {
+                upload_ref.clearFiles()
+            })
+        }
     }
 
     /**
@@ -363,17 +404,11 @@ export default class Service {
      */
     addRow = (): void => {
         this.import_config.save_data_type = 'new'
-        //清除历史验证信息
-        if(typeof this.import_config.edit_form_ref != 'undefined'){
-            this.import_config.edit_form_ref.resetFields()
-            this.uploadRefs.forEach((upload_ref) => {
-                upload_ref.clearFiles()
-            })
-        }
+        this.resetForm()
 
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
-            if(item['type'] == 'upload'){
+            if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
                 row[item['field_name']] = []
             }else{
                 row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
@@ -393,6 +428,7 @@ export default class Service {
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
 
+        //表单加载完的回调
         this.import_config.loadForm(this, row)
 
 
@@ -405,13 +441,7 @@ export default class Service {
      */
     editRow = (row: AnyObject): void => {
         this.import_config.save_data_type = 'edit'
-        //清除历史验证信息
-        if(typeof this.import_config.edit_form_ref != 'undefined'){
-            this.import_config.edit_form_ref.resetFields()
-            this.uploadRefs.forEach((upload_ref) => {
-                upload_ref.clearFiles()
-            })
-        }
+        this.resetForm()
 
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
@@ -423,7 +453,7 @@ export default class Service {
                     row[key] = row[key].split(',')
                 }else if(key == item['field_name'] && item['type'] == 'input_number'){
                     row[key] = parseInt(row[key])
-                }else if(key == item['field_name'] && item['type'] == 'upload' && typeof row[key] == 'string'){
+                }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []
                     if(arr.length > 0){
@@ -450,6 +480,7 @@ export default class Service {
         this.import_config.form_title = '编辑'
         this.import_config.edit_dlg = true
 
+        //表单加载完的回调
         this.import_config.loadForm(this, row)
 
     }
@@ -459,42 +490,52 @@ export default class Service {
      */
     saveEditRow = (): void => {
         const row:AnyObject | undefined = toRaw(this.table_config.current_select_row)
+        const save_data:AnyObject = {}  //存放需要保存的数据
 
-        //将上传控件的列表数据转换成逗号分隔的字符串
         if(typeof row != 'undefined'){
             Object.keys(row).forEach((key) => {
+                //只有列表中存在的字段才保存
+                this.table_config.columns.forEach((field_info: AnyObject) => {
+                    if(field_info.prop == key) save_data[key] = row[key]
+                })
+
+                //将上传控件的列表数据转换成逗号分隔的字符串
                 Object.values(this.table_config.form_info).forEach((item) => {
-                    if (key == item['field_name'] && item['type'] == 'upload') {
+                    if (key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file')) {
                         if(typeof row[key + '_new_upload'] == 'object'){
                             if(row[key + '_new_upload'].length == 0){
-                                row[key] = ''
+                                save_data[key] = ''
                             }else{
                                 const arr:Array<string> = []
                                 row[key + '_new_upload'].forEach((val:AnyObject)=>{
                                     if(typeof val.url != 'undefined') arr.push(val.url)
                                 })
-                                row[key] = arr.join(',')
-                                delete row[key + '_new_upload']
+                                save_data[key] = arr.join(',')
+
+                            }
+                        }else if(typeof row[key] == 'object'){
+                            if(row[key].length == 0){
+                                save_data[key] = ''
+                            }else{
+                                const arr:Array<string> = []
+                                row[key].forEach((val:AnyObject)=>{
+                                    if(typeof val.url != 'undefined') arr.push(val.url)
+                                })
+                                save_data[key] = arr.join(',')
                             }
                         }
                     }
                 })
+
             })
 
             this.import_config.edit_form_ref.validate((valid: boolean) => {
                 if (valid) {
-                    this.uploadDataService.saveRow(row)
+                    this.uploadDataService.saveRow(save_data)
                 } else {
                     ElMessage.error('表单数据验证未通过！')
                 }
             })
-
-            //恢复行数据，如上传控件的 上传列表数据
-            if(this.import_config.save_data_type != 'new'){
-                this.editRow(row)
-            } else{
-                this.import_config.edit_form_ref.resetFields()
-            }
         }
 
         setTimeout(() => this.loadDataService.loadTableField(), 300) //加载列表表头字段
@@ -552,7 +593,6 @@ export default class Service {
      * @param fileList  上传的文件列表
      */
     uploadSuccess = (response: AnyObject, file:AnyObject, fileList:AnyObject[]):void => {
-        console.log(response)
         if(file.status == 'success'){
             //取出字段名
             let field_name = ''
@@ -579,10 +619,13 @@ export default class Service {
                 this.table_config.current_select_row[field_name + '_new_upload'] = fileList
             }
 
-            console.log( this.table_config.current_select_row)
         }
     }
 
+    /**
+     * 设置上传组件ref
+     * @param el
+     */
     setUploadRef = (el: Ref) => {
         if(el){
             this.uploadRefs.push(el)

@@ -17,6 +17,7 @@ import { ElMessage } from 'element-plus'
  */
 export default class UploadData extends Base{
     field_options: AnyObject;       //字段选项信息
+    relation_info: AnyObject;       //字段关联信息
     form_info: AnyObject;           //列表表单信息
     import_excel_data: AnyObject;   //导入的文件内容
     import_current_page: number;    //导入当前进度页
@@ -81,8 +82,9 @@ export default class UploadData extends Base{
      * 第一步： 触发上传事件
      * @param field_options  字段选项信息
      * @param form_info  字段表单信息
+     * @param relation_info  字段关联信息
      */
-    triggerUpload = (field_options: AnyObject, form_info:AnyObject):void => {
+    triggerUpload = (field_options: AnyObject, form_info: AnyObject, relation_info: AnyObject):void => {
         //初始化相关信息
         this.import_config.import_file_name = ''
         this.import_config.parse_data_tips = ''
@@ -95,6 +97,7 @@ export default class UploadData extends Base{
         this.import_config.import_data_form.reset()
         this.import_config.import_file_form.click()
         this.field_options = field_options
+        this.relation_info = relation_info
         this.form_info = form_info
     }
 
@@ -147,6 +150,18 @@ export default class UploadData extends Base{
                     let flag = false
                     Object.keys(this.field_options[field.field_id]).forEach((key) => {
                         if(this.field_options[field.field_id][key] == new_val){
+                            flag = true
+                            new_val = parseInt(key.replace(/'/g,''))
+                        }
+                    })
+
+                    if(!flag){
+                        this.import_config.import_file_error += '第 '+ (row_index+2) +' 行中的“ '+new_val+' ”在系统中没有找到对应的“ '+field['label']+" ”<br>";
+                    }
+                }else if(typeof this.relation_info.full_options[field.field_id] != 'undefined' && this.relation_info.full_options[field.field_id] != ''){
+                    let flag = false
+                    Object.keys(this.relation_info.full_options[field.field_id]).forEach((key) => {
+                        if(this.relation_info.full_options[field.field_id][key].replace(/[┊┊┈└─]/g,'').trim() == new_val){
                             flag = true
                             new_val = parseInt(key.replace(/'/g,''))
                         }

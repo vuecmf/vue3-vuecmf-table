@@ -20,6 +20,7 @@ export default class Download{
     page_size: number;          //每次拉取条数
     columns: AnyObject;         //列表字段信息
     field_options: AnyObject;   //字段选项信息
+    relation_info: AnyObject;   //字段关联信息
     export_file_type: BookType; //导出文件类型
 
     export_config: AnyObject;   //导出配置信息
@@ -32,7 +33,8 @@ export default class Download{
     ) {
         this.export_data = []
         this.current_page = 0
-        this.field_options = []
+        this.field_options = {}
+        this.relation_info = {}
         this.page_size = 500
         this.export_file_type = 'xlsx'
         this.columns = []
@@ -70,6 +72,9 @@ export default class Download{
                     let value = val[field.prop];
                     if(typeof this.field_options[field.field_id] != 'undefined'){
                         value = this.field_options[field.field_id][value]
+                    }else if(typeof this.relation_info.full_options[field.field_id] != 'undefined'){
+                        value = this.relation_info.full_options[field.field_id][value]
+                        value = typeof value == 'string' ? value.replace(/[┊┊┈└─]/g,'').trim() : value
                     }
                     item[label] = value;
                 }
@@ -108,12 +113,14 @@ export default class Download{
      * @param current_page 当前页码
      * @param columns  列头字段信息
      * @param field_options  字段选项信息
+     * @param relation_info  字段关联信息
      */
-    exportFile = (type: BookType, current_page: number, columns: AnyObject, field_options: AnyObject):void => {
+    exportFile = (type: BookType, current_page: number, columns: AnyObject, field_options: AnyObject, relation_info: AnyObject):void => {
         this.export_file_type = type;
         this.current_page = current_page;
         this.columns = columns
         this.field_options = field_options
+        this.relation_info = relation_info
 
         this.export_config.percentage = 0
         this.export_config.show_download_dlg = true
