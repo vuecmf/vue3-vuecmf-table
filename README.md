@@ -56,6 +56,7 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
       :edit_btn_visible="editBtnVisible"
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
+      form_dialog_width="70%"
       server="http://www.vf.com/vuecmf/admin"
       import_server="http://www.vf.com/vuecmf/admin/saveAll"
       save_server="http://www.vf.com/vuecmf/admin/save"

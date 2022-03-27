@@ -184,7 +184,7 @@
 
   </el-table>
 
-  <div class="pagination" v-if=" typeof row_key == 'undefined' || row_key == '' || row_key == null">
+  <div class="pagination" v-if=" typeof row_key == 'undefined' || row_key === '' || row_key == null">
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -201,7 +201,7 @@
   <vuecmf-dialog
       title="正在下载数据，请稍后..."
       :model_value="show_download_dlg"
-      width="30%"
+      :width="form_dialog_width"
       :close_on_click_modal="false"
       :close_on_press_escape="false"
       :show_close="false"
@@ -214,7 +214,7 @@
   </vuecmf-dialog>
 
   <!-- 导入数据 -->
-  <vuecmf-dialog :model_value="import_dlg" title="导入" custom_class="import-dlg" @close="search" @updateVisible="showImportDlg">
+  <vuecmf-dialog :model_value="import_dlg" title="导入" :width="form_dialog_width" custom_class="import-dlg" @close="search" @updateVisible="showImportDlg">
     <template #content>
       <el-row justify="space-between">
         <el-col :span="12" class="import-form">
@@ -248,7 +248,7 @@
   </vuecmf-dialog>
 
   <!-- 编辑表单 -->
-  <vuecmf-dialog :model_value="edit_dlg" :title="form_title"  @close="search" @updateVisible="showEditDlg">
+  <vuecmf-dialog :model_value="edit_dlg" :title="form_title" :width="form_dialog_width"  @close="search" @updateVisible="showEditDlg">
     <template #content>
       <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :label-width="form_label_width + 'px'" :size="size" :model="current_select_row" class="edit-form-inline">
         <template :key="index" v-for="(item, index) in form_info">
@@ -357,7 +357,7 @@
   </vuecmf-dialog>
 
   <!-- 行详情 -->
-  <vuecmf-dialog :model_value="detail_dlg" title="详情" @updateVisible="showDetailDlg">
+  <vuecmf-dialog :model_value="detail_dlg" :width="form_dialog_width" title="详情" @updateVisible="showDetailDlg">
     <template #content>
       <table>
         <tr :key="index" v-for=" (item, index) in columns ">
@@ -507,6 +507,12 @@ const props = defineProps({
   expand_action: {
     type: Boolean,
     default: true
+  },
+
+  //表单弹窗宽度
+  form_dialog_width: {
+    type: String,
+    default: '50%'
   }
 
 })
@@ -660,7 +666,7 @@ export default defineComponent({
   text-align: right;
 
   .el-input--small, .el-input--default, .el-input--large{
-    width: auto;
+    width: calc(100% - 132px);
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;
       border-bottom-right-radius: 0 !important;

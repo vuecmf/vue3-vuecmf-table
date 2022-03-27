@@ -17,6 +17,7 @@
       :edit_btn_visible="editBtnVisible"
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
+      form_dialog_width="70%"
       server="http://www.vf.com/vuecmf/photo"
       import_server="http://www.vf.com/vuecmf/photo/saveAll"
       save_server="http://www.vf.com/vuecmf/photo/save"
@@ -60,7 +61,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'f21245bea58ebb45def5d11ffc84f5c3'
+     const token = '961f4f941f9ecba1fd2197c09b41b101'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
