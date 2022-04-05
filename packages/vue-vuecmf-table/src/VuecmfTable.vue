@@ -7,48 +7,48 @@
     </el-col>
     <el-col :xs="24" :sm="16" :md="14" :lg="12" :xl="12" class="table-tools">
       <el-row justify="end">
-            <el-input :size="size" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
-            <el-button type="default" :size="size" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
+        <el-input :size="size" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
+        <el-button type="default" :size="size" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
 
-            <!--<el-button type="default" size="small" title="日历"><i class="fa fa-calendar"></i></el-button>
-            <el-button type="default" size="small" title="透视" @click="pivot"><i class="fa fa-table"></i></el-button>
-            <el-button type="default" size="small" title="图表"><i class="fa fa-bar-chart"></i></el-button>
-            <el-button type="default" size="small" title="看板"><i class="fa fa-th-large"></i></el-button>-->
+        <!--<el-button type="default" size="small" title="日历"><i class="fa fa-calendar"></i></el-button>
+        <el-button type="default" size="small" title="透视" @click="pivot"><i class="fa fa-table"></i></el-button>
+        <el-button type="default" size="small" title="图表"><i class="fa fa-bar-chart"></i></el-button>
+        <el-button type="default" size="small" title="看板"><i class="fa fa-th-large"></i></el-button>-->
 
-            <el-dropdown trigger="click" >
-              <el-button type="default" :size="size" title="列">
-                <el-icon><grid /></el-icon>
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-checkbox-group v-model="check_column_list" class="dropdown-content" @change="toggleColumn">
+        <el-dropdown trigger="click" >
+          <el-button type="default" :size="size" title="列">
+            <el-icon><grid /></el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-checkbox-group v-model="check_column_list" class="dropdown-content" @change="toggleColumn">
 
-                    <el-checkbox :key="index"  :label="item.label" v-for="(item,index) in columns">
-                      <span v-html="item.label"></span>
-                    </el-checkbox>
+                <el-checkbox :key="index"  :label="item.label" v-for="(item,index) in columns">
+                  <span v-html="item.label"></span>
+                </el-checkbox>
 
-                  </el-checkbox-group>
-                </el-dropdown-menu>
-              </template>
+              </el-checkbox-group>
+            </el-dropdown-menu>
+          </template>
 
-            </el-dropdown>
+        </el-dropdown>
 
-            <el-button type="default" :size="size"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
+        <el-button type="default" :size="size"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
 
-            <el-dropdown trigger="click" @command="downloadExport">
-              <el-button type="default" :size="size" title="导出">
-                <el-icon><download /></el-icon>
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="xlsx">XLSX工作表</el-dropdown-item>
-                  <el-dropdown-item command="csv">CSV文档</el-dropdown-item>
-                  <el-dropdown-item command="txt">TXT文本文档</el-dropdown-item>
-                  <el-dropdown-item command="xml">XML文档</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
+        <el-dropdown trigger="click" @command="downloadExport">
+          <el-button type="default" :size="size" title="导出">
+            <el-icon><download /></el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="xlsx">XLSX工作表</el-dropdown-item>
+              <el-dropdown-item command="csv">CSV文档</el-dropdown-item>
+              <el-dropdown-item command="txt">TXT文本文档</el-dropdown-item>
+              <el-dropdown-item command="xml">XML文档</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
 
-            </el-dropdown>
+        </el-dropdown>
       </el-row>
 
     </el-col>
@@ -135,11 +135,11 @@
     <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
       <template #default="scope" >
         <template v-if="expand_action">
-            <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
-            <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-button>
-            <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-button>
+          <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
+          <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-button>
+          <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-button>
 
-            <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+          <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
 
         </template>
         <template v-else>
@@ -172,7 +172,7 @@
 
             <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
               <template #default="expand_scope">
-                  <span  v-html="expand_scope.row[item.prop]"></span>
+                <span  v-html="expand_scope.row[item.prop]"></span>
               </template>
             </el-table-column>
 
@@ -315,7 +315,7 @@
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
             <el-upload
-                :ref="setUploadRef"
+                :ref="(el: Ref) => setUploadRef(el, item.field_name)"
                 :headers="{token:token}"
                 :data="{field_name:item.field_name}"
                 :action="upload_api_url"

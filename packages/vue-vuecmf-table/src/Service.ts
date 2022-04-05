@@ -26,7 +26,7 @@ export default class Service {
     downloadService: Download;      //下载数据服务
     uploadDataService: UploadData;  //导入数据服务
 
-    uploadRefs:Ref[] = []
+    uploadRefs: AnyObject = {}
 
     /**
      * 列表设置
@@ -67,7 +67,7 @@ export default class Service {
         select_rows: {},        //已选择所有行数据
         current_select_row: ref<AnyObject>(), //当前选择的一行数据
     })
-    
+
     /**
      * 数据导入设置
      */
@@ -85,7 +85,7 @@ export default class Service {
         loadForm: (tableService: AnyObject, select_row: AnyObject) => true,
 
         changeEvent: () => null,    //表单中的组件change事件回调函数
-        
+
         import_api_url: '',         //导入后端API地址
         save_api_url: '',           //保存数据API地址
         upload_api_url: '',         //上传文件API地址
@@ -95,7 +95,7 @@ export default class Service {
         is_import_disabled: true,   //开始按钮是否禁用
         import_percentage: 0,       //导入进度百分比
     })
-    
+
     /**
      * 数据导出设置
      */
@@ -133,7 +133,7 @@ export default class Service {
         emit('beforeLoadTable', this)
 
     }
-    
+
     /**
      * 获取配置参数并导出
      * @param config_name 配置名称
@@ -148,7 +148,7 @@ export default class Service {
                 return toRefs(this.table_config)
         }
     }
-    
+
     /**
      * 搜索|刷新
      */
@@ -157,7 +157,7 @@ export default class Service {
         this.import_config.import_dlg = false
         this.loadDataService.reloadPage()
     }
-    
+
     /**
      * 列排序
      * @param column 列头字段信息
@@ -222,7 +222,7 @@ export default class Service {
                         result = options[key]
                     }
                 })
-                
+
             }else{
                 result = field_value
             }
@@ -295,7 +295,7 @@ export default class Service {
 
         return result;
     }
-    
+
     /**
      * 列的显示与隐藏
      * @param check_val 当前选择的列名称
@@ -313,7 +313,7 @@ export default class Service {
             }
         })
     }
-    
+
     /**
      * 每页显示条数修改
      * @param size 每页显示的条数
@@ -322,7 +322,7 @@ export default class Service {
         this.table_config.page_size = size;
         this.search();
     }
-    
+
     /**
      * 当前页修改
      * @param page_num 页码
@@ -331,7 +331,7 @@ export default class Service {
         this.table_config.current_page = page_num;
         this.search();
     }
-    
+
     /**
      * 导出文件
      * @param type 文件类型
@@ -342,21 +342,21 @@ export default class Service {
         this.export_config.download_error = ''
         this.downloadService.exportFile(type, 1, this.table_config.columns, this.table_config.field_options, this.table_config.relation_info)
     }
-    
+
     /**
      * 下载导入模板文件
      */
     downloadTemplate = ():void => {
         this.uploadDataService.downloadTemplate()
     }
-    
+
     /**
      * 第一步：触发上传
      */
     triggerUpload = ():void => {
         this.uploadDataService.triggerUpload(this.table_config.field_options, this.table_config.form_info, this.table_config.relation_info)
     }
-    
+
     /**
      * 第二步：解析数据
      * @param fileEvent  选择文件事件对象
@@ -364,7 +364,7 @@ export default class Service {
     importExcel = (fileEvent: Event):void => {
         this.uploadDataService.importExcel(fileEvent)
     }
-    
+
     /**
      * 第三步：开始导入
      */
@@ -372,7 +372,7 @@ export default class Service {
         this.uploadDataService.startImportData()
         setTimeout(() => this.loadDataService.loadTableField(), 300) //加载列表表头字段
     }
-    
+
     /**
      * 改变窗口大小，分页条自适应
      */
@@ -420,7 +420,7 @@ export default class Service {
     private resetForm = ():void => {
         if(typeof this.import_config.edit_form_ref != 'undefined'){
             this.import_config.edit_form_ref.resetFields()
-            this.uploadRefs.forEach((upload_ref) => {
+            Object.values(this.uploadRefs).forEach((upload_ref) => {
                 upload_ref.clearFiles()
             })
         }
@@ -435,7 +435,7 @@ export default class Service {
 
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
-            
+
             if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
                 row[item['field_name']] = []
             }else{
@@ -454,7 +454,7 @@ export default class Service {
                     }else{
                         row[item['field_name']] = form_val
                     }
-                    
+
                 }
             })
 
@@ -463,7 +463,7 @@ export default class Service {
         this.table_config.current_select_row = row
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
-        
+
         //表单加载完的回调
         this.import_config.loadForm(this, row)
 
@@ -482,7 +482,7 @@ export default class Service {
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
             if(/^\d+$/.test(row[key])) row[key] = parseInt(row[key])
-            
+
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
@@ -640,6 +640,9 @@ export default class Service {
             if(file.response.code != 0){
                 const arr = file.response.msg.split('|')
                 field_name = arr[0].replace('异常：', '')
+                ElMessage.error('上传失败！'+ arr[1])
+                this.uploadRefs[field_name].abort(file)
+                this.uploadRefs[field_name].handleRemove(file)
             }else{
                 field_name = file.response.data.field_name
             }
@@ -667,9 +670,9 @@ export default class Service {
      * 设置上传组件ref
      * @param el
      */
-    setUploadRef = (el: Ref) => {
+    setUploadRef = (el: Ref, field_name: string) => {
         if(el){
-            this.uploadRefs.push(el)
+            this.uploadRefs[field_name] = el
         }
     }
 
@@ -693,7 +696,7 @@ export default class Service {
             this.table_config.current_select_row[id] = content
         }
     }
-    
+
     /**
      * 实例挂载完后，页面显示初始化
      */
