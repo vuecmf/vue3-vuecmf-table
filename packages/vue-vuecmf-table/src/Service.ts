@@ -200,11 +200,29 @@ export default class Service {
                 const id_arr = field_value.split(',')
                 const rs: never[] = []
                 id_arr.forEach((id) => {
-                    rs.push(this.table_config.field_options[field_id][id])
+                    const options = this.table_config.field_options[field_id]
+
+                    Object.keys(options).forEach((key) => {
+                        if(typeof options[key] == 'object'){
+                            if(options[key]['id'] == id) rs.push(options[key]['label'])
+                        }else if(key == id){
+                            rs.push(options[key])
+                        }
+                    })
+
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
-                result = this.table_config.field_options[field_id][field_value]
+                const options: AnyObject = this.table_config.field_options[field_id]
+
+                Object.keys(options).forEach((key) => {
+                    if(typeof options[key] == 'object'){
+                        if(options[key]['id'] == field_value) result = options[key]['label']
+                    }else if(key == field_value.toString()){
+                        result = options[key]
+                    }
+                })
+                
             }else{
                 result = field_value
             }
@@ -215,22 +233,31 @@ export default class Service {
             //关联字段类型处理
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
-                const rs: never[] = []
+                const rs: string|number[] = []
                 id_arr.forEach((id) => {
-                    if(typeof this.table_config.relation_info.full_options[field_id][id] == 'object'){
-                        rs.push(this.table_config.relation_info.full_options[field_id][id]['label'])
-                    }else{
-                        rs.push(this.table_config.relation_info.full_options[field_id][id])
-                    }
+                    const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
+
+                    Object.keys(full_options).forEach((key) => {
+                        if(typeof full_options[key] == 'object'){
+                            if(full_options[key]['id'] == id) rs.push(full_options[key]['label'])
+                        }else if(key == id){
+                            rs.push(full_options[key])
+                        }
+                    })
 
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
-                if(typeof this.table_config.relation_info.full_options[field_id][field_value] == 'object'){
-                    result = this.table_config.relation_info.full_options[field_id][field_value]['label']
-                }else{
-                    result = this.table_config.relation_info.full_options[field_id][field_value]
-                }
+                const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
+
+                Object.keys(full_options).forEach((key) => {
+                    if(typeof full_options[key] == 'object'){
+                        if(full_options[key]['id'] == field_value) result = full_options[key]['label']
+                    }else if(key == field_value.toString()){
+                        result = full_options[key]
+                    }
+                })
+
             }else{
                 result = field_value
             }
@@ -408,6 +435,7 @@ export default class Service {
 
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
+            
             if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
                 row[item['field_name']] = []
             }else{
@@ -417,8 +445,16 @@ export default class Service {
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
-                    const form_val = this.table_config.filter_form[item['field_name']]
-                    row[item['field_name']] = typeof form_val == 'number' ? form_val.toString() : form_val
+                    const form_val: string|number = this.table_config.filter_form[item['field_name']]
+
+                    if(['switch','radio','checkbox'].indexOf(item['type']) != -1){
+                        row[item['field_name']] = typeof form_val == 'number' ? form_val.toString() : form_val
+                    }else if(form_val != '' && /^\d+$/.test(form_val)){
+                        row[item['field_name']] = parseInt(form_val)
+                    }else{
+                        row[item['field_name']] = form_val
+                    }
+                    
                 }
             })
 
@@ -427,7 +463,7 @@ export default class Service {
         this.table_config.current_select_row = row
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
-
+        
         //表单加载完的回调
         this.import_config.loadForm(this, row)
 
@@ -445,14 +481,19 @@ export default class Service {
 
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
-            row[key] = typeof row[key] == 'number' ? row[key].toString() : row[key]
+            if(/^\d+$/.test(row[key])) row[key] = parseInt(row[key])
+            
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
-                }else if(key == item['field_name'] && item['type'] == 'select_mul' && typeof row[key] == 'string'){
+                }else if(key == item['field_name'] && item['type'] == 'select_mul'){
+                    row[key] = row[key].toString()
                     row[key] = row[key].split(',')
-                }else if(key == item['field_name'] && item['type'] == 'input_number'){
-                    row[key] = parseInt(row[key])
+                    row[key].forEach((val:string, idx: number) => {
+                        row[key][idx] = parseInt(val)
+                    })
+                }else if(key == item['field_name'] && ['switch','radio','checkbox'].indexOf(item['type']) != -1){
+                    row[key] = row[key].toString()
                 }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []

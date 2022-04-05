@@ -97,8 +97,8 @@
                 <el-option
                     v-for="(option_val,option_key) in field_options[item.field_id]"
                     :key="option_key"
-                    :label="option_val"
-                    :value="option_key"
+                    :label="typeof option_val == 'object' ? option_val.label : option_val"
+                    :value="typeof option_val == 'object' ? option_val.id : option_key"
                 >
                 </el-option>
               </el-select>
@@ -107,7 +107,7 @@
                     v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
                     :key="option_key"
                     :label="typeof option_val == 'object'? option_val.label : option_val"
-                    :value="option_key"
+                    :value="typeof option_val == 'object' ? option_val.id : option_key"
                 >
                 </el-option>
               </el-select>
@@ -276,17 +276,17 @@
             <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
                 <el-radio-group v-model="current_select_row[item.field_name]">
-                  <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-radio>
+                  <el-radio :label="typeof op_val == 'object' ? op_val.id : op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
                 <el-checkbox-group v-model="current_select_row[item.field_name]">
-                  <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val }}</el-checkbox>
+                  <el-checkbox :label="typeof op_val == 'object' ? op_val.id : op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
                 <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
-                  <el-option :label="op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
+                  <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="typeof op_val == 'object' ? op_val.id : op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
                 </el-select>
               </template>
             </template>
@@ -294,17 +294,17 @@
             <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
                 <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-radio :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
+                  <el-radio :label=" typeof op_val == 'object' ? op_val.id : op_idx " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
                 <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-checkbox :label="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
+                  <el-checkbox :label=" typeof op_val == 'object' ? op_val.id : op_idx " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ typeof op_val == 'object' ? op_val.label : op_val }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
                 <el-select v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="op_idx" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
+                  <el-option :label=" typeof op_val == 'object' ? op_val.label : op_val " :value=" typeof op_val == 'object' ? op_val.id : op_idx " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
                 </el-select>
               </template>
             </template>
