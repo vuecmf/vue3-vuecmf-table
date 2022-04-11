@@ -33,7 +33,7 @@
 
         </el-dropdown>
 
-        <el-button type="default" :size="size"  title="导入" @click="import_dlg = true"><el-icon><upload /></el-icon></el-button>
+        <el-button type="default" :size="size"  title="导入" @click="import_dlg = true" v-if="import_server != ''"><el-icon><upload /></el-icon></el-button>
 
         <el-dropdown trigger="click" @command="downloadExport">
           <el-button type="default" :size="size" title="导出">
