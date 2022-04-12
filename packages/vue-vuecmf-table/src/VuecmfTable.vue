@@ -93,7 +93,7 @@
           </el-tooltip>
           <div>
             <template v-if="item.filter">
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
+              <el-select v-model="filter_form[item.prop]" @change="search" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
                 <el-option
                     v-for="(option_val,option_key) in field_options[item.field_id]"
                     :key="option_key"
@@ -102,7 +102,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="filter_form[item.prop]" multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
+              <el-select v-model="filter_form[item.prop]" @change="search"  multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
                 <el-option
                     v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
                     :key="option_key"
@@ -111,9 +111,10 @@
                 >
                 </el-option>
               </el-select>
-              <el-date-picker :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+              <el-date-picker @change="search" :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
               </el-date-picker>
               <el-input
+                  @change="search"
                   v-model="filter_form[item.prop]"
                   :size="size"  clearable
                   placeholder="输入关键字搜索" v-else />
@@ -132,7 +133,7 @@
     </template>
 
     <!-- 行操作 -->
-    <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width">
+    <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width > 0">
       <template #default="scope" >
         <template v-if="expand_action">
           <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
@@ -443,27 +444,27 @@ const props = defineProps({
   //操作列的宽度
   operate_width: {
     type: Number,
-    default: 80
+    default: 0
   },
   //是否显示行详情按钮
   detail_btn_visible: {
     type: Function,
-    default: (select_row: AnyObject) => true
+    default: (select_row: AnyObject) => false
   },
   //是否显示新增按钮
   add_btn_visible: {
     type: Boolean,
-    default: true
+    default: false
   },
   //是否显示行编辑按钮
   edit_btn_visible: {
     type: Function,
-    default: (select_row: AnyObject) => true
+    default: (select_row: AnyObject) => false
   },
   //是否显示行删除按钮
   del_btn_visible:{
     type: Function,
-    default: (select_row: AnyObject) => true
+    default: (select_row: AnyObject) => false
   },
   //是否显示行选择复选框
   checkbox: {

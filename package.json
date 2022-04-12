@@ -1,6 +1,6 @@
 {
   "name": "vue3-vuecmf-table",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "description": "基于vue3、Element Plus和TypeScript的多功能列表组件，支持树形列表数据，内置搜索、筛选、分页、行展开、详情、新增、编辑、删除、导出和导入EXCEL等功能",
   "main": "packages/index.ts",
   "keyword": "vue3-vuecmf-table vuecmf-table vuecmf vue3 table 列表组件 表格组件",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitee.com/emei/vue3-vuecmf-table.git"
+    "url": "git+https://github.com/vuecmf/vue3-vuecmf-table.git"
   },
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
@@ -48,7 +48,7 @@
     "unplugin-vue-components": "^0.17.18"
   },
   "bugs": {
-    "url": "https://gitee.com/emei/vue3-vuecmf-table/issues"
+    "url": "https://github.com/vuecmf/vue3-vuecmf-table/issues"
   },
-  "homepage": "https://gitee.com/emei/vue3-vuecmf-table#readme"
+  "homepage": "http://www.vuecmf.com"
 }
