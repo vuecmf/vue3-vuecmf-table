@@ -25,7 +25,7 @@ export default class UploadData extends Base{
     table_config: AnyObject;    //列表配置信息
     import_config: AnyObject;   //导入配置信息
     tpl_file_name: string;      //下载模板文件名前缀
-    
+
     constructor(
         table_config: AnyObject,
         import_config: AnyObject,
@@ -146,7 +146,10 @@ export default class UploadData extends Base{
                     && new_val > 40000 && new_val < 90000
                 ){
                     new_val = dateFormat(new Date(1900, 0, new_val),'Y/m/d H:i:s')  //如果日期变成类似42747 则用这种方式转换
-                }else if(typeof this.field_options[field.field_id] != 'undefined' && this.field_options[field.field_id] != ''){
+                }else if(typeof this.field_options != 'undefined' &&
+                    typeof this.field_options[field.field_id] != 'undefined' &&
+                    this.field_options[field.field_id] != ''
+                ){
                     let flag = false
                     Object.keys(this.field_options[field.field_id]).forEach((key) => {
                         if(this.field_options[field.field_id][key] == new_val){
@@ -158,7 +161,10 @@ export default class UploadData extends Base{
                     if(!flag){
                         this.import_config.import_file_error += '第 '+ (row_index+2) +' 行中的“ '+new_val+' ”在系统中没有找到对应的“ '+field['label']+" ”<br>";
                     }
-                }else if(typeof this.relation_info.full_options[field.field_id] != 'undefined' && this.relation_info.full_options[field.field_id] != ''){
+                }else if(typeof this.relation_info.full_options != 'undefined' &&
+                    typeof this.relation_info.full_options[field.field_id] != 'undefined' &&
+                    this.relation_info.full_options[field.field_id] != ''
+                ){
                     let flag = false
                     Object.keys(this.relation_info.full_options[field.field_id]).forEach((key) => {
                         if(this.relation_info.full_options[field.field_id][key].replace(/[┊┊┈└─]/g,'').trim() == new_val){
