@@ -153,7 +153,9 @@ export default class Service {
      * 搜索|刷新
      */
     search = ():void => {
-        this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
+        if(typeof this.table_config.vuecmf_table_ref != 'undefined' && this.table_config.vuecmf_table_ref != null)
+            this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
+
         this.import_config.import_dlg = false
         this.loadDataService.reloadPage()
     }
@@ -418,7 +420,7 @@ export default class Service {
      * 重置FORM表单，清除历史验证等信息
      */
     private resetForm = ():void => {
-        if(typeof this.import_config.edit_form_ref != 'undefined'){
+        if(typeof this.import_config.edit_form_ref != 'undefined' && this.import_config.edit_form_ref != null){
             this.import_config.edit_form_ref.resetFields()
             Object.values(this.uploadRefs).forEach((upload_ref) => {
                 upload_ref.clearFiles()
@@ -487,11 +489,16 @@ export default class Service {
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){
-                    row[key] = row[key].toString()
-                    row[key] = row[key].split(',')
-                    row[key].forEach((val:string, idx: number) => {
-                        row[key][idx] = parseInt(val)
-                    })
+                    if(row[key] == ''){
+                        row[key] = []
+                    }else{
+                        if(typeof row[key] != 'string') row[key] = row[key].toString()
+                        row[key] = row[key].split(',')
+                        row[key].forEach((val:string, idx: number) => {
+                            row[key][idx] = parseInt(val)
+                        })
+                    }
+
                 }else if(key == item['field_name'] && ['switch','radio','checkbox'].indexOf(item['type']) != -1){
                     row[key] = row[key].toString()
                 }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){
