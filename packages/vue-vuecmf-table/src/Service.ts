@@ -448,10 +448,9 @@ export default class Service {
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
                     const form_val: string|number = this.table_config.filter_form[item['field_name']]
+                    if(typeof form_val == 'number') form_val.toString()
 
-                    if(['switch','radio','checkbox'].indexOf(item['type']) != -1){
-                        row[item['field_name']] = typeof form_val == 'number' ? form_val.toString() : form_val
-                    }else if(form_val != '' && /^\d+$/.test(form_val)){
+                    if(item['type'] == 'input_number'){
                         row[item['field_name']] = parseInt(form_val)
                     }else{
                         row[item['field_name']] = form_val
@@ -483,24 +482,23 @@ export default class Service {
 
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
-            if(/^\d+$/.test(row[key])) row[key] = parseInt(row[key])
+            if(typeof row[key] == 'number') row[key] = row[key].toString()
 
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
+                }else if(key == item['field_name'] && item['type'] == 'input_number'){
+                    row[key] = parseInt(row[key])
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){
                     if(row[key] == ''){
                         row[key] = []
                     }else{
-                        if(typeof row[key] != 'string') row[key] = row[key].toString()
                         row[key] = row[key].split(',')
                         row[key].forEach((val:string, idx: number) => {
                             row[key][idx] = parseInt(val)
                         })
                     }
 
-                }else if(key == item['field_name'] && ['switch','radio','checkbox'].indexOf(item['type']) != -1){
-                    row[key] = row[key].toString()
                 }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){
                     const arr = row[key].split(',')
                     const file_list:AnyObject[] = []
