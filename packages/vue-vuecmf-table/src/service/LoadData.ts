@@ -94,10 +94,10 @@ export default class LoadData extends Base {
      */
     private updateTableField = (data:AnyObject): boolean => {
         this.table_config.columns = data.data.data.field_info
-        this.table_config.field_options = typeof data.data.data.field_option != 'undefined' ? data.data.data.field_option : []
+        this.table_config.field_options = typeof data.data.data.field_option != 'undefined' ? data.data.data.field_option : {}
         this.table_config.form_info = typeof data.data.data.form_info != 'undefined' ? data.data.data.form_info : {}
         this.table_config.form_rules = typeof data.data.data.form_rules != 'undefined' ? data.data.data.form_rules : []
-        this.table_config.relation_info = typeof data.data.data.relation_info != 'undefined' ? data.data.data.relation_info : []
+        this.table_config.relation_info = typeof data.data.data.relation_info != 'undefined' ? data.data.data.relation_info : {}
 
         if(typeof this.table_config.columns != 'undefined'){
             this.table_config.columns.forEach((val: AnyObject) => {
@@ -114,8 +114,9 @@ export default class LoadData extends Base {
         //若有表单设置信息，取出各表单标签长度，计算表单标签宽度
         if(this.table_config.form_info != {}){
             let label_length:number[] = []
-            Object.values(this.table_config.form_info).forEach((form_item: AnyObject) => {
-                label_length.push(form_item.label.length)
+
+            Object.keys(this.table_config.form_info).forEach((key) => {
+                label_length.push(this.table_config.form_info[key].label.length)
             })
 
             label_length = label_length.sort(function (a,b){ return b - a })
@@ -123,6 +124,43 @@ export default class LoadData extends Base {
             this.table_config.form_label_width = max_len as number * 18 + 16
         }
 
+        //将ID转成字符串
+        if(this.table_config.field_options != {}){
+            Object.keys(this.table_config.field_options).forEach((key) => {
+                Object.keys(this.table_config.field_options[key]).forEach((key2) => {
+                    if(typeof this.table_config.field_options[key][key2] == 'object' && 
+                        typeof this.table_config.field_options[key][key2].id == 'number'){
+                        this.table_config.field_options[key][key2].id = this.table_config.field_options[key][key2].id.toString()
+                    }
+                })
+            })
+        }
+
+        //将ID转成字符串
+        if(this.table_config.relation_info != {}){
+            if(typeof this.table_config.relation_info.full_options == 'object'){
+                Object.keys(this.table_config.relation_info.full_options).forEach((key) => {
+                    Object.keys(this.table_config.relation_info.full_options[key]).forEach((key2) => {
+                        if(typeof this.table_config.relation_info.full_options[key][key2] == 'object' &&
+                            typeof this.table_config.relation_info.full_options[key][key2].id == 'number'){
+                            this.table_config.relation_info.full_options[key][key2].id = this.table_config.relation_info.full_options[key][key2].id.toString()
+                        }
+                    })
+                })
+            }
+
+            if(typeof this.table_config.relation_info.options == 'object'){
+                Object.keys(this.table_config.relation_info.options).forEach((key) => {
+                    Object.keys(this.table_config.relation_info.options[key]).forEach((key2) => {
+                        if(typeof this.table_config.relation_info.options[key][key2] == 'object' &&
+                            typeof this.table_config.relation_info.options[key][key2].id == 'number'){
+                            this.table_config.relation_info.options[key][key2].id = this.table_config.relation_info.options[key][key2].id.toString()
+                        }
+                    })
+                })
+            }
+
+        }
 
         this.emit('afterLoadTable', this.table_config)
 

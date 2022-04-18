@@ -447,7 +447,7 @@ export default class Service {
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
-                    const form_val: string|number = this.table_config.filter_form[item['field_name']]
+                    let form_val: string|number = this.table_config.filter_form[item['field_name']]
                     if(typeof form_val == 'number') form_val.toString()
 
                     if(item['type'] == 'input_number'){
@@ -489,14 +489,13 @@ export default class Service {
                     row[key] = ''
                 }else if(key == item['field_name'] && item['type'] == 'input_number'){
                     row[key] = parseInt(row[key])
+                }else if(key == item['field_name'] && item['type'] == 'select'){
+                    row[key] = row[key] == '0' ? '' : row[key]
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){
                     if(row[key] == ''){
                         row[key] = []
                     }else{
                         row[key] = row[key].split(',')
-                        row[key].forEach((val:string, idx: number) => {
-                            row[key][idx] = parseInt(val)
-                        })
                     }
 
                 }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){

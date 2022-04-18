@@ -287,7 +287,7 @@
               </template>
               <template v-else>
                 <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
-                  <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="typeof op_val == 'object' ? (typeof op_val.id == 'number' ? op_val.id.toString() : op_val.id) : op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
+                  <el-option :label="typeof op_val == 'object' ? op_val.label : op_val" :value="typeof op_val == 'object' ? op_val.id : op_idx" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
                 </el-select>
               </template>
             </template>
@@ -305,7 +305,7 @@
               </template>
               <template v-else>
                 <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-option :label=" typeof op_val == 'object' ? op_val.label : op_val " :value=" typeof op_val == 'object' ? (typeof op_val.id == 'number' ? op_val.id.toString() : op_val.id) : op_idx " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
+                  <el-option :label=" typeof op_val == 'object' ? op_val.label : op_val " :value=" typeof op_val == 'object' ? op_val.id : op_idx " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
                 </el-select>
               </template>
             </template>
