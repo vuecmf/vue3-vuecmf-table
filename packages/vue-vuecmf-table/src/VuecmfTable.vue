@@ -765,4 +765,10 @@ export default defineComponent({
 .el-message-box__btns{
   justify-content: center;
 }
+
+.el-input-number {
+  .el-input__wrapper{
+    display: inline-flex !important;
+  }
+}
 </style>
