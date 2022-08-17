@@ -167,7 +167,8 @@ export default class UploadData extends Base{
                 ){
                     let flag = false
                     Object.keys(this.relation_info.full_options[field.field_id]).forEach((key) => {
-                        if(this.relation_info.full_options[field.field_id][key].replace(/[┊┊┈└─]/g,'').trim() == new_val){
+                        if(this.relation_info.full_options[field.field_id][key].label !== undefined &&
+                            this.relation_info.full_options[field.field_id][key].replace(/[┊┊┈└─]/g,'').trim() == new_val){
                             flag = true
                             new_val = parseInt(key.replace(/'/g,''))
                         }
