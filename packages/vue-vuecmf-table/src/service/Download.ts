@@ -72,7 +72,7 @@ export default class Download{
                     let value = val[field.prop];
                     if(typeof this.field_options[field.field_id] != 'undefined'){
                         value = this.field_options[field.field_id][value]
-                    }else if(typeof this.relation_info.full_options[field.field_id] != 'undefined'){
+                    }else if(this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
                         value = this.relation_info.full_options[field.field_id][value]
                         value = typeof value == 'string' ? value.replace(/[┊┊┈└─]/g,'').trim() : value
                     }
