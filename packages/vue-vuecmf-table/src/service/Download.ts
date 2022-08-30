@@ -70,12 +70,24 @@ export default class Download{
                     //过滤HTML标签
                     const label = field.label.replace(/<[^>]*>/g, "");
                     let value = val[field.prop];
+
                     if(typeof this.field_options[field.field_id] != 'undefined'){
                         value = this.field_options[field.field_id][value]
                     }else if(this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
-                        value = this.relation_info.full_options[field.field_id][value]
-                        value = typeof value == 'string' ? value.replace(/[┊┊┈└─]/g,'').trim() : value
+                        let res = this.relation_info.full_options[field.field_id][value]
+                        if(typeof res != 'string'){
+                            res = ''
+                            this.relation_info.full_options[field.field_id].forEach((row: AnyObject) => {
+                                if(row.id != undefined && parseInt(row.id) == parseInt(value)){
+                                    res = row.label != undefined ? row.label : ''
+                                }
+                            })
+                        }
+
+                        value = res.replace(/[┊┊┈└─]/g,'').trim()
+
                     }
+
                     item[label] = value;
                 }
             });
