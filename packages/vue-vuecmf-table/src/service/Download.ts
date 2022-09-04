@@ -43,6 +43,66 @@ export default class Download{
         this.pullData = pullData
     }
 
+    /**
+     * 获取导出行数据
+     * @param val
+     */
+    private getExportDataItem = (val: AnyObject):AnyObject => {
+        const item: AnyObject = [];
+        //将下载的字段名替换成表格的表头名称
+        this.columns.forEach((field:AnyObject) => {
+            //只下载显示的列
+            if (field.show == true) {
+                //过滤HTML标签
+                const label = field.label.replace(/<[^>]*>/g, "");
+                let value = val[field.prop];
+
+                if(typeof this.field_options[field.field_id] != 'undefined'){
+                    let res = ''
+                    if(this.field_options[field.field_id].length != undefined){
+                        this.field_options[field.field_id].forEach((treeItem: AnyObject) => {
+                            if(treeItem.id != undefined && parseInt(treeItem.id) == parseInt(value)){
+                                res = treeItem.label != undefined ? treeItem.label : ''
+                            }
+                        })
+                        value = res.replace(/[┊┊┈└─]/g,'').trim()
+                    }else{
+                        value = this.field_options[field.field_id][value]
+                    }
+                }else if(this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
+                    let res = this.relation_info.full_options[field.field_id][value]
+                    if(typeof res != 'string'){
+                        res = ''
+                        this.relation_info.full_options[field.field_id].forEach((row: AnyObject) => {
+                            if(row.id != undefined && parseInt(row.id) == parseInt(value)){
+                                res = row.label != undefined ? row.label : ''
+                            }
+                        })
+                    }
+
+                    value = res.replace(/[┊┊┈└─]/g,'').trim()
+
+                }
+
+                item[label] = value;
+            }
+        });
+        return item
+    }
+
+    /**
+     * 获取目录树导出的数据
+     * @param data
+     */
+    private getTreeExportData = (data: AnyObject):void => {
+        data.forEach((val:AnyObject) => {
+            this.export_data.push(this.getExportDataItem(val));
+            if(val.children != undefined && val.children.length > 0){
+                this.getTreeExportData(val.children)
+            }
+        })
+    }
+
 
     /**
      * 拉取要导出的数据的回调
@@ -61,38 +121,13 @@ export default class Download{
             return false
         }
 
-        data.data.data.data.forEach((val:AnyObject) => {
-            const item: AnyObject = [];
-            //将下载的字段名替换成表格的表头名称
-            this.columns.forEach((field:AnyObject) => {
-                //只下载显示的列
-                if (field.show == true) {
-                    //过滤HTML标签
-                    const label = field.label.replace(/<[^>]*>/g, "");
-                    let value = val[field.prop];
-
-                    if(typeof this.field_options[field.field_id] != 'undefined'){
-                        value = this.field_options[field.field_id][value]
-                    }else if(this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
-                        let res = this.relation_info.full_options[field.field_id][value]
-                        if(typeof res != 'string'){
-                            res = ''
-                            this.relation_info.full_options[field.field_id].forEach((row: AnyObject) => {
-                                if(row.id != undefined && parseInt(row.id) == parseInt(value)){
-                                    res = row.label != undefined ? row.label : ''
-                                }
-                            })
-                        }
-
-                        value = res.replace(/[┊┊┈└─]/g,'').trim()
-
-                    }
-
-                    item[label] = value;
-                }
+        if(this.export_config.row_key != ''){
+            this.getTreeExportData(data.data.data.data)
+        }else{
+            data.data.data.data.forEach((val:AnyObject) => {
+                this.export_data.push(this.getExportDataItem(val));
             });
-            this.export_data.push(item);
-        });
+        }
 
         this.export_config.percentage = Math.ceil(
             this.current_page / total_pages * 100

@@ -103,7 +103,8 @@ export default class Service {
         show_download_dlg: false,   //下载进度提示框的显示与隐藏
         percentage: 0,              //下载进度
         download_error: '',         //下载错误提示
-        export_file_name: ''        //导入文件名
+        export_file_name: '',       //导入文件名
+        row_key: ''                 //目录树ID字段设置（方便目录树类型的列表数据导出）
     })
 
     constructor(init_config: AnyObject, emit:EmitFn<EE[]>) {
@@ -114,6 +115,7 @@ export default class Service {
         this.table_config.del_api_url = init_config.del_server.value
         this.table_config.page = init_config.page.value
         this.export_config.export_file_name = init_config.export_file_name.value
+        this.export_config.row_key = init_config.row_key.value
         this.import_config.import_api_url = init_config.import_server.value
         this.import_config.save_api_url = init_config.save_server.value
         this.import_config.loadForm = init_config.load_form.value
@@ -447,7 +449,7 @@ export default class Service {
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
-                    let form_val: string|number = this.table_config.filter_form[item['field_name']]
+                    const form_val: string|number = this.table_config.filter_form[item['field_name']]
                     if(typeof form_val == 'number') form_val.toString()
 
                     if(item['type'] == 'input_number'){
@@ -674,7 +676,7 @@ export default class Service {
      * 设置上传组件ref
      * @param el
      */
-    setUploadRef = (el: Ref, field_name: string) => {
+    setUploadRef = (el: Ref, field_name: string):void => {
         if(el){
             this.uploadRefs[field_name] = el
         }

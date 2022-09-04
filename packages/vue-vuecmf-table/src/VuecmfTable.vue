@@ -519,7 +519,7 @@ const props = defineProps({
 })
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form, row_key} = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -532,7 +532,8 @@ const service = new Service({
   save_server: save_server,
   del_server: del_server,
   upload_server: upload_server,
-  load_form: load_form
+  load_form: load_form,
+  row_key: row_key
 },emit)
 
 

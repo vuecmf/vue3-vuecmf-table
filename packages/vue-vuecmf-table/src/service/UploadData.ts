@@ -152,7 +152,13 @@ export default class UploadData extends Base{
                 ){
                     let flag = false
                     Object.keys(this.field_options[field.field_id]).forEach((key) => {
-                        if(this.field_options[field.field_id][key] == new_val){
+                        if(typeof this.field_options[field.field_id][key] == 'object'){
+                            const treeItem = this.field_options[field.field_id][key]
+                            if(treeItem.label != undefined && treeItem.label.replace(/[┊┊┈└─]/g,'').trim() == new_val){
+                                flag = true
+                                new_val = parseInt(treeItem.id)
+                            }
+                        }else if(this.field_options[field.field_id][key] == new_val){
                             flag = true
                             new_val = parseInt(key.replace(/'/g,''))
                         }
@@ -166,14 +172,15 @@ export default class UploadData extends Base{
                     this.relation_info.full_options[field.field_id] != ''
                 ){
                     let flag = false
+                    let res = 0
                     Object.keys(this.relation_info.full_options[field.field_id]).forEach((key) => {
-                        if(this.relation_info.full_options[field.field_id][key].label !== undefined &&
-                            this.relation_info.full_options[field.field_id][key].label.replace(/[┊┊┈└─]/g,'').trim() == new_val){
+                        const treeItem = this.relation_info.full_options[field.field_id][key]
+                        if(treeItem.label !== undefined && treeItem.label.replace(/[┊┊┈└─]/g,'').trim() == new_val){
                             flag = true
-                            new_val = parseInt(key.replace(/'/g,''))
+                            res = parseInt(treeItem.id.replace(/'/g,''))
                         }
                     })
-
+                    new_val = res
                     if(!flag){
                         this.import_config.import_file_error += '第 '+ (row_index+2) +' 行中的“ '+new_val+' ”在系统中没有找到对应的“ '+field['label']+" ”<br>";
                     }
