@@ -416,36 +416,25 @@ export default class Service {
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
 
-            if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
+            /*if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
                 row[item['field_name']] = []
             }else{
                 row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
-            }
+            }*/
 
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id']){
-                    if(['bigint','int','smallint','tinyint'].indexOf(fieldInfo['type']) != -1){
-                        row[item['field_name']] = item['default_value'] == '0' ? '' : parseInt(item['default_value'])
+                    if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
+                        row[item['field_name']] = []
+                    }else if(['bigint','int','smallint','tinyint'].indexOf(fieldInfo['type']) != -1){
+                        row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseInt(item['default_value'])
                     }else if(['decimal','double','float'].indexOf(fieldInfo['type']) != -1){
-                        row[item['field_name']] = item['default_value'] == '0' ? '' : parseFloat(item['default_value'])
+                        row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseFloat(item['default_value'])
+                    }else {
+                        row[item['field_name']] = item['default_value']
                     }
                 }
-
-
-                /*if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
-                    const form_val: string|number = this.table_config.filter_form[item['field_name']]
-                    if(typeof form_val == 'number') form_val.toString()
-
-                    if(item['type'] == 'input_number'){
-                        row[item['field_name']] = parseInt(form_val)
-                    }else{
-                        row[item['field_name']] = form_val
-                    }
-
-                }*/
-
-
             })
 
         })
@@ -475,7 +464,21 @@ export default class Service {
         Object.keys(row).forEach((key)=>{
             //if(typeof row[key] == 'number') row[key] = row[key].toString()
 
-            Object.values(this.table_config.form_info).forEach((item)=>{
+            Object.values(this.table_config.form_info).forEach((item, idx)=>{
+                //默认值类型转换成与字段类型一致
+                Object.values(this.table_config.columns).forEach((fieldInfo) => {
+                    if(fieldInfo['field_id'] == item['field_id']){
+                        if(['bigint','int','smallint','tinyint'].indexOf(fieldInfo['type']) != -1){
+                            this.table_config.form_info[idx]['default_value'] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseInt(item['default_value'])
+                        }else if(['decimal','double','float'].indexOf(fieldInfo['type']) != -1){
+                            row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseFloat(item['default_value'])
+                        }else {
+                            row[item['field_name']] = item['default_value']
+                        }
+                    }
+                })
+
+
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
                 /*}else if(key == item['field_name'] && item['type'] == 'input_number'){
@@ -527,6 +530,8 @@ export default class Service {
     saveEditRow = (): void => {
         const row:AnyObject | undefined = toRaw(this.table_config.current_select_row)
         const save_data:AnyObject = {}  //存放需要保存的数据
+
+        console.log(this.table_config.form_info)
 
         if(typeof row != 'undefined'){
             Object.keys(row).forEach((key) => {
