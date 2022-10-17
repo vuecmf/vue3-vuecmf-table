@@ -108,6 +108,43 @@ export default class LoadData extends Base {
                 if(val.filter == true){
                     this.table_config.filter_form[val.prop] = typeof this.table_config.relation_info.options == 'object' && typeof this.table_config.relation_info.options[val.field_id] == 'object' ? []:''
                 }
+                //将选项值列表中的数值转换成与对应字段的值同类型
+                if(this.table_config.field_options != {} && this.table_config.field_options[val.field_id] != undefined){
+                    if(['bigint','int','smallint','tinyint'].indexOf(val.type) != -1){
+                        Object.keys(this.table_config.field_options[val.field_id]).forEach((key) => {
+                            this.table_config.field_options[val.field_id][key]['value'] = parseInt(this.table_config.field_options[val.field_id][key]['value'])
+                        })
+                    }else if(['decimal','double','float'].indexOf(val.type) != -1){
+                        Object.keys(this.table_config.field_options[val.field_id]).forEach((key) => {
+                            this.table_config.field_options[val.field_id][key]['value'] = parseFloat(this.table_config.field_options[val.field_id][key]['value'])
+                        })
+                    }
+                }
+                //若存关联信息，则将关联信息中的选项值转换成与对应字段的值同类型
+                if(this.table_config.relation_info != {}){
+                    if(typeof this.table_config.relation_info.full_options == 'object' && this.table_config.relation_info.full_options[val.field_id] != undefined){
+                        if(['bigint','int','smallint','tinyint'].indexOf(val.type) != -1){
+                            Object.keys(this.table_config.relation_info.full_options[val.field_id]).forEach((key) => {
+                                this.table_config.relation_info.full_options[val.field_id][key]['value'] = parseInt(this.table_config.relation_info.full_options[val.field_id][key]['value'])
+                            })
+                        }else if(['decimal','double','float'].indexOf(val.type) != -1){
+                            Object.keys(this.table_config.relation_info.full_options[val.field_id]).forEach((key) => {
+                                this.table_config.relation_info.full_options[val.field_id][key]['value'] = parseFloat(this.table_config.relation_info.full_options[val.field_id][key]['value'])
+                            })
+                        }
+                    }
+                    if(typeof this.table_config.relation_info.options == 'object' && this.table_config.relation_info.options[val.field_id] != undefined){
+                        if(['bigint','int','smallint','tinyint'].indexOf(val.type) != -1){
+                            Object.keys(this.table_config.relation_info.options[val.field_id]).forEach((key) => {
+                                this.table_config.relation_info.options[val.field_id][key]['value'] = parseInt(this.table_config.relation_info.options[val.field_id][key]['value'])
+                            })
+                        }else if(['decimal','double','float'].indexOf(val.type) != -1){
+                            Object.keys(this.table_config.relation_info.options[val.field_id]).forEach((key) => {
+                                this.table_config.relation_info.options[val.field_id][key]['value'] = parseFloat(this.table_config.relation_info.options[val.field_id][key]['value'])
+                            })
+                        }
+                    }
+                }
             })
         }
 
@@ -125,10 +162,10 @@ export default class LoadData extends Base {
         }
 
         //将ID转成字符串
-        if(this.table_config.field_options != {}){
+        /*if(this.table_config.field_options != {}){
             Object.keys(this.table_config.field_options).forEach((key) => {
                 Object.keys(this.table_config.field_options[key]).forEach((key2) => {
-                    if(typeof this.table_config.field_options[key][key2] == 'object' && 
+                    if(typeof this.table_config.field_options[key][key2] == 'object' &&
                         typeof this.table_config.field_options[key][key2].id == 'number'){
                         this.table_config.field_options[key][key2].id = this.table_config.field_options[key][key2].id.toString()
                     }
@@ -160,7 +197,7 @@ export default class LoadData extends Base {
                 })
             }
 
-        }
+        }*/
 
         this.emit('afterLoadTable', this.table_config)
 

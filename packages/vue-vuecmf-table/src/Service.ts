@@ -205,28 +205,16 @@ export default class Service {
                 const rs: never[] = []
                 id_arr.forEach((id) => {
                     const options = this.table_config.field_options[field_id]
-
                     Object.keys(options).forEach((key) => {
-                        if(typeof options[key] == 'object'){
-                            if(options[key]['id'] == id) rs.push(options[key]['label'])
-                        }else if(key == id){
-                            rs.push(options[key])
-                        }
+                        if(options[key]['value'] == id) rs.push(options[key]['label'])
                     })
-
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
                 const options: AnyObject = this.table_config.field_options[field_id]
-
                 Object.keys(options).forEach((key) => {
-                    if(typeof options[key] == 'object'){
-                        if(options[key]['id'] == field_value) result = options[key]['label']
-                    }else if(key == field_value.toString()){
-                        result = options[key]
-                    }
+                    if(options[key]['value'] == field_value) result = options[key]['label']
                 })
-
             }else{
                 result = field_value
             }
@@ -240,28 +228,16 @@ export default class Service {
                 const rs: string|number[] = []
                 id_arr.forEach((id) => {
                     const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
-
                     Object.keys(full_options).forEach((key) => {
-                        if(typeof full_options[key] == 'object'){
-                            if(full_options[key]['id'] == id) rs.push(full_options[key]['label'])
-                        }else if(key == id){
-                            rs.push(full_options[key])
-                        }
+                        if(full_options[key]['value'] == id) rs.push(full_options[key]['label'])
                     })
-
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
                 const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
-
                 Object.keys(full_options).forEach((key) => {
-                    if(typeof full_options[key] == 'object'){
-                        if(full_options[key]['id'] == field_value) result = full_options[key]['label']
-                    }else if(key == field_value.toString()){
-                        result = full_options[key]
-                    }
+                    if(full_options[key]['value'] == field_value) result = full_options[key]['label']
                 })
-
             }else{
                 result = field_value
             }
@@ -448,7 +424,16 @@ export default class Service {
 
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
-                if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
+                if(fieldInfo['field_id'] == item['field_id']){
+                    if(['bigint','int','smallint','tinyint'].indexOf(fieldInfo['type']) != -1){
+                        row[item['field_name']] = item['default_value'] == '0' ? '' : parseInt(item['default_value'])
+                    }else if(['decimal','double','float'].indexOf(fieldInfo['type']) != -1){
+                        row[item['field_name']] = item['default_value'] == '0' ? '' : parseFloat(item['default_value'])
+                    }
+                }
+
+
+                /*if(fieldInfo['field_id'] == item['field_id'] && fieldInfo['filter'] == false && typeof this.table_config.filter_form[item['field_name']] != 'undefined'){
                     const form_val: string|number = this.table_config.filter_form[item['field_name']]
                     if(typeof form_val == 'number') form_val.toString()
 
@@ -458,10 +443,14 @@ export default class Service {
                         row[item['field_name']] = form_val
                     }
 
-                }
+                }*/
+
+
             })
 
         })
+
+        console.log('row=====', row)
 
         this.table_config.current_select_row = row
         this.import_config.form_title = '新增'
@@ -484,15 +473,15 @@ export default class Service {
 
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
-            if(typeof row[key] == 'number') row[key] = row[key].toString()
+            //if(typeof row[key] == 'number') row[key] = row[key].toString()
 
             Object.values(this.table_config.form_info).forEach((item)=>{
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
-                }else if(key == item['field_name'] && item['type'] == 'input_number'){
-                    row[key] = parseInt(row[key])
+                /*}else if(key == item['field_name'] && item['type'] == 'input_number'){
+                    row[key] = parseInt(row[key])*/
                 }else if(key == item['field_name'] && item['type'] == 'select'){
-                    row[key] = row[key] == '0' ? '' : row[key]
+                    row[key] = row[key] == 0 ? null : row[key]
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){
                     if(row[key] == ''){
                         row[key] = []
