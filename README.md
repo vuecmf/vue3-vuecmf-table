@@ -36,6 +36,33 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
 
 1.10.0版本开始，后端api获取的字段信息中 relation_info 中增加 full_options项，供列表中关联字段值转换显示内容用
 
+1.14.0版本开始，后端api获取的字段信息中 field_option项 和 relation_info 中的 full_options项 及 options 项 的数据结构全部调整为统一的格式，如下
+```
+#1.14.0 以前版本
+"field_option":{
+    "71":{
+        "10":"是",
+        "20":"否"
+    },
+    ... 此处省略
+},
+
+#1.14.0版本开始
+"field_option":{
+    "71":[
+        {
+            "value": 10,
+            "label": "是"
+        },
+        {
+            "value": 20,
+            "label": "否"
+        }
+    ],
+    ... 此处省略
+},
+```
+
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -238,10 +265,16 @@ default_expand_all属性（是否全部展开）;
             ... 此处省略
         },
         "field_option":{
-            "71":{
-                "10":"是",
-                "20":"否"
-            },
+            "71":[
+                {
+                    "value": 10,
+                    "label": "是"
+                },
+                {
+                    "value": 20,
+                    "label": "否"
+                }
+            ],
             ... 此处省略
         },
         "relation_info":[

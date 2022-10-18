@@ -152,15 +152,10 @@ export default class UploadData extends Base{
                 ){
                     let flag = false
                     Object.keys(this.field_options[field.field_id]).forEach((key) => {
-                        if(typeof this.field_options[field.field_id][key] == 'object'){
-                            const treeItem = this.field_options[field.field_id][key]
-                            if(treeItem.label != undefined && treeItem.label.replace(/[┊┊┈└─]/g,'').trim() == new_val){
-                                flag = true
-                                new_val = parseInt(treeItem.id)
-                            }
-                        }else if(this.field_options[field.field_id][key] == new_val){
+                        const treeItem = this.field_options[field.field_id][key]
+                        if(treeItem['label'].replace(/[┊┊┈└─]/g,'').trim() == new_val){
                             flag = true
-                            new_val = parseInt(key.replace(/'/g,''))
+                            new_val = treeItem['value']
                         }
                     })
 
@@ -175,9 +170,9 @@ export default class UploadData extends Base{
                     let res = 0
                     Object.keys(this.relation_info.full_options[field.field_id]).forEach((key) => {
                         const treeItem = this.relation_info.full_options[field.field_id][key]
-                        if(treeItem.label !== undefined && treeItem.label.replace(/[┊┊┈└─]/g,'').trim() == new_val){
+                        if(treeItem['label'].replace(/[┊┊┈└─]/g,'').trim() == new_val){
                             flag = true
-                            res = parseInt(treeItem.id.replace(/'/g,''))
+                            res = treeItem['value']
                         }
                     })
                     new_val = res

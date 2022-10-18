@@ -161,44 +161,6 @@ export default class LoadData extends Base {
             this.table_config.form_label_width = max_len as number * 18 + 16
         }
 
-        //将ID转成字符串
-        /*if(this.table_config.field_options != {}){
-            Object.keys(this.table_config.field_options).forEach((key) => {
-                Object.keys(this.table_config.field_options[key]).forEach((key2) => {
-                    if(typeof this.table_config.field_options[key][key2] == 'object' &&
-                        typeof this.table_config.field_options[key][key2].id == 'number'){
-                        this.table_config.field_options[key][key2].id = this.table_config.field_options[key][key2].id.toString()
-                    }
-                })
-            })
-        }
-
-        //将ID转成字符串
-        if(this.table_config.relation_info != {}){
-            if(typeof this.table_config.relation_info.full_options == 'object'){
-                Object.keys(this.table_config.relation_info.full_options).forEach((key) => {
-                    Object.keys(this.table_config.relation_info.full_options[key]).forEach((key2) => {
-                        if(typeof this.table_config.relation_info.full_options[key][key2] == 'object' &&
-                            typeof this.table_config.relation_info.full_options[key][key2].id == 'number'){
-                            this.table_config.relation_info.full_options[key][key2].id = this.table_config.relation_info.full_options[key][key2].id.toString()
-                        }
-                    })
-                })
-            }
-
-            if(typeof this.table_config.relation_info.options == 'object'){
-                Object.keys(this.table_config.relation_info.options).forEach((key) => {
-                    Object.keys(this.table_config.relation_info.options[key]).forEach((key2) => {
-                        if(typeof this.table_config.relation_info.options[key][key2] == 'object' &&
-                            typeof this.table_config.relation_info.options[key][key2].id == 'number'){
-                            this.table_config.relation_info.options[key][key2].id = this.table_config.relation_info.options[key][key2].id.toString()
-                        }
-                    })
-                })
-            }
-
-        }*/
-
         this.emit('afterLoadTable', this.table_config)
 
         return true

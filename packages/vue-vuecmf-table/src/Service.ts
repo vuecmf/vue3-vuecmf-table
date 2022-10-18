@@ -415,13 +415,6 @@ export default class Service {
 
         const row:AnyObject = {}
         Object.values(this.table_config.form_info).forEach((item)=>{
-
-            /*if(item['type'] == 'upload_image' || item['type'] == 'upload_file'){
-                row[item['field_name']] = []
-            }else{
-                row[item['field_name']] = item['type'] == 'input_number' ? parseInt(item['default_value']) : item['default_value']
-            }*/
-
             //默认值设置
             Object.values(this.table_config.columns).forEach((fieldInfo) => {
                 if(fieldInfo['field_id'] == item['field_id']){
@@ -439,15 +432,12 @@ export default class Service {
 
         })
 
-        console.log('row=====', row)
-
         this.table_config.current_select_row = row
         this.import_config.form_title = '新增'
         this.import_config.edit_dlg = true
 
         //表单加载完的回调
         this.import_config.loadForm(this, row)
-
 
     }
 
@@ -462,27 +452,10 @@ export default class Service {
 
         //将上传控件的 字符串值转换成 数组列表
         Object.keys(row).forEach((key)=>{
-            //if(typeof row[key] == 'number') row[key] = row[key].toString()
-
-            Object.values(this.table_config.form_info).forEach((item, idx)=>{
+            Object.values(this.table_config.form_info).forEach((item)=>{
                 //默认值类型转换成与字段类型一致
-                Object.values(this.table_config.columns).forEach((fieldInfo) => {
-                    if(fieldInfo['field_id'] == item['field_id']){
-                        if(['bigint','int','smallint','tinyint'].indexOf(fieldInfo['type']) != -1){
-                            this.table_config.form_info[idx]['default_value'] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseInt(item['default_value'])
-                        }else if(['decimal','double','float'].indexOf(fieldInfo['type']) != -1){
-                            row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseFloat(item['default_value'])
-                        }else {
-                            row[item['field_name']] = item['default_value']
-                        }
-                    }
-                })
-
-
                 if(key == item['field_name'] && item['type'] == 'password'){
                     row[key] = ''
-                /*}else if(key == item['field_name'] && item['type'] == 'input_number'){
-                    row[key] = parseInt(row[key])*/
                 }else if(key == item['field_name'] && item['type'] == 'select'){
                     row[key] = row[key] == 0 ? null : row[key]
                 }else if(key == item['field_name'] && item['type'] == 'select_mul'){

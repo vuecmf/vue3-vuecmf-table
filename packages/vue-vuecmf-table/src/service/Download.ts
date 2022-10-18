@@ -61,7 +61,7 @@ export default class Download{
                     let res = ''
                     if(this.field_options[field.field_id].length != undefined){
                         this.field_options[field.field_id].forEach((treeItem: AnyObject) => {
-                            if(treeItem.id != undefined && parseInt(treeItem.id) == parseInt(value)){
+                            if(treeItem['value'] == value){
                                 res = treeItem.label != undefined ? treeItem.label : ''
                             }
                         })
@@ -74,7 +74,7 @@ export default class Download{
                     if(typeof res != 'string'){
                         res = ''
                         this.relation_info.full_options[field.field_id].forEach((row: AnyObject) => {
-                            if(row.id != undefined && parseInt(row.id) == parseInt(value)){
+                            if(row['value'] == value){
                                 res = row.label != undefined ? row.label : ''
                             }
                         })
