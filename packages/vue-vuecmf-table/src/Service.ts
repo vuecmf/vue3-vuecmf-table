@@ -212,9 +212,11 @@ export default class Service {
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
                 const options: AnyObject = this.table_config.field_options[field_id]
-                Object.keys(options).forEach((key) => {
-                    if(options[key]['value'] == field_value) result = options[key]['label']
-                })
+                if(options != undefined){
+                    Object.keys(options).forEach((key) => {
+                        if(options[key]['value'] == field_value) result = options[key]['label']
+                    })
+                }
             }else{
                 result = field_value
             }
@@ -503,14 +505,20 @@ export default class Service {
     saveEditRow = (): void => {
         const row:AnyObject | undefined = toRaw(this.table_config.current_select_row)
         const save_data:AnyObject = {}  //存放需要保存的数据
-
-        console.log(this.table_config.form_info)
-
+        
         if(typeof row != 'undefined'){
             Object.keys(row).forEach((key) => {
                 //只有列表中存在的字段才保存
                 this.table_config.columns.forEach((field_info: AnyObject) => {
-                    if(field_info.prop == key) save_data[key] = row[key]
+                    if(field_info.prop == key){
+                        if(['bigint','int','smallint','tinyint'].indexOf(field_info.type) != -1){
+                            save_data[key] = parseInt(row[key])
+                        }else if(['decimal','double','float'].indexOf(field_info.type) != -1){
+                            save_data[key] = parseFloat(row[key])
+                        }else{
+                            save_data[key] = row[key]
+                        }
+                    } 
                 })
 
                 //将上传控件的列表数据转换成逗号分隔的字符串
