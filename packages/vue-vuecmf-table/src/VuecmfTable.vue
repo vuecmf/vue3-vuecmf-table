@@ -60,7 +60,6 @@
       border
       style="width: 100%"
       :size="size"
-      @sort-change="sort"
       :stripe="true"
       :height="height"
       @select="currentSelect"
@@ -77,10 +76,11 @@
       <el-table-column v-if="item.show"
                        :prop="item.prop"
                        :label="item.label"
-                       :sortable="item.sortable"
+                       :sortable="false"
                        :fixed= "item.fixed"
                        :min-width="item.width"
                        :key="index"
+                       :class-name="item.sort"
       >
         <!-- 列头自定义 -->
         <template #header>
@@ -120,6 +120,9 @@
                   placeholder="输入关键字搜索" v-else />
             </template>
           </div>
+
+          <span class="caret-wrapper" @click="sort(item)"><i class="sort-caret ascending"></i><i class="sort-caret descending"></i></span>
+
         </template>
 
         <!-- 格式化列表内容显示 -->

@@ -168,7 +168,21 @@ export default class Service {
      */
     sort = (column: AnyObject):void => {
         this.table_config.order_field = column.prop;
-        this.table_config.order_sort = column.order == "descending" ? "desc" : "asc";
+        if(column.sort == ''){
+            column.sort = 'ascending'
+        }else if(column.sort == 'ascending'){
+            column.sort = 'descending'
+        }else{
+            column.sort = ''
+        }
+
+        if(column.sort != ''){
+            this.table_config.order_sort = column.sort == "descending" ? "desc" : "asc";
+        }else{
+            this.table_config.order_field = '';
+            this.table_config.order_sort = ''
+        }
+
         this.search();
     }
 
@@ -505,7 +519,7 @@ export default class Service {
     saveEditRow = (): void => {
         const row:AnyObject | undefined = toRaw(this.table_config.current_select_row)
         const save_data:AnyObject = {}  //存放需要保存的数据
-        
+
         if(typeof row != 'undefined'){
             Object.keys(row).forEach((key) => {
                 //只有列表中存在的字段才保存
@@ -518,7 +532,7 @@ export default class Service {
                         }else{
                             save_data[key] = row[key]
                         }
-                    } 
+                    }
                 })
 
                 //将上传控件的列表数据转换成逗号分隔的字符串

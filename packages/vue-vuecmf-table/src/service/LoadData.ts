@@ -101,6 +101,7 @@ export default class LoadData extends Base {
 
         if(typeof this.table_config.columns != 'undefined'){
             this.table_config.columns.forEach((val: AnyObject) => {
+                val['sort'] = ''
                 if (val.show == true) {
                     this.table_config.check_column_list.push(val.label)
                 }
