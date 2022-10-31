@@ -478,7 +478,15 @@ export default class Service {
                     if(row[key] == ''){
                         row[key] = []
                     }else{
-                        row[key] = row[key].split(',')
+                        let arr = row[key].split(',')
+                        arr.forEach((v:string, k:number) => {
+                            if(/\d/.test(v)){
+                                arr[k] = parseInt(v)
+                            }else if(/\d.\d/.test(v)){
+                                arr[k] = parseFloat(v)
+                            }
+                        })
+                        row[key] = arr
                     }
 
                 }else if(key == item['field_name'] && (item['type'] == 'upload_image' || item['type'] == 'upload_file') && typeof row[key] == 'string'){
