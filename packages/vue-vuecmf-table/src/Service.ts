@@ -537,6 +537,13 @@ export default class Service {
                             save_data[key] = parseInt(row[key])
                         }else if(['decimal','double','float'].indexOf(field_info.type) != -1){
                             save_data[key] = parseFloat(row[key])
+                        }else if(field_info.type == 'varchar' && typeof row[key] == 'object'){
+                            if(row[key].length == 0){
+                                save_data[key] = ''
+                            }else{
+                                save_data[key] = row[key].join(',')
+                            }
+
                         }else{
                             save_data[key] = row[key]
                         }
