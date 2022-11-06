@@ -63,6 +63,38 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
 },
 ```
 
+1.14.5版本开始，后端api获取的字段信息的 form_info 中的 is_disabled 调整为 true 或 false; true则表单控件为禁用状态，false则是可用状态
+```
+#1.14.5 以前版本
+"form_info":{
+            "67":{
+                "field_id":67,
+                "field_name":"username",
+                "label":"用户名",
+                "type":"text",
+                "default_value":"",
+                "is_disabled":20,   #表单中未使用
+                "model_field_id":67
+            },
+            ... 此处省略
+        },
+
+#1.14.5版本开始
+"form_info":{
+            "67":{
+                "field_id":67,
+                "field_name":"username",
+                "label":"用户名",
+                "type":"text",
+                "default_value":"",
+                "is_disabled": false, #值为true或false, 并已应用到表单的可用与禁用
+                "model_field_id":67
+            },
+            ... 此处省略
+        },
+```
+
+
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -259,7 +291,7 @@ default_expand_all属性（是否全部展开）;
                 "label":"用户名",
                 "type":"text",
                 "default_value":"",
-                "is_disabled":20,
+                "is_disabled": false,
                 "model_field_id":67
             },
             ... 此处省略

@@ -259,39 +259,39 @@
       <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :label-width="form_label_width + 'px'" :size="size" :model="current_select_row" class="edit-form-inline">
         <template :key="index" v-for="(item, index) in form_info">
           <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
-            <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
+            <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" :disabled="item.is_disabled" clearable >
             </el-date-picker>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
-            <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间" clearable >
+            <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间"  :disabled="item.is_disabled" clearable >
             </el-date-picker>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
-            <el-input-number v-model="current_select_row[item.field_name]" />
+            <el-input-number v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled" />
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name">
             <input type="hidden" v-model="current_select_row[item.field_name]" />
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'textarea'" :prop="item.field_name">
-            <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"/>
+            <el-input v-model="current_select_row[item.field_name]" :rows="3" placeholder="请输入内容" type="textarea"  :disabled="item.is_disabled" />
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'switch'" :prop="item.field_name">
-            <el-switch v-model="current_select_row[item.field_name]" active-value="10" inactive-value="20" />
+            <el-switch v-model="current_select_row[item.field_name]" active-value="10" inactive-value="20"  :disabled="item.is_disabled" />
           </el-form-item>
           <el-form-item :label="item.label" v-else-if=" ['radio','checkbox','select','select_mul'].indexOf(item.type) !== -1 " :prop="item.field_name">
             <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
-                <el-radio-group v-model="current_select_row[item.field_name]">
+                <el-radio-group v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled">
                   <el-radio :label="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
-                <el-checkbox-group v-model="current_select_row[item.field_name]">
+                <el-checkbox-group v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled">
                   <el-checkbox :label="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
-                <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable >
+                <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择"  :disabled="item.is_disabled" clearable >
                   <el-option :label="op_val.label" :value="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
                 </el-select>
               </template>
@@ -299,17 +299,17 @@
 
             <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
-                <el-radio-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
+                <el-radio-group  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-radio :label=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
-                <el-checkbox-group v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
+                <el-checkbox-group  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-checkbox :label=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
-                <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
+                <el-select  :disabled="item.is_disabled" :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择" clearable  @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-option :label=" op_val.label " :value=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]"></el-option>
                 </el-select>
               </template>
@@ -321,6 +321,7 @@
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
             <el-upload
+                :disabled="item.is_disabled"
                 :ref="(el: Ref) => setUploadRef(el, item.field_name)"
                 :headers="{token:token}"
                 :data="{field_name:item.field_name}"
@@ -347,10 +348,10 @@
             ></vuecmf-editor>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
-            <el-input v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
+            <el-input  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
           </el-form-item>
           <el-form-item :label="item.label" :prop="item.field_name" v-else>
-            <el-input v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
+            <el-input  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
           </el-form-item>
         </template>
 
