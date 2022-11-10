@@ -559,7 +559,12 @@ export default class Service {
                             }else{
                                 const arr:Array<string> = []
                                 row[key + '_new_upload'].forEach((val:AnyObject)=>{
-                                    if(typeof val.url != 'undefined') arr.push(val.url)
+                                    if(typeof val.url != 'undefined'){
+                                        arr.push(val.url)
+                                        if(this.table_config.current_select_row != undefined){
+                                            this.table_config.current_select_row[key].push(val.url)
+                                        }
+                                    }
                                 })
                                 save_data[key] = arr.join(',')
 
