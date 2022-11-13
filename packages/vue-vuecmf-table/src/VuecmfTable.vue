@@ -86,7 +86,7 @@
         <template #header>
           <span class="header-label">{{ item.label }}</span>
           <el-tooltip v-if="item.tooltip" placement="bottom" effect="dark">
-            <el-icon size="24"><question-filled /></el-icon>
+            <el-icon size="15"><question-filled /></el-icon>
             <template #content >
               <div><span v-html="item.tooltip"></span></div>
             </template>
@@ -291,7 +291,7 @@
                 </el-checkbox-group>
               </template>
               <template v-else>
-                <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择"  :disabled="item.is_disabled" clearable >
+                <el-select :teleported="false" v-model="current_select_row[item.field_name]" filterable :multiple="item.type === 'select_mul'" placeholder="请选择"  :disabled="item.is_disabled" clearable @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
                   <el-option :label="op_val.label" :value="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]"></el-option>
                 </el-select>
               </template>
@@ -344,6 +344,9 @@
                 :id="item.field_name"
                 :content="current_select_row[item.field_name]"
                 @on-change="getEditorContent"
+                :token="token"
+                :params="{field_name:item.field_name}"
+                :upload="upload_api_url"
                 :size="size"
             ></vuecmf-editor>
           </el-form-item>
@@ -732,8 +735,11 @@ export default defineComponent({
 
 /* 列头标题 */
 .el-table :deep(.caret-wrapper){
-  top:5px; right:0; position: absolute;
+  top:8px; right:0; position: absolute;
 }
+
+
+
 .header-label{ font-size: 14px; }
 :deep(.el-date-editor){
   --el-date-editor-daterange-width: auto;
@@ -777,5 +783,9 @@ export default defineComponent({
   .el-input__wrapper{
     display: inline-flex !important;
   }
+}
+
+.el-table th.el-table__cell{
+  padding: 4px 0 8px !important;
 }
 </style>

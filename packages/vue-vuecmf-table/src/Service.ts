@@ -478,7 +478,7 @@ export default class Service {
                     if(row[key] == ''){
                         row[key] = []
                     }else{
-                        let arr = row[key].split(',')
+                        const arr = row[key].split(',')
                         arr.forEach((v:string, k:number) => {
                             if(/\d/.test(v)){
                                 arr[k] = parseInt(v)
