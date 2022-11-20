@@ -251,9 +251,14 @@ export default class Service {
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
                 const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
-                Object.keys(full_options).forEach((key) => {
-                    if(full_options[key]['value'] == field_value) result = full_options[key]['label']
-                })
+                if(full_options != null){
+                    Object.keys(full_options).forEach((key) => {
+                        if(full_options[key]['value'] == field_value) result = full_options[key]['label']
+                    })
+                }else{
+                    result = '0'
+                }
+
             }else{
                 result = field_value
             }
@@ -440,7 +445,14 @@ export default class Service {
                         row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseInt(item['default_value'])
                     }else if(['decimal','double','float'].indexOf(fieldInfo['type']) != -1){
                         row[item['field_name']] = item['default_value'] == '0' || item['default_value'] == '' ? null : parseFloat(item['default_value'])
-                    }else {
+                    }else if(item['type'] == "checkbox" || item['type'] == "select_mul") {
+                        if(item['default_value'] == ""){
+                            row[item['field_name']] = []
+                        }else{
+                            row[item['field_name']] = item['default_value'].split(',')
+                        }
+
+                    }else{
                         row[item['field_name']] = item['default_value']
                     }
                 }
@@ -474,17 +486,22 @@ export default class Service {
                     row[key] = ''
                 }else if(key == item['field_name'] && item['type'] == 'select'){
                     row[key] = row[key] == 0 ? null : row[key]
-                }else if(key == item['field_name'] && item['type'] == 'select_mul'){
+                }else if(key == item['field_name'] && (item['type'] == 'select_mul' || item['type'] == 'checkbox') ){
                     if(row[key] == ''){
                         row[key] = []
                     }else{
                         const arr = row[key].split(',')
                         arr.forEach((v:string, k:number) => {
-                            if(/\d/.test(v)){
-                                arr[k] = parseInt(v)
-                            }else if(/\d.\d/.test(v)){
-                                arr[k] = parseFloat(v)
+                            if(item['type'] == 'checkbox'){
+                                arr[k] = v
+                            }else{
+                                if(/\d/.test(v)){
+                                    arr[k] = parseInt(v)
+                                }else if(/\d.\d/.test(v)){
+                                    arr[k] = parseFloat(v)
+                                }
                             }
+
                         })
                         row[key] = arr
                     }
@@ -537,7 +554,7 @@ export default class Service {
                             save_data[key] = parseInt(row[key])
                         }else if(['decimal','double','float'].indexOf(field_info.type) != -1){
                             save_data[key] = parseFloat(row[key])
-                        }else if(field_info.type == 'varchar' && typeof row[key] == 'object'){
+                        }else if(field_info.type == 'varchar' && row[key] != null && typeof row[key] == 'object'){
                             if(row[key].length == 0){
                                 save_data[key] = ''
                             }else{
