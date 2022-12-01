@@ -31,7 +31,7 @@ export default class LoadData extends Base {
      * 删除行数据
      * @param row
      */
-    delRow = (row: AnyObject):Promise<AnyObject> => {
+    delRow = (row: AnyObject):AnyObject => {
         return this.post(this.table_config.del_api_url, {
             data: row
         }).then(function (res) {
@@ -46,7 +46,7 @@ export default class LoadData extends Base {
      * @param callback  回调处理函数
      * @param action  动作名称
      */
-    pullData = (current_page:number, page_size:number, callback: (arg:AnyObject) => Promise<AnyObject>|boolean , action?:string):Promise<AnyObject> => {
+    pullData = (current_page:number, page_size:number, callback: (arg:AnyObject) => AnyObject|boolean , action?:string):AnyObject => {
         if (action != undefined && action == "getField") {
             //拉取表格字段信息
             return this.post(this.table_config.api_url, {
@@ -77,15 +77,15 @@ export default class LoadData extends Base {
     /**
      * 刷新列表
      */
-    reloadPage = ():Promise<AnyObject> => {
+    reloadPage = ():AnyObject => {
         return this.pullData(this.table_config.current_page, this.table_config.page_size, this.getList);
     }
 
     /**
      * 加载表格字段信息
      */
-    loadTableField = ():Promise<AnyObject> => {
-        return this.pullData(1, this.table_config.page_size, this.updateTableField, "getField");
+    loadTableField = ():void => {
+        this.pullData(1, this.table_config.page_size, this.updateTableField, "getField");
     }
 
     /**
