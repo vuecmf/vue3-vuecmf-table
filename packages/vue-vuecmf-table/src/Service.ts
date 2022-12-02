@@ -734,8 +734,11 @@ export default class Service {
      */
     mounted = ():void => {
         onMounted(() => {
-            this.loadDataService.loadTableField() //加载列表表头字段
-            this.search(); //加载列表数据
+			//只有设置了API地址才执行拉取后端数据
+			if(this.table_config.api_url != ''){
+				this.loadDataService.loadTableField() //加载列表表头字段
+				this.search(); //加载列表数据
+			}
 
             //列表响应式显示处理
             this.resizeWin()
