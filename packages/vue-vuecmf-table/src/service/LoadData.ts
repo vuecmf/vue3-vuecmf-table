@@ -154,7 +154,11 @@ export default class LoadData extends Base {
             let label_length:number[] = []
 
             Object.keys(this.table_config.form_info).forEach((key) => {
-                label_length.push(this.table_config.form_info[key].label.length)
+                let char_len = this.table_config.form_info[key].label.length
+                if(/^[a-zA-Z0-9\s]*$/.test(this.table_config.form_info[key].label)){
+                    char_len = Math.floor(char_len / 2)
+                }
+                label_length.push(char_len)
             })
 
             label_length = label_length.sort(function (a,b){ return b - a })
