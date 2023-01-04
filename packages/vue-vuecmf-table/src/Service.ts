@@ -192,6 +192,7 @@ export default class Service {
      * @param url  文件链接
      */
     private formatFile = (name: string, url: string):string => {
+        if(url === undefined || url === '') return ''
         const arr = url.split(',')
         const res: string[] = []
         arr.forEach((file_url) => {

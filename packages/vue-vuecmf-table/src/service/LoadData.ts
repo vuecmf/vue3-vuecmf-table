@@ -84,8 +84,8 @@ export default class LoadData extends Base {
     /**
      * 加载表格字段信息
      */
-    loadTableField = ():void => {
-        this.pullData(1, this.table_config.page_size, this.updateTableField, "getField");
+    loadTableField = ():AnyObject => {
+        return this.pullData(1, this.table_config.page_size, this.updateTableField, "getField");
     }
 
     /**
@@ -183,8 +183,8 @@ export default class LoadData extends Base {
         }else{
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
-            this.table_config.loadingService.close()
         }
+        this.table_config.loadingService.close()
         return true
     }
 

@@ -269,7 +269,7 @@
           <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
             <el-input-number v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled" />
           </el-form-item>
-          <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name">
+          <el-form-item :label="item.label" v-else-if="item.type === 'hidden'" :prop="item.field_name" style="display: none">
             <input type="hidden" v-model="current_select_row[item.field_name]" />
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'textarea'" :prop="item.field_name">
