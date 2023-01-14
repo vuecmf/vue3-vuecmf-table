@@ -220,9 +220,11 @@ export default class Service {
                 const rs: never[] = []
                 id_arr.forEach((id) => {
                     const options = this.table_config.field_options[field_id]
-                    Object.keys(options).forEach((key) => {
-                        if(options[key]['value'] == id) rs.push(options[key]['label'])
-                    })
+                    if(options != undefined) {
+                        Object.keys(options).forEach((key) => {
+                            if (options[key]['value'] == id) rs.push(options[key]['label'])
+                        })
+                    }
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
@@ -245,9 +247,11 @@ export default class Service {
                 const rs: string|number[] = []
                 id_arr.forEach((id) => {
                     const full_options: AnyObject = this.table_config.relation_info.full_options[field_id]
-                    Object.keys(full_options).forEach((key) => {
-                        if(full_options[key]['value'] == id) rs.push(full_options[key]['label'])
-                    })
+                    if(full_options != null) {
+                        Object.keys(full_options).forEach((key) => {
+                            if (full_options[key]['value'] == id) rs.push(full_options[key]['label'])
+                        })
+                    }
                 })
                 result = rs.join('<br>')
             }else if(typeof field_value == 'number'){
