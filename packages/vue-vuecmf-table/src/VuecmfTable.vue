@@ -594,7 +594,7 @@ const {
 
 } = service.getConfig('import_config')
 
-let {
+const {
   show_download_dlg, //下载进度提示框的显示与隐藏
   percentage,        //下载进度
   download_error,    //下载错误提示
@@ -713,6 +713,8 @@ export default defineComponent({
 .dropdown-content {
   max-height: 260px;
   max-width: 560px;
+  padding-top: 8px;
+  padding-left: 3px;
   width: 100%;
   :deep(.el-checkbox) {
     display: block;
