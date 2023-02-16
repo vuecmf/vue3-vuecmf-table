@@ -7,7 +7,7 @@
 // +----------------------------------------------------------------------
 
 import FileSaver from 'file-saver'
-import XLSX, {BookType, WorkBook, WorkSheet, WritingOptions} from 'xlsx'
+import {BookType, read, utils, WorkBook, WorkSheet, write, WritingOptions} from 'xlsx'
 import {VuecmfTable} from "./typings/VuecmfTable";
 import AnyObject = VuecmfTable.AnyObject;
 
@@ -39,15 +39,18 @@ const sheet2blob = (sheet:WorkSheet, file_type:BookType, sheet_name?: string) =>
 
     workbook.Sheets[sheet_name] = sheet;
     // 生成excel的配置项
-    const wopts:WritingOptions = {
+    const options:WritingOptions = {
         bookType: file_type, // 要生成的文件类型, 支持 xlsx, csv, xml, txt
         bookSST: false, // 是否生成Shared String Table，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
         type: 'binary'
     };
-    const wbout = XLSX.write(workbook, wopts);
-    const blob = new Blob([stringToBuffer(wbout)], {type:"application/octet-stream,charset=UTF-8"});
 
-    return blob;
+    let out = write(workbook, options);
+    if(file_type != 'txt'){
+        out = stringToBuffer(out)
+    }
+    return new Blob([out], {type:"application/octet-stream,charset=UTF-8"});
+
 }
 
 
@@ -60,7 +63,7 @@ const sheet2blob = (sheet:WorkSheet, file_type:BookType, sheet_name?: string) =>
  */
 export function jsonExport(dataList: AnyObject[],file_type:BookType,fileName: string):void {
     const cur_date = new Date()
-    const sheet = XLSX.utils.json_to_sheet(dataList)
+    const sheet = utils.json_to_sheet(dataList)
     FileSaver.saveAs(sheet2blob(sheet,file_type), fileName + '_' + cur_date.toLocaleString() + '.' + file_type)
 }
 
@@ -71,24 +74,22 @@ export function jsonExport(dataList: AnyObject[],file_type:BookType,fileName: st
  * @returns {boolean}
  */
 export function jsonImport(fileEvent: Event, callback: (file_data: VuecmfTable.AnyObject[]) => boolean):void | boolean {
-    if(!fileEvent.target.files) {
+    if(fileEvent.target == null || fileEvent.target.files == undefined) {
         return false
     }
 
     const file = fileEvent.target.files[0]
     const reader = new FileReader()
-    let json_data = []
 
     reader.onload = (e) => {
         if(e.target == null) return false
         const data = e.target.result
-        const binaryData = XLSX.read(data, {
+        const binaryData = read(data, {
             type: 'binary' //以二进制的方式读取
         })
 
         const sheet = binaryData.Sheets[binaryData.SheetNames[0]]
-        json_data = XLSX.utils.sheet_to_json(sheet)
-        callback(json_data)
+        callback(utils.sheet_to_json(sheet))
     }
 
     reader.readAsBinaryString(file)

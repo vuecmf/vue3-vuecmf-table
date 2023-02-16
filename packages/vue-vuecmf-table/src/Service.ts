@@ -6,8 +6,7 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import {ref, onMounted, reactive, toRefs, toRaw, Ref} from "vue"
-import {ToRefs} from "@vue/reactivity";
+import {ref, onMounted, reactive, toRefs, toRaw, Ref, ToRefs} from "vue"
 import LoadData from "./service/LoadData";
 import Download from "./service/Download";
 import UploadData from "./service/UploadData";
@@ -82,7 +81,10 @@ export default class Service {
         import_file_form: ref(),    //file表单ref
 
         //表单加载前的回调函数
-        loadForm: (tableService: AnyObject, select_row: AnyObject) => true,
+        loadForm: (tableService: AnyObject, select_row: AnyObject):boolean => {
+            console.log(tableService,select_row)
+            return true
+        },
 
         changeEvent: () => null,    //表单中的组件change事件回调函数
 
