@@ -111,7 +111,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-date-picker @change="search" :size="size" format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+              <el-date-picker @change="search" :size="size" format="YYYY-MM-DD" value-format="YYYY-MM-DD" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
               </el-date-picker>
               <el-input
                   @change="search"
@@ -254,11 +254,11 @@
       <el-form :inline="false" ref="edit_form_ref" status-icon :rules="form_rules" :label-width="form_label_width + 'px'" :size="size" :model="current_select_row" class="edit-form-inline">
         <template :key="index" v-for="(item, index) in form_info">
           <el-form-item  :label="item.label" v-if="item.type === 'date'" :prop="item.field_name">
-            <el-date-picker v-model="current_select_row[item.field_name]" type="date" placeholder="请选择日期" clearable >
+            <el-date-picker v-model="current_select_row[item.field_name]" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" clearable >
             </el-date-picker>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'datetime'" :prop="item.field_name">
-            <el-date-picker v-model="current_select_row[item.field_name]" type="datetime" placeholder="请选择日期时间" clearable >
+            <el-date-picker v-model="current_select_row[item.field_name]" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" type="datetime" placeholder="请选择日期时间" clearable >
             </el-date-picker>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'input_number'" :prop="item.field_name">
