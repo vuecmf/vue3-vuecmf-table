@@ -250,6 +250,16 @@ export default defineComponent({
 </script>
 
 ```
+
+1.15.x 增加属性如下
+```
+date_format：日期控件显示格式, 默认 YYYY-MM-DD
+date_value_format：日期控件保存的值格式, 默认 YYYY-MM-DD
+datetime_format：日期时间控件显示格式, 默认 YYYY-MM-DD HH:mm:ss
+datetime_value_format：日期时间控件保存的值格式, 默认 YYYY-MM-DD HH:mm:ss
+以上属性的值设置同element-plus中Date Picker控件的format和value_format设置 https://element-plus.org/en-US/component/date-picker.html#attributes
+```
+
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
 default_expand_all属性（是否全部展开）;
 若列表为非树形时，不要设置 row_key 属性，否则列表的分页条不会显示。 
