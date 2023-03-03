@@ -9,11 +9,10 @@
       <el-row justify="end">
         <el-input :size="size" placeholder="请输入内容" v-model="keywords" @change="search" clearable></el-input>
         <el-button type="default" :size="size" title="刷新" @click="search"><el-icon><icon-refresh /></el-icon></el-button>
-
+        <el-button type="default" :size="size" title="列表显示方式" @click="changeShowType"><el-icon><tickets v-if="data_show_type === 'card'" /><icon-menu v-else /></el-icon></el-button>
         <!--<el-button type="default" size="small" title="日历"><i class="fa fa-calendar"></i></el-button>
         <el-button type="default" size="small" title="透视" @click="pivot"><i class="fa fa-table"></i></el-button>
-        <el-button type="default" size="small" title="图表"><i class="fa fa-bar-chart"></i></el-button>
-        <el-button type="default" size="small" title="看板"><i class="fa fa-th-large"></i></el-button>-->
+        <el-button type="default" size="small" title="图表"><i class="fa fa-bar-chart"></i></el-button>-->
 
         <el-dropdown trigger="click" >
           <el-button type="default" :size="size" title="列">
@@ -54,141 +53,159 @@
     </el-col>
   </el-row>
 
-  <el-table
-      ref="vuecmf_table_ref"
-      :data="table_data"
-      border
-      style="width: 100%"
-      :size="size"
-      :stripe="true"
-      :height="height"
-      @select="currentSelect"
-      @selection-change="getSelectRows"
-      :row-key="row_key"
-      :default-expand-all="default_expand_all"
-
-  >
-    <!-- 行选择 -->
-    <el-table-column fixed type="selection" :selectable="selectable" width="50" v-if="checkbox"></el-table-column>
-
-    <!-- 列头及列表展示 -->
-    <template v-for="(item,index) in columns">
-      <el-table-column v-if="item.show"
-                       :prop="item.prop"
-                       :label="item.label"
-                       :sortable="false"
-                       :fixed= "item.fixed"
-                       :min-width="item.width"
-                       :key="index"
-                       :class-name="item.sort"
-      >
-        <!-- 列头自定义 -->
-        <template #header>
-          <span class="header-label">{{ item.label }}</span>
-          <el-tooltip v-if="item.tooltip" placement="bottom" effect="dark">
-            <el-icon size="15"><question-filled /></el-icon>
-            <template #content >
-              <div><span v-html="item.tooltip"></span></div>
+  <template v-if="data_show_type === 'card'">
+    <el-row :gutter="10">
+      <template :key="index" v-for="(item,index) in table_data">
+        <el-col :xs="12" :sm="8" :md="6" :lg="4" :xl="3" style="padding: 5px">
+          <el-card  :body-style="{ padding: '10px'}" shadow="hover">
+            <template :key="idx" v-for="(field,idx) in columns">
+              <div v-if="field.show">
+                {{ field.label }} :
+                <span v-html="formatter(field.field_id, item[field.prop])"></span>
+              </div>
             </template>
-          </el-tooltip>
-          <div>
-            <template v-if="item.filter">
-              <el-select v-model="filter_form[item.prop]" @change="search" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
-                <el-option
-                    v-for="(option_val,option_key) in field_options[item.field_id]"
-                    :key="option_key"
-                    :label="option_val.label"
-                    :value="option_val.value"
-                >
-                </el-option>
-              </el-select>
-              <el-select v-model="filter_form[item.prop]" @change="search"  multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
-                <el-option
-                    v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
-                    :key="option_key"
-                    :label="option_val.label"
-                    :value="option_val.value"
-                >
-                </el-option>
-              </el-select>
-              <el-date-picker @change="search" :size="size" :format="date_format" :value-format="date_value_format" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
-              </el-date-picker>
-              <el-input
-                  @change="search"
-                  v-model="filter_form[item.prop]"
-                  :size="size"  clearable
-                  placeholder="输入关键字搜索" v-else />
-            </template>
-          </div>
+            <div class="card-btn">
+              <el-button :size="size" type="primary" @click.prevent="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-button>
+              <el-button :size="size" type="success" @click.prevent="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-button>
+              <el-button :size="size" type="danger" @click.prevent="delRow(item)" v-if="del_btn_visible(item)">删除</el-button>
+              <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
+            </div>
+          </el-card>
+        </el-col>
+      </template>
+    </el-row>
+  </template>
+  <template v-else>
+    <el-table
+        ref="vuecmf_table_ref"
+        :data="table_data"
+        border
+        style="width: 100%"
+        :size="size"
+        :stripe="true"
+        :height="height"
+        @select="currentSelect"
+        @selection-change="getSelectRows"
+        :row-key="row_key"
+        :default-expand-all="default_expand_all"
 
-          <span class="caret-wrapper" @click="sort(item)"><i class="sort-caret ascending"></i><i class="sort-caret descending"></i></span>
+    >
+      <!-- 行选择 -->
+      <el-table-column fixed type="selection" :selectable="selectable" width="50" v-if="checkbox"></el-table-column>
 
-        </template>
+      <!-- 列头及列表展示 -->
+      <template v-for="(item,index) in columns">
+        <el-table-column v-if="item.show"
+                         :prop="item.prop"
+                         :label="item.label"
+                         :sortable="false"
+                         :fixed= "item.fixed"
+                         :min-width="item.width"
+                         :key="index"
+                         :class-name="item.sort"
+        >
+          <!-- 列头自定义 -->
+          <template #header>
+            <span class="header-label">{{ item.label }}</span>
+            <el-tooltip v-if="item.tooltip" placement="bottom" effect="dark">
+              <el-icon size="15"><question-filled /></el-icon>
+              <template #content >
+                <div><span v-html="item.tooltip"></span></div>
+              </template>
+            </el-tooltip>
+            <div>
+              <template v-if="item.filter">
+                <el-select v-model="filter_form[item.prop]" @change="search" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
+                  <el-option
+                      v-for="(option_val,option_key) in field_options[item.field_id]"
+                      :key="option_key"
+                      :label="option_val.label"
+                      :value="option_val.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-select v-model="filter_form[item.prop]" @change="search"  multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
+                  <el-option
+                      v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
+                      :key="option_key"
+                      :label="option_val.label"
+                      :value="option_val.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-date-picker @change="search" :size="size" :format="date_format" :value-format="date_value_format" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+                </el-date-picker>
+                <el-input
+                    @change="search"
+                    v-model="filter_form[item.prop]"
+                    :size="size"  clearable
+                    placeholder="输入关键字搜索" v-else />
+              </template>
+            </div>
 
-        <!-- 格式化列表内容显示 -->
-        <template #default="scope">
-          <slot name="formatRow" :row="scope.row" :field="item.prop" >
-            <span v-html="formatter(item.field_id, scope.row[item.prop])"></span>
-          </slot>
+            <span class="caret-wrapper" @click="sort(item)"><i class="sort-caret ascending"></i><i class="sort-caret descending"></i></span>
+
+          </template>
+
+          <!-- 格式化列表内容显示 -->
+          <template #default="scope">
+            <slot name="formatRow" :row="scope.row" :field="item.prop" >
+              <span v-html="formatter(item.field_id, scope.row[item.prop])"></span>
+            </slot>
+          </template>
+
+        </el-table-column>
+      </template>
+
+      <!-- 行操作 -->
+      <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width > 0">
+        <template #default="scope" >
+
+          <template v-if="expand_action">
+            <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
+            <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-button>
+            <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-button>
+
+            <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+
+          </template>
+          <template v-else>
+            <el-menu mode="horizontal">
+              <el-menu-item @click="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-menu-item>
+              <el-menu-item @click="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-menu-item>
+              <el-menu-item @click="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-menu-item>
+              <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+            </el-menu>
+          </template>
+
         </template>
 
       </el-table-column>
-    </template>
 
-    <!-- 行操作 -->
-    <el-table-column fixed="right" label="操作" :min-width="operate_width" v-if="operate_width > 0">
-      <template #default="scope" >
-        <template v-if="expand_action">
-          <el-button :size="size" type="primary" @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-button>
-          <el-button :size="size" type="success" @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-button>
-          <el-button :size="size" type="danger" @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-button>
+      <!-- 行展开 -->
+      <el-table-column type="expand" fixed="left" v-if="expand">
+        <template #default="props">
+          <!-- 表格行展开自定义 -->
+          <slot name="rowExpand" :row="props.row" :index="props.$index">
+            <template v-if="props.row.expand_data != undefined && props.row.expand_data.table_list != undefined">
+              <el-table border :data="props.row.expand_data.table_list" :size="size" :stripe="true" >
 
-          <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+                <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
+                  <template #default="expand_scope">
+                    <span  v-html="expand_scope.row[item.prop]"></span>
+                  </template>
+                </el-table-column>
 
-        </template>
-        <template v-else>
-          <el-dropdown :size="size" >
-            <el-button type="success">
-              操作 <el-icon class="el-icon--right"><arrow-down /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="del_btn_visible(scope.row)">详情</el-dropdown-item>
-                <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-dropdown-item>
-                <el-dropdown-item @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-dropdown-item>
-
-                <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
-
-              </el-dropdown-menu>
+              </el-table>
             </template>
-          </el-dropdown>
+          </slot>
+
         </template>
-      </template>
+      </el-table-column>
 
-    </el-table-column>
+    </el-table>
+  </template>
 
-    <!-- 行展开 -->
-    <el-table-column type="expand" fixed="left" v-if="expand">
-      <template #default="props">
-        <!-- 表格行展开自定义 -->
-        <slot name="rowExpand" :row="props.row" :index="props.$index">
-          <template v-if="props.row.expand_data != undefined && props.row.expand_data.table_list != undefined">
-            <el-table border :data="props.row.expand_data.table_list" :size="size" :stripe="true" >
-
-              <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
-                <template #default="expand_scope">
-                  <span  v-html="expand_scope.row[item.prop]"></span>
-                </template>
-              </el-table-column>
-
-            </el-table>
-          </template>
-        </slot>
-
-      </template>
-    </el-table-column>
-
-  </el-table>
 
   <div class="pagination" v-if=" typeof row_key == 'undefined' || row_key === '' || row_key == null">
     <el-pagination
@@ -547,12 +564,18 @@ const props = defineProps({
   datetime_value_format: {
     type: String,
     default: 'YYYY-MM-DD HH:mm:ss'
+  },
+
+  //列表展示方式
+  show_type: {
+    type: String,
+    default: 'table'  //table, card
   }
 
 })
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form, row_key} = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form, row_key,show_type } = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -596,6 +619,7 @@ const {
   columns,            //列头字段信息
   select_rows,        //已选择的所有行数据
   current_select_row, //当前选择的一行数据
+  data_show_type,     //列表展示方式
 
 
 } = service.getConfig('table_config')
@@ -623,6 +647,9 @@ const {
   percentage,        //下载进度
   download_error,    //下载错误提示
 } = service.getConfig('export_config')
+
+
+data_show_type.value = show_type?.value
 
 
 //事件方法
@@ -653,6 +680,7 @@ const uploadSuccess = service.uploadSuccess             //上传文件成功
 const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
 const setUploadRef = service.setUploadRef               //设置文件上传ref
+const changeShowType = service.changeShowType           //改变列表展示方式
 
 const showDownloadDlg = () => show_download_dlg.value = false
 const showImportDlg = () => import_dlg.value = false
@@ -677,13 +705,17 @@ import {
   QuestionFilled,
   ArrowDown,
   Plus,
+  Tickets,
+  Menu as IconMenu
 } from '@element-plus/icons-vue'
+
+import { ElCard,ElMenu,ElMenuItem } from 'element-plus'
 
 
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown, Plus
+    ElCard,ElMenu,ElMenuItem, Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown, Plus, Tickets, IconMenu
   }
 });
 </script>
@@ -701,7 +733,7 @@ export default defineComponent({
   text-align: right;
 
   .el-input--small, .el-input--default, .el-input--large{
-    width: calc(100% - 132px);
+    width: calc(100% - 166px);
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
@@ -765,7 +797,6 @@ export default defineComponent({
 }
 
 
-
 .header-label{ font-size: 14px; }
 :deep(.el-date-editor){
   --el-date-editor-daterange-width: auto;
@@ -814,4 +845,9 @@ export default defineComponent({
 .el-table th.el-table__cell{
   padding: 4px 0 8px !important;
 }
+
+.card-btn .el-button{
+  margin-top: 8px;
+}
+
 </style>

@@ -65,6 +65,8 @@ export default class Service {
         order_sort: "desc",     //排序方式
         select_rows: {},        //已选择所有行数据
         current_select_row: ref<AnyObject>(), //当前选择的一行数据
+        data_show_type: 'table',   //列表展示方式: table  | card
+
     })
 
     /**
@@ -734,6 +736,13 @@ export default class Service {
         if(typeof this.table_config.current_select_row != 'undefined') {
             this.table_config.current_select_row[id] = content
         }
+    }
+
+    /**
+     * 修改列表展示方式
+     */
+    changeShowType = ():void => {
+        this.table_config.data_show_type = this.table_config.data_show_type === 'table' ? 'card' : 'table'
     }
 
     /**

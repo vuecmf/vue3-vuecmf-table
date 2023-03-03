@@ -10,6 +10,7 @@ import Base from "./Base"
 import {VuecmfTable} from "../typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject
 
+
 /**
  * 列表加载数据相关服务类
  */
@@ -184,7 +185,11 @@ export default class LoadData extends Base {
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
         }
-        this.table_config.loadingService.close()
+
+        if(typeof this.table_config.loadingService.close != 'undefined'){
+            this.table_config.loadingService.close()
+        }
+
         return true
     }
 

@@ -18,13 +18,14 @@
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
       form_dialog_width="70%"
-      server="http://www.vuecmf.com/vuecmf/vuecmf/test"
-      import_server="http://www.vuecmf.com/vuecmf/vuecmf/test/saveAll"
-      save_server="http://www.vuecmf.com/vuecmf/vuecmf/test/save"
-      upload_server="http://www.vuecmf.com/vuecmf/vuecmf/test/upload"
-      del_server="http://www.vuecmf.com/vuecmf/vuecmf/test/delete"
+      server="http://www.vf2.com/demo/photo"
+      import_server="http://www.vf2.com/demo/photo/save_all"
+      save_server="http://www.vf2.com/demo/photo/save"
+      upload_server="http://www.vf2.com/demo/photo/upload"
+      del_server="http://www.vf2.com/demo/photo/delete"
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
+      show_type="table"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
