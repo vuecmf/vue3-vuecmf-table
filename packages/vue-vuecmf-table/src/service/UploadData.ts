@@ -68,7 +68,7 @@ export default class UploadData extends Base{
 
         //将下载的字段名替换成表格的表头名称
         this.table_config.columns.forEach(function (v:AnyObject) {
-            if (v["prop"] != "action" && v["prop"] != undefined) {
+            if (['action','id'].indexOf(v["prop"]) == -1 && v["prop"] != undefined) {
                 //过滤HTML标签
                 const label = v["label"].replace(/<[^>]*>/g, "");
                 item[label] = "";

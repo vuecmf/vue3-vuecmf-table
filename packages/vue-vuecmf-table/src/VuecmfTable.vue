@@ -703,7 +703,6 @@ import {
   Grid,
   Refresh as IconRefresh,
   QuestionFilled,
-  ArrowDown,
   Plus,
   Tickets,
   Menu as IconMenu
@@ -715,7 +714,7 @@ import { ElCard,ElMenu,ElMenuItem } from 'element-plus'
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    ElCard,ElMenu,ElMenuItem, Download, Upload, Grid, IconRefresh, QuestionFilled, ArrowDown, Plus, Tickets, IconMenu
+    ElCard,ElMenu,ElMenuItem, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, IconMenu
   }
 });
 </script>
@@ -848,6 +847,21 @@ export default defineComponent({
 
 .card-btn .el-button{
   margin-top: 8px;
+}
+
+.el-table__body .el-menu--horizontal {
+  border-bottom: 0;
+  .el-sub-menu .el-sub-menu__title {
+    padding: 3px 0 !important;
+  }
+  .el-sub-menu.is-active .el-sub-menu__title{
+    border-bottom: 0 !important;
+    color: var(--el-menu-text-color);
+  }
+}
+
+.el-menu--popup{
+  min-width: 120px !important;
 }
 
 </style>

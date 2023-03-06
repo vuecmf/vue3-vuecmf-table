@@ -18,11 +18,11 @@
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
       form_dialog_width="70%"
-      server="http://www.vf2.com/demo/photo"
-      import_server="http://www.vf2.com/demo/photo/save_all"
-      save_server="http://www.vf2.com/demo/photo/save"
-      upload_server="http://www.vf2.com/demo/photo/upload"
-      del_server="http://www.vf2.com/demo/photo/delete"
+      server="http://localhost:8080/web/website"
+      import_server="http://localhost:8080/web/website/save_all"
+      save_server="http://localhost:8080/web/website/save"
+      upload_server="http://localhost:8080/web/website/upload"
+      del_server="http://localhost:8080/web/website/delete"
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
       show_type="table"
@@ -62,7 +62,7 @@ import {defineComponent} from 'vue';
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = '961f4f941f9ecba1fd2197c09b41b101'
+     const token = 'cdf852b4c6aeb9fb4540cce7969f34f3'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
