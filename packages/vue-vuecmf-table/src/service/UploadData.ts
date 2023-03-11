@@ -34,6 +34,7 @@ export default class UploadData extends Base{
     ) {
         super(token)
         this.field_options = {}
+        this.relation_info = {}
         this.form_info = {}
         this.import_excel_data = []
         this.import_current_page = 0
@@ -219,7 +220,11 @@ export default class UploadData extends Base{
         const post_data = this.import_excel_data.slice(this.import_current_page * page_num,(this.import_current_page + 1) * page_num)
 
         if( post_data != null && post_data.length != 0){
-            this.post(this.import_config.import_api_url,{data:JSON.stringify(post_data)}).then((data) => {
+            const submit_data = {
+                data: JSON.stringify(post_data)
+            }
+
+            this.post(this.import_config.import_api_url, Object.assign(submit_data, this.table_config.extend_params)).then((data) => {
                 if(data.status == 200 && data.data.code == 0){
                     this.import_config.import_percentage = Math.ceil((this.import_current_page + 1) / pages * 100)
                     this.import_current_page ++

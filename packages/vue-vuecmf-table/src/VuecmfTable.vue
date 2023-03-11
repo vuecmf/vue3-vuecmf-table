@@ -65,10 +65,20 @@
               </div>
             </template>
             <div class="card-btn">
-              <el-button :size="size" type="primary" @click.prevent="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-button>
-              <el-button :size="size" type="success" @click.prevent="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-button>
-              <el-button :size="size" type="danger" @click.prevent="delRow(item)" v-if="del_btn_visible(item)">删除</el-button>
-              <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
+              <template v-if="expand_action">
+                <el-button :size="size" type="primary" @click.prevent="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-button>
+                <el-button :size="size" type="success" @click.prevent="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-button>
+                <el-button :size="size" type="danger" @click.prevent="delRow(item)" v-if="del_btn_visible(item)">删除</el-button>
+                <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
+              </template>
+              <template v-else>
+                <el-menu mode="horizontal">
+                  <el-menu-item @click="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-menu-item>
+                  <el-menu-item @click="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-menu-item>
+                  <el-menu-item @click="delRow(item)" v-if="del_btn_visible(item)">删除</el-menu-item>
+                  <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
+                </el-menu>
+              </template>
             </div>
           </el-card>
         </el-col>

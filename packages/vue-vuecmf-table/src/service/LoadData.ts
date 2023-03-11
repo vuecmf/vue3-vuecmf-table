@@ -58,18 +58,20 @@ export default class LoadData extends Base {
         } else {
             //拉取列表数据
             const post_data:AnyObject = {
-                page_size: page_size,
-                order_field: this.table_config.order_field,
-                order_sort: this.table_config.order_sort,
-                keywords: this.table_config.keywords,
-                filter: this.table_config.filter_form,
-                //兼容后端只接收offset 和 limit 参数分页处理
-                offset: this.table_config.page_size * (current_page - 1),
-                limit: this.table_config.page_size
+                data: {
+                    page_size: page_size,
+                    order_field: this.table_config.order_field,
+                    order_sort: this.table_config.order_sort,
+                    keywords: this.table_config.keywords,
+                    filter: this.table_config.filter_form,
+                    //兼容后端只接收offset 和 limit 参数分页处理
+                    offset: this.table_config.page_size * (current_page - 1),
+                    limit: this.table_config.page_size
+                }
             }
-            post_data[this.table_config.page] = current_page
+            post_data.data[this.table_config.page] = current_page
 
-            return this.post(this.table_config.api_url, {data: post_data}).then(function (data) {
+            return this.post(this.table_config.api_url, Object.assign(post_data, this.table_config.extend_params)).then(function (data) {
                 return callback(data);
             });
         }

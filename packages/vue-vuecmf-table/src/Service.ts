@@ -41,6 +41,7 @@ export default class Service {
         //筛选相关
         field_filter: {},   //拉取字段信息的筛选表单
         filter_form: {},    //列表筛选表单
+        extend_params: {},  //扩展筛选参数，与data参数并列关系
         keywords: '',       //列表搜索关键词
 
         //分页设置
