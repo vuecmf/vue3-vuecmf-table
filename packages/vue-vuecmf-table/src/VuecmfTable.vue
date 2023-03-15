@@ -55,10 +55,10 @@
 
   <template v-if="data_show_type === 'card'">
     <el-row :gutter="10">
-      <template :key="index" v-for="(item,index) in table_data">
+      <template :key="'card_' + index" v-for="(item,index) in table_data">
         <el-col :xs="12" :sm="8" :md="6" :lg="4" :xl="3" style="padding: 5px">
           <el-card  :body-style="{ padding: '10px'}" shadow="hover">
-            <template :key="idx" v-for="(field,idx) in columns">
+            <template :key="'card_container_' + idx" v-for="(field,idx) in columns">
               <div v-if="field.show">
                 {{ field.label }} :
                 <span v-html="formatter(field.field_id, item[field.prop])"></span>
@@ -237,7 +237,6 @@
       :width="form_dialog_width"
       :close_on_click_modal="false"
       :close_on_press_escape="false"
-      :show_close="false"
       @updateVisible="showDownloadDlg"
   >
     <template #content>
