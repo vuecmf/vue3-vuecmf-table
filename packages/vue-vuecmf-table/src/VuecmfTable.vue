@@ -78,7 +78,7 @@
                   </el-button>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item @click.prevent="detailRow(item)" v-if="del_btn_visible(item)">详情</el-dropdown-item>
+                      <el-dropdown-item @click.prevent="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-dropdown-item>
                       <el-dropdown-item @click.prevent="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-dropdown-item>
                       <el-dropdown-item @click.prevent="delRow(item)" v-if="del_btn_visible(item)">删除</el-dropdown-item>
 
@@ -195,7 +195,7 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="del_btn_visible(scope.row)">详情</el-dropdown-item>
+                  <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-dropdown-item>
                   <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-dropdown-item>
                   <el-dropdown-item @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-dropdown-item>
 
