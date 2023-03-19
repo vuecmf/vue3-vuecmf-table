@@ -72,12 +72,21 @@
                 <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
               </template>
               <template v-else>
-                <el-menu mode="horizontal">
-                  <el-menu-item @click="detailRow(item)" v-if="detail_btn_visible(item)">详情</el-menu-item>
-                  <el-menu-item @click="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-menu-item>
-                  <el-menu-item @click="delRow(item)" v-if="del_btn_visible(item)">删除</el-menu-item>
-                  <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
-                </el-menu>
+                <el-dropdown :size="size" >
+                  <el-button link :size="size" title="操作">
+                    <el-icon><more /></el-icon>
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item @click.prevent="detailRow(item)" v-if="del_btn_visible(item)">详情</el-dropdown-item>
+                      <el-dropdown-item @click.prevent="editRow(item)" v-if="edit_btn_visible(item)">编辑</el-dropdown-item>
+                      <el-dropdown-item @click.prevent="delRow(item)" v-if="del_btn_visible(item)">删除</el-dropdown-item>
+
+                      <slot name="rowAction" :row="item" :index="index" :service="service"></slot>
+
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </div>
           </el-card>
@@ -180,12 +189,21 @@
 
           </template>
           <template v-else>
-            <el-menu mode="horizontal">
-              <el-menu-item @click="detailRow(scope.row)" v-if="detail_btn_visible(scope.row)">详情</el-menu-item>
-              <el-menu-item @click="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-menu-item>
-              <el-menu-item @click="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-menu-item>
-              <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
-            </el-menu>
+            <el-dropdown :size="size" >
+              <el-button link :size="size" title="操作">
+                <el-icon><more /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click.prevent="detailRow(scope.row)" v-if="del_btn_visible(scope.row)">详情</el-dropdown-item>
+                  <el-dropdown-item @click.prevent="editRow(scope.row)" v-if="edit_btn_visible(scope.row)">编辑</el-dropdown-item>
+                  <el-dropdown-item @click.prevent="delRow(scope.row)" v-if="del_btn_visible(scope.row)">删除</el-dropdown-item>
+
+                  <slot name="rowAction" :row="scope.row" :index="scope.$index" :service="service"></slot>
+
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
 
         </template>
@@ -714,16 +732,17 @@ import {
   QuestionFilled,
   Plus,
   Tickets,
+  More,
   Menu as IconMenu
 } from '@element-plus/icons-vue'
 
-import { ElCard,ElMenu,ElMenuItem } from 'element-plus'
+import { ElCard } from 'element-plus'
 
 
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    ElCard,ElMenu,ElMenuItem, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, IconMenu
+    ElCard, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, More, IconMenu
   }
 });
 </script>
@@ -856,21 +875,6 @@ export default defineComponent({
 
 .card-btn .el-button{
   margin-top: 8px;
-}
-
-.el-table__body .el-menu--horizontal {
-  border-bottom: 0;
-  .el-sub-menu .el-sub-menu__title {
-    padding: 3px 0 !important;
-  }
-  .el-sub-menu.is-active .el-sub-menu__title{
-    border-bottom: 0 !important;
-    color: var(--el-menu-text-color);
-  }
-}
-
-.el-menu--popup{
-  min-width: 120px !important;
 }
 
 </style>
