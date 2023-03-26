@@ -33,9 +33,11 @@ export default class LoadData extends Base {
      * @param row
      */
     delRow = (row: AnyObject):AnyObject => {
-        return this.post(this.table_config.del_api_url, {
-            data: row
-        }).then(function (res) {
+        return this.post(this.table_config.del_api_url,
+            Object.assign(
+                { data: row },
+                this.table_config.extend_params
+            )).then(function (res) {
             return res
         });
     }
@@ -50,9 +52,14 @@ export default class LoadData extends Base {
     pullData = (current_page:number, page_size:number, callback: (arg:AnyObject) => AnyObject|boolean , action?:string):AnyObject => {
         if (action != undefined && action == "getField") {
             //拉取表格字段信息
-            return this.post(this.table_config.api_url, {
-                data: { action: action, filter: this.table_config.field_filter }
-            }).then(function (data) {
+            return this.post(this.table_config.api_url,
+                Object.assign(
+                    {
+                        data: { action: action, filter: this.table_config.field_filter }
+                    },
+                    this.table_config.extend_params
+                )
+            ).then(function (data) {
                 return callback(data);
             });
         } else {

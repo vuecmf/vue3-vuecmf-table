@@ -50,7 +50,10 @@ export default class UploadData extends Base{
      * @param row  一条行数据
      */
     saveRow = (row: AnyObject):void => {
-        this.post(this.import_config.save_api_url,{data:row}).then((data) => {
+        this.post(this.import_config.save_api_url, Object.assign(
+            { data:row },
+            this.table_config.extend_params
+        )).then((data) => {
             if(data.status == 200 && data.data.code == 0){
                 ElMessage.success(data.data.msg)
                 this.import_config.edit_dlg = false
