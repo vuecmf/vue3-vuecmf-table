@@ -389,7 +389,7 @@ export default class Service {
      */
     resizeWin = ():void => {
         //如果页数不够page-count，sizes 将不会显示
-        if(typeof this.table_config.vuecmf_table_ref != 'undefined'){
+        if(this.table_config.vuecmf_table_ref != null && this.table_config.vuecmf_table_ref.$el != null){
             if (this.table_config.vuecmf_table_ref.$el.offsetWidth < 768) {
                 this.table_config.page_layout = "total, prev, pager, next";
             } else {
