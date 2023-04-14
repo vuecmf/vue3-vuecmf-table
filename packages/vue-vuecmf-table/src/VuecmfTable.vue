@@ -413,11 +413,22 @@
   <!-- 行详情 -->
   <vuecmf-dialog :model_value="detail_dlg" :width="form_dialog_width" title="详情" @updateVisible="showDetailDlg">
     <template #content>
-      <table>
+      <table class="detail-table">
         <tr :key="index" v-for=" (item, index) in columns ">
-          <th align="right">{{ item.label }}:</th>
+          <th align="right" :width="form_label_width">{{ item.label }}:</th>
           <td>
-            <div v-html="formatter(item.field_id, detail_data[item.prop])"></div>
+
+            <template v-if="item['code'] != null && item['code'] === true">
+              <el-input
+                  :model-value="formatter(item.field_id, detail_data[item.prop])"
+                  type="textarea"
+                  :autosize="{ minRows: 6 }"
+              />
+            </template>
+            <template v-else>
+              <div v-html="formatter(item.field_id, detail_data[item.prop])"></div>
+            </template>
+
           </td>
         </tr>
       </table>
@@ -853,6 +864,10 @@ export default defineComponent({
   white-space: normal;
 }
 
+/* 详情页面 */
+.detail-table {
+  width: 100%;
+}
 </style>
 
 <style lang="scss">

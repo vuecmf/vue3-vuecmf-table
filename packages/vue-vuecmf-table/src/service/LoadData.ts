@@ -186,7 +186,11 @@ export default class LoadData extends Base {
      * @param data 需处理的列表数据
      */
     private getList = (data: AnyObject):boolean => {
-        if (data.data.code != 0 || typeof data.data.data.data == 'undefined') {
+        if (typeof data.data == 'undefined' ||
+            data.data.code != 0 ||
+            data.data.data == null ||
+            typeof data.data.data == 'undefined' ||
+            typeof data.data.data.data == 'undefined') {
             let msg = "接口异常，无法拉取数据！";
             if (typeof data.data.msg != 'undefined') msg = msg + data.data.msg;
             this.emit('exception', msg, data.data.code)

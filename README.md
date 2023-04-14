@@ -4,32 +4,10 @@
 
 - 示例演示： http://www.vuecmf.com
 
-## 安装
+## 版本变更日志
+注意：
 
-``` bash
-# yarn方式安装 vue3-vuecmf-table
-yarn add vue3-vuecmf-table
-
-# npm方式安装 vue3-vuecmf-table
-npm install vue3-vuecmf-table
-```
-
-###1、先在项目中的main.ts 引入
-```
-import { createApp } from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-
-/*导入vuecmf editor、vuecmf dialog和vuecmf table组件*/
-import VuecmfEditor from 'vue-vuecmf-editor'
-import VuecmfDialog from 'vue-vuecmf-dialog'
-import VuecmfTable from "vue3-vuecmf-table"
-
-createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app')
-```
-
-## 模板中使用组件
-注意：1.8.0版本开始，show_detail、add_form 和 edit_form 属性被移除，新增加
+1.8.0版本开始，show_detail、add_form 和 edit_form 属性被移除，新增加
 detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属性，具体使用见下面实例
 
 1.9.0版本开始callback事件移除，增加 beforeLoadTable 和 afterLoadTable 事件
@@ -94,7 +72,85 @@ detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属�
         },
 ```
 
+1.15.x 增加属性如下
+```
+date_format：日期控件显示格式, 默认 YYYY-MM-DD
+date_value_format：日期控件保存的值格式, 默认 YYYY-MM-DD
+datetime_format：日期时间控件显示格式, 默认 YYYY-MM-DD HH:mm:ss
+datetime_value_format：日期时间控件保存的值格式, 默认 YYYY-MM-DD HH:mm:ss
+以上属性的值设置同element-plus中Date Picker控件的format和value_format设置 https://element-plus.org/en-US/component/date-picker.html#attributes
+```
 
+1.16.x 增加属性如下
+```
+show_type：列表显示方式 （默认table, 可选值： table  card）
+```
+
+1.17.x 增加如下
+```
+1、传给后端的参数，增加了可选的 扩展参数extend_params， 与data参数并列关系。
+例如当前组件服务实例为 service, 若要添加扩展参数，参考如下
+service.table_config.extend_params = {
+    wid: 'xxxxxx',
+    model: 'xxxx'
+}
+此时调用后端API时，POST的json就会是如下形式
+{
+  data: {....}
+  wid: 'xxxxxx',
+  model: 'xxxx' 
+}
+
+2、后端获取字段接口返回的字段信息中增加了code字段，若code=true时，列表中查看详情页面的 对应字段就会在多行文本框中显示HMTL源代码。
+如下
+{
+    "data":{
+        "field_info":[
+            {
+                "field_id":66,
+                "prop":"id",
+                "label":"ID",
+                "width":100,
+                "length":11,
+                "show":true,
+                "fixed":false,
+                "filter":false,
+                "code": false,   //新增 是否显示HTML源码
+                "tooltip":"自增ID",
+                "model_id":8,
+                "sortable":true
+            },
+  ... 此处省略
+}
+```
+
+
+
+## 安装
+
+``` bash
+# yarn方式安装 vue3-vuecmf-table
+yarn add vue3-vuecmf-table
+
+# npm方式安装 vue3-vuecmf-table
+npm install vue3-vuecmf-table
+```
+
+###1、先在项目中的main.ts 引入
+```
+import { createApp } from 'vue'
+import App from './App.vue'
+import './registerServiceWorker'
+
+/*导入vuecmf editor、vuecmf dialog和vuecmf table组件*/
+import VuecmfEditor from 'vue-vuecmf-editor'
+import VuecmfDialog from 'vue-vuecmf-dialog'
+import VuecmfTable from "vue3-vuecmf-table"
+
+createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app')
+```
+
+## 模板中使用组件
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -251,19 +307,6 @@ export default defineComponent({
 
 ```
 
-1.15.x 增加属性如下
-```
-date_format：日期控件显示格式, 默认 YYYY-MM-DD
-date_value_format：日期控件保存的值格式, 默认 YYYY-MM-DD
-datetime_format：日期时间控件显示格式, 默认 YYYY-MM-DD HH:mm:ss
-datetime_value_format：日期时间控件保存的值格式, 默认 YYYY-MM-DD HH:mm:ss
-以上属性的值设置同element-plus中Date Picker控件的format和value_format设置 https://element-plus.org/en-US/component/date-picker.html#attributes
-```
-
-1.16.x 增加属性如下
-```
-show_type：列表显示方式 （默认table, 可选值： table  card）
-```
 
 若列表数据为树形时（即包含 children 字段时），必须设置 row_key 属性（树形数据的唯一键字段名），另还可以设置
 default_expand_all属性（是否全部展开）;
