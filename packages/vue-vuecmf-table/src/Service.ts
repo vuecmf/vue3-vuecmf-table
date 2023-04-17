@@ -218,7 +218,7 @@ export default class Service {
      */
     formatter = (field_id:number, field_value: string|number|AnyObject): string|AnyObject => {
         let result:string|AnyObject = ''
-        if(typeof this.table_config.field_options[field_id] != 'undefined'){
+        if(this.table_config.field_options != null && typeof this.table_config.field_options[field_id] != 'undefined'){
             //字段选项类型处理
             if(typeof field_value == 'string'){
                 const id_arr = field_value.split(',')
@@ -244,7 +244,7 @@ export default class Service {
             }
             if(typeof result === 'string') result = result.replace(/[┊┊┈└─]/g,'').trim()
 
-        }else if(typeof this.table_config.relation_info.full_options == 'object' &&
+        }else if(this.table_config.relation_info != null && typeof this.table_config.relation_info.full_options == 'object' &&
             typeof this.table_config.relation_info.full_options[field_id] != 'undefined'){
             //关联字段类型处理
             if(typeof field_value == 'string'){
@@ -278,19 +278,21 @@ export default class Service {
         }else{
             //获取字段对应表单信息
             let flag = true
-            Object.values(this.table_config.form_info).forEach((field_info: AnyObject) => {
-                if(field_info.field_id == field_id && (field_info.type == 'upload_image' || field_info.type == 'upload_file')){
-                    flag = false
-                    //字段内容是文件类型的处理
-                    if(typeof field_value == 'object'){
-                        field_value.forEach((item:AnyObject)=>{
-                            result += this.formatFile(item.name, item.url)
-                        })
-                    }else{
-                        result += this.formatFile(field_value as string, field_value as string)
+            if(this.table_config.form_info != null){
+                Object.values(this.table_config.form_info).forEach((field_info: AnyObject) => {
+                    if(field_info.field_id == field_id && (field_info.type == 'upload_image' || field_info.type == 'upload_file')){
+                        flag = false
+                        //字段内容是文件类型的处理
+                        if(typeof field_value == 'object'){
+                            field_value.forEach((item:AnyObject)=>{
+                                result += this.formatFile(item.name, item.url)
+                            })
+                        }else{
+                            result += this.formatFile(field_value as string, field_value as string)
+                        }
                     }
-                }
-            })
+                })
+            }
 
             //其他类型字段处理
             if(flag){

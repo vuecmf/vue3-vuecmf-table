@@ -57,7 +57,7 @@ export default class Download{
                 const label = field.label.replace(/<[^>]*>/g, "");
                 let value = val[field.prop];
 
-                if(typeof this.field_options[field.field_id] != 'undefined'){
+                if(this.field_options != null && typeof this.field_options[field.field_id] != 'undefined'){
                     let res = ''
                     if(this.field_options[field.field_id].length != undefined){
                         this.field_options[field.field_id].forEach((treeItem: AnyObject) => {
@@ -69,7 +69,7 @@ export default class Download{
                     }else{
                         value = this.field_options[field.field_id][value]
                     }
-                }else if(this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
+                }else if(this.relation_info != null && this.relation_info.full_options != undefined && typeof this.relation_info.full_options[field.field_id] != 'undefined'){
                     let res = this.relation_info.full_options[field.field_id][value]
                     if(typeof res != 'string'){
                         res = ''

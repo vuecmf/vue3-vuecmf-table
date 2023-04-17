@@ -134,7 +134,7 @@
             </el-tooltip>
             <div>
               <template v-if="item.filter">
-                <el-select v-model="filter_form[item.prop]" @change="search" multiple collapse-tags placeholder="请选择" v-if=" typeof field_options[item.field_id] == 'object'" :size="size">
+                <el-select v-model="filter_form[item.prop]" @change="search" multiple collapse-tags placeholder="请选择" v-if="field_options != null && typeof field_options[item.field_id] == 'object'" :size="size">
                   <el-option
                       v-for="(option_val,option_key) in field_options[item.field_id]"
                       :key="option_key"
@@ -143,7 +143,7 @@
                   >
                   </el-option>
                 </el-select>
-                <el-select v-model="filter_form[item.prop]" @change="search"  multiple collapse-tags placeholder="请选择" v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
+                <el-select v-model="filter_form[item.prop]" @change="search"  multiple collapse-tags placeholder="请选择" v-else-if=" relation_info != null && typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] == 'object'" :size="size">
                   <el-option
                       v-for="(option_val,option_key) in relation_info.full_options[item.field_id]"
                       :key="option_key"
@@ -152,7 +152,7 @@
                   >
                   </el-option>
                 </el-select>
-                <el-date-picker @change="search" :size="size" :format="date_format" :value-format="date_value_format" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" typeof form_info[item.field_id] != 'undefined' && (form_info[item.field_id].type == 'date' || form_info[item.field_id].type == 'datetime')">
+                <el-date-picker @change="search" :size="size" :format="date_format" :value-format="date_value_format" v-model="filter_form[item.prop]" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-else-if=" ['date','datetime','timestamp'].indexOf(item.type) !== -1">
                 </el-date-picker>
                 <el-input
                     @change="search"
@@ -661,6 +661,7 @@ const {
 
 
 } = service.getConfig('table_config')
+
 
 const {
   form_title,         //表单标题
