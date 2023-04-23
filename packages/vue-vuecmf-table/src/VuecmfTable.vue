@@ -448,7 +448,7 @@ import AnyObject = VuecmfTable.AnyObject;
 
 
 //异常错误提示回调处理函数
-const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable'])
+const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable', 'beforeLoadData', 'afterLoadData'])
 
 const props = defineProps({
   //加载列表数据的后端API链接

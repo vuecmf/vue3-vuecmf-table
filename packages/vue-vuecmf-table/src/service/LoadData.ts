@@ -81,6 +81,8 @@ export default class LoadData extends Base {
 
             const loadingInstance = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
 
+            this.emit('beforeLoadData', this.table_config)
+
             return this.post(this.table_config.api_url, Object.assign(post_data, this.table_config.extend_params)).then(function (data) {
                 const res = callback(data);
                 loadingInstance.close()
@@ -202,6 +204,8 @@ export default class LoadData extends Base {
         }else{
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
+
+            this.emit('afterLoadData', data.data.data)
         }
 
         return true

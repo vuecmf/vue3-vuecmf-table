@@ -124,6 +124,12 @@ service.table_config.extend_params = {
 }
 ```
 
+1.18.x版本开始增加 beforeLoadData 和 afterLoadData 事件
+```
+beforeLoadData： 列表数据加载前，接收到的参数为表格的 table_config 对象
+afterLoadData： 列表数据加载完成后，接收到的参数为列表的data数据对象
+
+```
 
 
 ## 安装
