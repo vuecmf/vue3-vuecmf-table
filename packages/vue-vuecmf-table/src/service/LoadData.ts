@@ -9,6 +9,7 @@
 import Base from "./Base"
 import {VuecmfTable} from "../typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject
+import {ElLoading} from "element-plus";
 
 
 /**
@@ -78,8 +79,12 @@ export default class LoadData extends Base {
             }
             post_data.data[this.table_config.page] = current_page
 
+            const loadingInstance = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
+
             return this.post(this.table_config.api_url, Object.assign(post_data, this.table_config.extend_params)).then(function (data) {
-                return callback(data);
+                const res = callback(data);
+                loadingInstance.close()
+                return res
             });
         }
     }
@@ -197,10 +202,6 @@ export default class LoadData extends Base {
         }else{
             this.table_config.table_data = data.data.data.data
             this.table_config.total = parseInt(data.data.data.total)
-        }
-
-        if(typeof this.table_config.loadingService.close != 'undefined'){
-            this.table_config.loadingService.close()
         }
 
         return true

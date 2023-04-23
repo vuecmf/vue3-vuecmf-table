@@ -14,7 +14,7 @@ import {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
 import {VuecmfTable} from "./typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject;
-import {ElMessage,ElLoading, ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 /**
  * table 服务类
@@ -160,9 +160,6 @@ export default class Service {
      * 搜索|刷新
      */
     search = ():void => {
-        if(typeof this.table_config.vuecmf_table_ref != 'undefined' && this.table_config.vuecmf_table_ref != null)
-            this.table_config.loadingService = ElLoading.service({target: this.table_config.vuecmf_table_ref.$refs.tableBody})
-
         this.import_config.import_dlg = false
         this.loadDataService.reloadPage()
     }
