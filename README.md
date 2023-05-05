@@ -131,6 +131,19 @@ afterLoadData： 列表数据加载完成后，接收到的参数为列表的dat
 
 ```
 
+1.19.x版本开始表单增加color_picker(颜色选择器)类型, 详情中显示源码的增加高亮显示样式
+```
+"form_info":{
+            "67":{
+                "field_id":67,
+                "field_name":"nav_background",
+                "label":"导航条背景色",
+                "type":"color_picker",  //新增 color_picker 颜色选择器 
+                ...
+            },
+            ... 此处省略
+        },
+```
 
 ## 安装
 

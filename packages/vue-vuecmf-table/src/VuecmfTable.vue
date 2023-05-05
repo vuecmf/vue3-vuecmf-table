@@ -397,6 +397,9 @@
           <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
             <el-input  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" type="password" autocomplete="off" clearable ></el-input>
           </el-form-item>
+          <el-form-item :label="item.label" v-else-if="item.type === 'color_picker'" :prop="item.field_name">
+            <el-color-picker :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" />
+          </el-form-item>
           <el-form-item :label="item.label" :prop="item.field_name" v-else>
             <el-input  :disabled="item.is_disabled" v-model="current_select_row[item.field_name]" :placeholder="item.default_value" clearable ></el-input>
           </el-form-item>
@@ -415,20 +418,14 @@
     <template #content>
       <table class="detail-table">
         <tr :key="index" v-for=" (item, index) in columns ">
-          <th align="right" :width="form_label_width">{{ item.label }}:</th>
-          <td>
-
+          <th align="right" valign="top" :style="'min-width:'+form_label_width+ 'px'">{{ item.label }}:</th>
+          <td valign="top">
             <template v-if="item['code'] != null && item['code'] === true">
-              <el-input
-                  :model-value="formatter(item.field_id, detail_data[item.prop])"
-                  type="textarea"
-                  :autosize="{ minRows: 6 }"
-              />
+              <highlightjs :code="formatter(item.field_id, detail_data[item.prop])" />
             </template>
             <template v-else>
               <div v-html="formatter(item.field_id, detail_data[item.prop])"></div>
             </template>
-
           </td>
         </tr>
       </table>
@@ -445,7 +442,6 @@ import Service from './Service'
 import {toRefs, defineProps, defineEmits} from "vue"
 import {VuecmfTable} from "./typings/VuecmfTable";
 import AnyObject = VuecmfTable.AnyObject;
-
 
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable', 'beforeLoadData', 'afterLoadData'])
@@ -750,11 +746,17 @@ import {
 
 import { ElCard } from 'element-plus'
 
+//引入高亮插件
+import 'highlight.js/styles/github-dark.css'
+import  'highlight.js/lib/common';
+import hljsVuePlugin from "@highlightjs/vue-plugin";
+
 
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    ElCard, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, More, IconMenu
+    ElCard, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, More, IconMenu,
+    highlightjs: hljsVuePlugin.component
   }
 });
 </script>
@@ -872,6 +874,7 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
+pre{ margin: 0 !important;}
 .cell{
   .el-button{ margin: 3px !important;}
 }
