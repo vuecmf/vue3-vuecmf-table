@@ -163,6 +163,17 @@ export default class LoadData extends Base {
                         }
                     }
                 }
+
+                //加上表单类型
+                val['form_type'] = ''
+                if(this.table_config.form_info != null){
+                    Object.keys(this.table_config.form_info).forEach((formKey) => {
+                        if(this.table_config.form_info[formKey]['type'] != null && val.field_id === this.table_config.form_info[formKey]['field_id']){
+                            val['form_type'] = this.table_config.form_info[formKey]['type']
+                        }
+                    })
+                }
+
             })
         }
 

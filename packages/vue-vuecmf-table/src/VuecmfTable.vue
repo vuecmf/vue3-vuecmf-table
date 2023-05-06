@@ -424,6 +424,9 @@
               <el-button type="info" size="small" class="copy-btn" @click="copyClipboard(formatter(item.field_id, detail_data[item.prop]))">复制</el-button>
               <highlightjs :code="formatter(item.field_id, detail_data[item.prop])" />
             </template>
+            <template v-else-if="item.form_type === 'color_picker'">
+              <el-color-picker  :model-value="formatter(item.field_id, detail_data[item.prop])" />
+            </template>
             <template v-else>
               <div v-html="formatter(item.field_id, detail_data[item.prop])"></div>
             </template>
