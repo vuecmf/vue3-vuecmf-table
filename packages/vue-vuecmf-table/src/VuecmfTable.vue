@@ -419,8 +419,9 @@
       <table class="detail-table">
         <tr :key="index" v-for=" (item, index) in columns ">
           <th align="right" valign="top" :style="'min-width:'+form_label_width+ 'px'">{{ item.label }}:</th>
-          <td valign="top">
+          <td valign="top" class="detail-content">
             <template v-if="item['code'] != null && item['code'] === true">
+              <el-button type="info" size="small" class="copy-btn" @click="copyClipboard(formatter(item.field_id, detail_data[item.prop]))">复制</el-button>
               <highlightjs :code="formatter(item.field_id, detail_data[item.prop])" />
             </template>
             <template v-else>
@@ -716,6 +717,7 @@ const fileRemove = service.fileRemove                   //文件移除
 const getEditorContent = service.getEditorContent       //获取编辑器内容
 const setUploadRef = service.setUploadRef               //设置文件上传ref
 const changeShowType = service.changeShowType           //改变列表展示方式
+const copyClipboard = service.copyClipboard             //复制内容到剪贴板
 
 const showDownloadDlg = () => show_download_dlg.value = false
 const showImportDlg = () => import_dlg.value = false
@@ -871,6 +873,19 @@ export default defineComponent({
 .detail-table {
   width: 100%;
 }
+.detail-content{
+  position: relative;
+  .copy-btn{
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+  }
+}
+.detail-content:hover{
+  .copy-btn{ display: block; }
+}
+
 </style>
 
 <style lang="scss">

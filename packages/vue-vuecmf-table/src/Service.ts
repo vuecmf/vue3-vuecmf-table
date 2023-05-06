@@ -15,6 +15,7 @@ import {getFileExt} from "./Utils";
 import {VuecmfTable} from "./typings/VuecmfTable"
 import AnyObject = VuecmfTable.AnyObject;
 import {ElMessage, ElMessageBox} from "element-plus";
+import {toClipboard} from "@soerenmartius/vue3-clipboard";
 
 /**
  * table 服务类
@@ -743,6 +744,19 @@ export default class Service {
      */
     changeShowType = ():void => {
         this.table_config.data_show_type = this.table_config.data_show_type === 'table' ? 'card' : 'table'
+    }
+
+
+    /**
+     * 复制内容到剪贴板
+     * @param val
+     */
+    copyClipboard = (val:string) => {
+        toClipboard(val).then(()=>{
+            ElMessage.success('内容已成功复制到剪贴板！')
+        }).catch(()=>{
+            ElMessage.error('内容复制失败！')
+        })
     }
 
     /**
