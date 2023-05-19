@@ -366,7 +366,17 @@
           <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
             <ul class="el-upload-list el-upload-list--picture-card" v-if="typeof upload_action == 'function'">
               <li class="el-upload-list__item is-ready" :key="file_key" v-for="file_item,file_key in current_select_row[item.field_name]">
-                <div><a :href="file_item.url" target="_blank"><img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name"></a></div>
+                <div class="file-icon">
+                  <a :href="file_item.url" target="_blank">
+                    <div v-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() == '.pdf'"><i class="bi bi-file-earmark-pdf"></i></div>
+                    <div v-else-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() == '.txt'"><i class="bi bi-file-earmark-text"></i></div>
+                    <div v-else-if="['.doc','docx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-word"></i></div>
+                    <div v-else-if="['.zip','.rar'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-zip"></i></div>
+                    <div v-else-if="['.xls','xlsx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name" v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1">
+                    <div v-else><i class="bi bi-file-earmark" ></i></div>
+                  </a>
+                </div>
               </li>
               <li class="el-upload el-upload--picture-card" @click="upload_action(current_select_row[item.field_name],item)"><el-icon><Plus /></el-icon></li>
             </ul>
@@ -389,11 +399,6 @@
               <el-button :size="size" type="primary" v-else>上传</el-button>
             </el-upload>
 
-
-
-
-
-
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
             <vuecmf-editor
@@ -404,6 +409,7 @@
                 :params="{field_name:item.field_name}"
                 :upload="upload_api_url"
                 :size="size"
+                :upload_action="upload_action"
             ></vuecmf-editor>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
@@ -889,6 +895,14 @@ export default defineComponent({
 /* 上传文件 */
 :deep(.el-upload-list__item-name) {
   white-space: normal;
+}
+.file-icon{
+  text-align: center;
+  width: 100%;
+  div{ padding-top: 38px; }
+  i{
+    font-size: 4rem;
+  }
 }
 
 /* 详情页面 */

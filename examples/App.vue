@@ -60,7 +60,9 @@
       title="上传文件"
       width="50%"
   >
-    <span>此处可以自定义上传组件或接入外部文件管理器组件，如<a href="https://github.com/vuecmf/vue-vuecmf-fileexplorer" target="_blank">vue-vuecmf-fileexplorer</a> </span>
+    <span>此处可以自定义上传组件或接入外部文件管理器组件，如<a href="https://github.com/vuecmf/vue-vuecmf-fileexplorer" target="_blank">vue-vuecmf-fileexplorer</a><br>
+    若直接本地文件上传，去掉vuecmf-table组件中upload_action属性即可。
+    </span>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -86,6 +88,11 @@ export default defineComponent({
        }else{
          return false
        }
+     }
+
+     //批量删除
+     const mulDel = (rows: any):void => {
+       console.log(rows)
      }
 
      //表格头部左边 添加 按钮操作
@@ -153,31 +160,45 @@ export default defineComponent({
 
     const fileData = ref()  //文件信息数据
     const dialogVisible = ref(false) //上传弹窗
+    const fromEditor = ref(false) //是否来自编辑器上传
     //上传动作，触发打开自定义的上传弹窗
     const uploadAction = (data: any, field: any): void => {
       fileData.value = data
       dialogVisible.value = true
+
+      fromEditor.value = false
+      if(field == 'editor'){
+        fromEditor.value = true
+      }
+
       console.log('值：',data)
       console.log('字段：', field)
     }
     //保存文件信息，如可将文件管理器中选择的文件信息保存
     const saveFile = ():void => {
-       fileData.value.push({
-         field_name: 'photo_url',
-         name: '200.jpg',
-         url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
-       })
-      fileData.value.push({
-        field_name: 'photo_url',
-        name: '201.jpg',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
-      })
+       if(fromEditor.value){
+         fileData.value.url = 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+       }else{
+         fileData.value.push({
+           field_name: 'photo_url',
+           name: '200.jpg',
+           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg'
+         })
+         fileData.value.push({
+           field_name: 'photo_url',
+           name: '201.jpg',
+           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+         })
+       }
+
+
       dialogVisible.value = false
     }
 
      return {
        token,
        selectable,
+       mulDel,
        add,
        lock,
        changeUser,
