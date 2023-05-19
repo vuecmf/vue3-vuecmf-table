@@ -26,6 +26,7 @@
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
       show_type="table"
+      :upload_action="uploadAction"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
@@ -54,15 +55,29 @@
 
   </vuecmf-table>
 
+  <el-dialog
+      v-model="dialogVisible"
+      title="上传文件"
+      width="50%"
+  >
+    <span>此处可以自定义上传组件或接入外部文件管理器组件，如<a href="https://github.com/vuecmf/vue-vuecmf-fileexplorer" target="_blank">vue-vuecmf-fileexplorer</a> </span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveFile">确定</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref} from 'vue';
 
 export default defineComponent({
   name: 'App',
   setup(){
-     const token = 'cdf852b4c6aeb9fb4540cce7969f34f3'
+     const token = '2bfdcc6e7b614934972e91a7b0ce80bb'
 
      const selectable = (row: any, index: number):boolean => {
        if(typeof row.username != 'undefined' && index > 0){
@@ -136,6 +151,30 @@ export default defineComponent({
       return true
     }
 
+    const fileData = ref()  //文件信息数据
+    const dialogVisible = ref(false) //上传弹窗
+    //上传动作，触发打开自定义的上传弹窗
+    const uploadAction = (data: any, field: any): void => {
+      fileData.value = data
+      dialogVisible.value = true
+      console.log('值：',data)
+      console.log('字段：', field)
+    }
+    //保存文件信息，如可将文件管理器中选择的文件信息保存
+    const saveFile = ():void => {
+       fileData.value.push({
+         field_name: 'photo_url',
+         name: '200.jpg',
+         url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+       })
+      fileData.value.push({
+        field_name: 'photo_url',
+        name: '201.jpg',
+        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+      })
+      dialogVisible.value = false
+    }
+
      return {
        token,
        selectable,
@@ -146,7 +185,11 @@ export default defineComponent({
        afterLoadTable,
        detailBtnVisible,
        editBtnVisible,
-       delBtnVisible
+       delBtnVisible,
+       uploadAction,
+
+       dialogVisible,
+       saveFile
      }
   }
 });

@@ -364,6 +364,12 @@
             </template>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
+            <ul class="el-upload-list el-upload-list--picture-card" v-if="typeof upload_action == 'function'">
+              <li class="el-upload-list__item is-ready" :key="file_key" v-for="file_item,file_key in current_select_row[item.field_name]">
+                <div><a :href="file_item.url" target="_blank"><img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name"></a></div>
+              </li>
+              <li class="el-upload el-upload--picture-card" @click="upload_action(current_select_row[item.field_name],item)"><el-icon><Plus /></el-icon></li>
+            </ul>
             <el-upload
                 :disabled="item.is_disabled"
                 :ref="(el: Ref) => setUploadRef(el, item.field_name)"
@@ -377,11 +383,17 @@
                 :accept=" item.type === 'upload_image' ? 'image/*' : '' "
                 multiple
                 :file-list="current_select_row[item.field_name]"
+                v-else
             >
               <el-icon v-if="item.type === 'upload_image'"><Plus /></el-icon>
               <el-button :size="size" type="primary" v-else>上传</el-button>
-
             </el-upload>
+
+
+
+
+
+
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'editor'" :prop="item.field_name">
             <vuecmf-editor
@@ -608,7 +620,14 @@ const props = defineProps({
   show_type: {
     type: String,
     default: 'table'  //table, card
+  },
+
+  //上传动作配置
+  upload_action: {
+    type: Function,
+    default: null
   }
+
 
 })
 
