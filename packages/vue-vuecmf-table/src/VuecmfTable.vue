@@ -367,13 +367,13 @@
             <ul class="el-upload-list el-upload-list--picture-card" v-if="typeof upload_action == 'function'">
               <li class="el-upload-list__item is-ready" :key="file_key" v-for="(file_item,file_key) in current_select_row[item.field_name]">
                 <div class="file-icon">
-                  <a :href="file_item.url" target="_blank">
+                  <a :href="file_item.url" :title="file_item.name" target="_blank">
                     <div v-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() === '.pdf'"><i class="bi bi-file-earmark-pdf"></i></div>
                     <div v-else-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() === '.txt'"><i class="bi bi-file-earmark-text"></i></div>
                     <div v-else-if="['.doc','docx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-word"></i></div>
                     <div v-else-if="['.zip','.rar'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-zip"></i></div>
                     <div v-else-if="['.xls','xlsx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-spreadsheet"></i></div>
-                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name" v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1">
+                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name"  v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1">
                     <div v-else><i class="bi bi-file-earmark" ></i></div>
                   </a>
                 </div>
