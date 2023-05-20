@@ -165,6 +165,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
 
+/* v1.21+版本开始需要导入此图标样式 */
+import "bootstrap-icons/font/bootstrap-icons.css" 
+
 /*导入vuecmf editor、vuecmf dialog和vuecmf table组件*/
 import VuecmfEditor from 'vue-vuecmf-editor'
 import VuecmfDialog from 'vue-vuecmf-dialog'

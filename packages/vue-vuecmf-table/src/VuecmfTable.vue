@@ -32,7 +32,7 @@
 
         </el-dropdown>
 
-        <el-button type="default" :size="size"  title="导入" @click="import_dlg = true" v-if="import_server != ''"><el-icon><upload /></el-icon></el-button>
+        <el-button type="default" :size="size"  title="导入" @click="import_dlg = true" v-if="import_server !== ''"><el-icon><upload /></el-icon></el-button>
 
         <el-dropdown trigger="click" @command="downloadExport">
           <el-button type="default" :size="size" title="导出">
@@ -215,7 +215,7 @@
         <template #default="props">
           <!-- 表格行展开自定义 -->
           <slot name="rowExpand" :row="props.row" :index="props.$index">
-            <template v-if="props.row.expand_data != undefined && props.row.expand_data.table_list != undefined">
+            <template v-if="props.row.expand_data !== undefined && props.row.expand_data.table_list !== undefined">
               <el-table border :data="props.row.expand_data.table_list" :size="size" :stripe="true" >
 
                 <el-table-column :prop="item.prop" :label="item.label" :width="item.width" :key="index" v-for="(item,index) in props.row.expand_data.table_fields">
@@ -365,15 +365,15 @@
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'upload_image' || item.type === 'upload_file'" :prop="item.field_name">
             <ul class="el-upload-list el-upload-list--picture-card" v-if="typeof upload_action == 'function'">
-              <li class="el-upload-list__item is-ready" :key="file_key" v-for="file_item,file_key in current_select_row[item.field_name]">
+              <li class="el-upload-list__item is-ready" :key="file_key" v-for="(file_item,file_key) in current_select_row[item.field_name]">
                 <div class="file-icon">
                   <a :href="file_item.url" target="_blank">
-                    <div v-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() == '.pdf'"><i class="bi bi-file-earmark-pdf"></i></div>
-                    <div v-else-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() == '.txt'"><i class="bi bi-file-earmark-text"></i></div>
-                    <div v-else-if="['.doc','docx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-word"></i></div>
-                    <div v-else-if="['.zip','.rar'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-zip"></i></div>
-                    <div v-else-if="['.xls','xlsx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1"><i class="bi bi-file-earmark-spreadsheet"></i></div>
-                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name" v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) != -1">
+                    <div v-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() === '.pdf'"><i class="bi bi-file-earmark-pdf"></i></div>
+                    <div v-else-if="file_item.url.substring(file_item.url.length - 4).toLowerCase() === '.txt'"><i class="bi bi-file-earmark-text"></i></div>
+                    <div v-else-if="['.doc','docx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-word"></i></div>
+                    <div v-else-if="['.zip','.rar'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-zip"></i></div>
+                    <div v-else-if="['.xls','xlsx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name" v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1">
                     <div v-else><i class="bi bi-file-earmark" ></i></div>
                   </a>
                 </div>
@@ -435,9 +435,9 @@
   <vuecmf-dialog :model_value="detail_dlg" :width="form_dialog_width" title="详情" @updateVisible="showDetailDlg">
     <template #content>
       <table class="detail-table">
-        <tr :key="index" v-for=" (item, index) in columns ">
-          <th align="right" valign="top" :style="'min-width:'+form_label_width+ 'px'">{{ item.label }}:</th>
-          <td valign="top" class="detail-content">
+        <tr :key="index" v-for="(item, index) in columns">
+          <th :style="'text-align:right; vertical-align: top; min-width:'+form_label_width+ 'px'">{{ item.label }}:</th>
+          <td class="detail-content">
             <template v-if="item['code'] != null && item['code'] === true">
               <el-button type="info" size="small" class="copy-btn" @click="copyClipboard(formatter(item.field_id, detail_data[item.prop]))">复制</el-button>
               <highlightjs :code="formatter(item.field_id, detail_data[item.prop])" />
@@ -825,7 +825,7 @@ export default defineComponent({
 
   .el-button {
     margin-left: -1px !important;
-    border-radius: 0px;
+    border-radius: 0;
   }
 
   .el-button:focus {
@@ -911,6 +911,7 @@ export default defineComponent({
 }
 .detail-content{
   position: relative;
+  vertical-align: top;
   .copy-btn{
     position: absolute;
     left: 0;
