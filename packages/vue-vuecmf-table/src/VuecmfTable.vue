@@ -632,13 +632,17 @@ const props = defineProps({
   upload_action: {
     type: Function,
     default: null
+  },
+  //请求后端超时限制
+  timeout: {
+    type: Number,
+    default: 60000
   }
-
 
 })
 
 //获取父组件传入的信息
-const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form, row_key,show_type } = toRefs(props)
+const {limit, server, page, token, export_file_name, import_server, save_server, del_server, upload_server, load_form, row_key,show_type,timeout } = toRefs(props)
 
 //实例化服务类
 const service = new Service({
@@ -652,7 +656,8 @@ const service = new Service({
   del_server: del_server,
   upload_server: upload_server,
   load_form: load_form,
-  row_key: row_key
+  row_key: row_key,
+  timeout: timeout,
 },emit)
 
 

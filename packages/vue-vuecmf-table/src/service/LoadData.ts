@@ -21,10 +21,11 @@ export default class LoadData extends Base {
 
     constructor(
         table_config: AnyObject,  //列表配置信息
-        token: string,            //token信息
+        token: string,            //token信息,
+        timeout: number,          //请求后端超时限制
         emit:EmitFn<EE[]>         //异常信息回调处理函数
     ) {
-        super(token);
+        super(token, timeout);
         this.table_config = table_config
         this.emit = emit
     }

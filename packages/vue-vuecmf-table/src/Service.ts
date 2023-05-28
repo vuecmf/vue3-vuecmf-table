@@ -127,14 +127,15 @@ export default class Service {
         this.import_config.loadForm = init_config.load_form.value
         this.import_config.upload_api_url = init_config.upload_server.value
 
-        this.loadDataService = new LoadData(this.table_config, init_config.token.value, emit)
+        this.loadDataService = new LoadData(this.table_config, init_config.token.value,init_config.timeout.value, emit)
         this.downloadService = new Download(this.export_config, this.loadDataService.pullData)
 
         this.uploadDataService = new UploadData(
             this.table_config,
             this.import_config,
             this.export_config.export_file_name,
-            init_config.token.value
+            init_config.token.value,
+            init_config.timeout.value
         )
 
         //表格数据加载前回调处理，传入服务类实例 , 作用是将 表格组件中的服务类实例暴露出来，便于操作表格数据，如过滤表单设置

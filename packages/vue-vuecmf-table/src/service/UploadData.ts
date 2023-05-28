@@ -30,9 +30,10 @@ export default class UploadData extends Base{
         table_config: AnyObject,
         import_config: AnyObject,
         tpl_file_name: string,
-        token: string
+        token: string,
+        timeout: number  //请求后端超时限制
     ) {
-        super(token)
+        super(token, timeout)
         this.field_options = {}
         this.relation_info = {}
         this.form_info = {}

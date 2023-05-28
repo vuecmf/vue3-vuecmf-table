@@ -16,9 +16,9 @@ import AnyObject = VuecmfTable.AnyObject;
  */
 export default abstract class Base {
 
-    constructor(token: string) {
+    constructor(token: string, timeout: number) {
         axios.defaults.baseURL = process.env.VUE_APP_BASE_API
-        axios.defaults.timeout = 5000
+        axios.defaults.timeout = timeout
         //允许跨域携带cookie信息
         axios.defaults.withCredentials = true
         axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8'
@@ -45,6 +45,12 @@ export default abstract class Base {
                 return Promise.reject(config);
             }
         }, error => {
+            if(typeof error == 'string'){
+                return Promise.reject(error)
+            }
+            if(error.message != null){
+                return Promise.reject(error.message)
+            }
             return Promise.reject(error.data.error.message)
         })
 
