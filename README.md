@@ -151,6 +151,8 @@ afterLoadData： 列表数据加载完成后，接收到的参数为列表的dat
 
 1.23.x版本开始，增加属性timeout设置请求后端超时限制，默认60秒
 
+1.24.x版本开始，升级编辑器到1.8.1，并增加openai_server（AI大模型后端地址）和 amap_key（高德地图应用KEY）两个属性
+
 ## 安装
 
 ``` bash
@@ -200,13 +202,15 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
       form_dialog_width="70%"
-      server="http://www.vf.com/vuecmf/admin"
-      import_server="http://www.vf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vf.com/vuecmf/admin/save"
-      upload_server="http://www.vf.com/admin/upload"
-      del_server="http://www.vf.com/vuecmf/admin/delete"
+      server="http://www.vuecmf.com/vuecmf/admin"
+      import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
+      save_server="http://www.vuecmf.com/vuecmf/admin/save"
+      upload_server="http://www.vuecmf.com/admin/upload"
+      del_server="http://www.vuecmf.com/vuecmf/admin/delete"
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
+      openai_server="http://www.vuecmf.com/web/ai"
+      amap_key="高德地图申请的APP KEY"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">

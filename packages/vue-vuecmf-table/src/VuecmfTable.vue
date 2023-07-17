@@ -410,6 +410,8 @@
                 :upload="upload_api_url"
                 :size="size"
                 :upload_action="upload_action"
+                :openai="openai_server"
+                :amap_key="amap_key"
             ></vuecmf-editor>
           </el-form-item>
           <el-form-item :label="item.label" v-else-if="item.type === 'password'" :prop="item.field_name">
@@ -637,6 +639,16 @@ const props = defineProps({
   timeout: {
     type: Number,
     default: 60000
+  },
+  //ChatGPT后端接口（也可换成其他大模型接口）
+  openai_server: {
+    type: String,
+    default: ''
+  },
+  //高德地图应用KEY
+  amap_key: {
+    type: String,
+    default: ''
   }
 
 })

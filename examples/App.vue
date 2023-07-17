@@ -27,6 +27,8 @@
       @afterLoadTable="afterLoadTable"
       show_type="table"
       :upload_action="uploadAction"
+      openai_server="http://localhost:8080/web/ai"
+      amap_key="高德地图申请的APP KEY"
   >
     <!-- 表格头部左边 自定义按钮操作 -->
     <template #headerAction="selectRows">
