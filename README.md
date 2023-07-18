@@ -153,6 +153,8 @@ afterLoadData： 列表数据加载完成后，接收到的参数为列表的dat
 
 1.24.x版本开始，升级编辑器到1.8.1，并增加openai_server（AI大模型后端地址）和 amap_key（高德地图应用KEY）两个属性
 
+1.25.x版本开始，列表表单增加title和placeholder属性自定义，需后端接口在 form_info信息中增加placeholder字段信息
+
 ## 安装
 
 ``` bash
@@ -382,7 +384,8 @@ default_expand_all属性（是否全部展开）;
                 "type":"text",
                 "default_value":"",
                 "is_disabled": false,
-                "model_field_id":67
+                "model_field_id":67,
+                "placeholder":"请输入用户名"
             },
             ... 此处省略
         },
