@@ -57,7 +57,7 @@
     <el-row :gutter="10">
       <template :key="'card_' + index" v-for="(item,index) in table_data">
         <el-col :xs="12" :sm="8" :md="6" :lg="4" :xl="3" style="padding: 5px">
-          <el-card  :body-style="{ padding: '10px'}" shadow="hover">
+          <el-card  :body-style="{ padding: '10px'}" :class="'card-'+size" shadow="hover">
             <template :key="'card_container_' + idx" v-for="(field,idx) in columns">
               <div v-if="field.show">
                 {{ field.label }} :
@@ -244,6 +244,7 @@
         :page-size="page_size"
         :layout="page_layout"
         :pager-count="5"
+        :small="size === 'small' ? true:false"
         :total="total">
     </el-pagination>
   </div>
@@ -819,9 +820,14 @@ export default defineComponent({
 /* 列表右边工具栏 */
 .table-tools {
   text-align: right;
-
-  .el-input--small, .el-input--default, .el-input--large{
+  .el-input--small, .el-input--default{
     width: calc(100% - 166px);
+  }
+  .el-input--large{
+    width: calc(100% - 260px);
+  }
+  .el-input--small, .el-input--default, .el-input--large{
+
     :deep(.el-input__inner) {
       border-top-right-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
@@ -963,6 +969,21 @@ pre{ margin: 0 !important;}
 
 .card-btn .el-button{
   margin-top: 8px;
+}
+
+.card-small{
+  font-size: 12px;
+
+}
+.card-default{
+  font-size: 14px;
+}
+.card-large{
+  font-size: 15px;
+}
+
+.card-small, .card-default, .card-large{
+  img{vertical-align: top; margin-top: 3px;}
 }
 
 </style>
