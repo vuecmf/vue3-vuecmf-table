@@ -155,6 +155,8 @@ afterLoadData： 列表数据加载完成后，接收到的参数为列表的dat
 
 1.25.x版本开始，列表表单增加title和placeholder属性自定义，需后端接口在 form_info信息中增加placeholder字段信息
 
+1.26.x版本开始，列表表单增加is_edit判断（编辑表单是否可修改），需后端接口在 form_info信息中增加is_edit字段信息
+
 ## 安装
 
 ``` bash
@@ -385,7 +387,8 @@ default_expand_all属性（是否全部展开）;
                 "default_value":"",
                 "is_disabled": false,
                 "model_field_id":67,
-                "placeholder":"请输入用户名"
+                "placeholder":"请输入用户名",     //1.25.x版本新增
+                "is_edit": true                 //1.26.x版本新增
             },
             ... 此处省略
         },
