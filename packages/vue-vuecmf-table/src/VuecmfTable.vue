@@ -374,7 +374,7 @@
                     <div v-else-if="['.doc','docx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-word"></i></div>
                     <div v-else-if="['.zip','.rar'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-zip"></i></div>
                     <div v-else-if="['.xls','xlsx'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1"><i class="bi bi-file-earmark-spreadsheet"></i></div>
-                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name"  v-else-if="['.gif','.jpg','jpeg','.png','.bmp'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1">
+                    <img class="el-upload-list__item-thumbnail" :src="file_item.url" :alt="file_item.name"  v-else-if="['.gif','.jpg','jpeg','.png','.bmp','.ico'].indexOf(file_item.url.substring(file_item.url.length - 4).toLowerCase()) !== -1">
                     <div v-else><i class="bi bi-file-earmark" ></i></div>
                   </a>
                 </div>

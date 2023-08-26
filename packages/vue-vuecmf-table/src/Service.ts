@@ -201,7 +201,7 @@ export default class Service {
         const res: string[] = []
         arr.forEach((file_url) => {
             const ext = getFileExt(file_url)
-            if(['gif','jpg','jpeg','png'].indexOf(ext) != -1){
+            if(['gif','jpg','jpeg','png','ico'].indexOf(ext) != -1){
                 res.push('<a href="' + file_url + '" target="_blank"><img src="' + file_url + '" style="width:100px; margin-bottom: 6px;"  alt="'+ name +'"/></a>');
             }else{
                 res.push('<a href="' + file_url + '" target="_blank" style="margin-bottom: 6px;">' + name + "</a>");
