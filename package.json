@@ -1,6 +1,6 @@
 {
   "name": "vue3-vuecmf-table",
-  "version": "1.26.4",
+  "version": "1.26.5",
   "description": "基于vue3、Element Plus和TypeScript的多功能列表组件，支持树形列表数据，内置搜索、筛选、分页、行展开、详情、新增、编辑、删除、导出和导入EXCEL等功能",
   "main": "packages/index.ts",
   "keyword": "frontend vue3-vuecmf-table vuecmf-table vuecmf vue3 table 列表组件 表格组件",

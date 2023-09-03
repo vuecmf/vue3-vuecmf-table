@@ -412,6 +412,7 @@
                 :size="size"
                 :upload_action="upload_action"
                 :openai="openai_server"
+                :aimodel="aimodel_server"
                 :amap_key="amap_key"
             ></vuecmf-editor>
           </el-form-item>
@@ -648,6 +649,11 @@ const props = defineProps({
   },
   //高德地图应用KEY
   amap_key: {
+    type: String,
+    default: ''
+  },
+  //ChatGPT模型列表后端接口（也可换成其他大模型接口）
+  aimodel_server: {
     type: String,
     default: ''
   }
