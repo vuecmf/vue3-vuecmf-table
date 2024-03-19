@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------------
-// | Copyright (c) 2020~2022 http://www.vuecmf.com All rights reserved.
+// | Copyright (c) 2020~2024 http://www.vuecmf.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
 // +----------------------------------------------------------------------
@@ -8,8 +8,8 @@
 
 import FileSaver from 'file-saver'
 import {BookType, read, utils, WorkBook, WorkSheet, write, WritingOptions} from 'xlsx'
-import {VuecmfTable} from "./typings/VuecmfTable";
-import AnyObject = VuecmfTable.AnyObject;
+import {AnyObject} from "./typings/VuecmfTable";
+
 
 
 /**

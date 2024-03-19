@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------------
-// | Copyright (c) 2020~2021 http://www.vuecmf.com All rights reserved.
+// | Copyright (c) 2020~2024 http://www.vuecmf.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
 // +----------------------------------------------------------------------

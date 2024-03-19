@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------------
-// | Copyright (c) 2020~2022 http://www.vuecmf.com All rights reserved.
+// | Copyright (c) 2020~2024 http://www.vuecmf.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
 // +----------------------------------------------------------------------
@@ -12,8 +12,7 @@ import Download from "./service/Download";
 import UploadData from "./service/UploadData";
 import {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
-import {VuecmfTable} from "./typings/VuecmfTable"
-import AnyObject = VuecmfTable.AnyObject;
+import {AnyObject} from "./typings/VuecmfTable"
 import {ElMessage, ElMessageBox} from "element-plus";
 import {toClipboard} from "@soerenmartius/vue3-clipboard";
 

@@ -4,9 +4,11 @@
 
 - 示例演示： http://www.vuecmf.com
 
-## 版本变更日志
-注意：
+## 注意
+### 打包方式变更
+v2版本开始使用vite方式打包，原v1版本使用的是webpack方式打包
 
+## 版本变更日志
 1.8.0版本开始，show_detail、add_form 和 edit_form 属性被移除，新增加
 detail_btn_visible、add_btn_visible、edit_btn_visible 和 del_btn_visible 属性，具体使用见下面实例
 
@@ -171,7 +173,6 @@ npm install vue3-vuecmf-table
 ```
 import { createApp } from 'vue'
 import App from './App.vue'
-import './registerServiceWorker'
 
 /* v1.21+版本开始需要导入此图标样式 */
 import "bootstrap-icons/font/bootstrap-icons.css" 
@@ -185,6 +186,7 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
 ```
 
 ## 模板中使用组件
+详见examples目录中的示例
 ```
 <template>
   <h3>vuecmf-table demo</h3>
@@ -206,11 +208,11 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
       :del_btn_visible="delBtnVisible"
       :expand_action="true"
       form_dialog_width="70%"
-      server="http://www.vuecmf.com/vuecmf/admin"
-      import_server="http://www.vuecmf.com/vuecmf/admin/saveAll"
-      save_server="http://www.vuecmf.com/vuecmf/admin/save"
-      upload_server="http://www.vuecmf.com/admin/upload"
-      del_server="http://www.vuecmf.com/vuecmf/admin/delete"
+      server="http://www.vuecmf.com/vuecmf/vuecmf/test"
+      import_server="http://www.vuecmf.com/vuecmf/vuecmf/test/saveAll"
+      save_server="http://www.vuecmf.com/vuecmf/vuecmf/test/save"
+      upload_server="http://www.vuecmf.com/vuecmf/vuecmf/test/upload"
+      del_server="http://www.vuecmf.com/vuecmf/vuecmf/test/delete"
       @beforeLoadTable="beforeLoadTable"
       @afterLoadTable="afterLoadTable"
       openai_server="http://www.vuecmf.com/web/ai"
@@ -239,6 +241,23 @@ createApp(App).use(VuecmfTable).use(VuecmfEditor).use(VuecmfDialog).mount('#app'
         {{ item.col01 }} {{ item.col02 }} {{ index }}
       </div>
     </template>
+    
+    <!-- 自定义上传组件, uploadAction必须为函数才生效 -->
+    <el-dialog
+      v-model="dialogVisible"
+      title="上传文件"
+      width="50%"
+  >
+    <span>此处可以自定义上传组件或接入外部文件管理器组件，如<a href="https://github.com/vuecmf/vue-vuecmf-fileexplorer" target="_blank">vue-vuecmf-fileexplorer</a><br>
+    若直接本地文件上传，去掉vuecmf-table组件中upload_action属性即可。
+    </span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveFile">确定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 
 
   </vuecmf-table>
@@ -324,6 +343,43 @@ export default defineComponent({
       console.log('row', row)
       return true
     }
+    
+    //上传动作，触发打开自定义的上传弹窗
+    //uploadAction为函数时，则调用的自定义上传表单，否则为默认上传表单
+    const uploadAction = null
+    /*const uploadAction = (data: any, field: any): void => {
+      fileData.value = data
+      dialogVisible.value = true
+
+      fromEditor.value = false
+      if(field == 'editor'){
+        fromEditor.value = true
+      }
+
+      console.log('值：',data)
+      console.log('字段：', field)
+    }
+    //保存文件信息，如可将文件管理器中选择的文件信息保存
+    const saveFile = ():void => {
+       if(fromEditor.value){
+         fileData.value.url = 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+       }else{
+         fileData.value.push({
+           field_name: 'photo_url',
+           name: '200.jpg',
+           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg'
+         })
+         fileData.value.push({
+           field_name: 'photo_url',
+           name: '201.jpg',
+           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/300'
+         })
+       }
+
+
+      dialogVisible.value = false
+    }
+    */
 
      return {
        token,

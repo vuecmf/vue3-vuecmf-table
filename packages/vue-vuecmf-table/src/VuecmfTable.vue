@@ -22,7 +22,7 @@
             <el-dropdown-menu>
               <el-checkbox-group v-model="check_column_list" class="dropdown-content" @change="toggleColumn">
 
-                <el-checkbox :key="index"  :label="item.label" v-for="(item,index) in columns">
+                <el-checkbox :key="index"  :label="item.label" :value="item.label" v-for="(item,index) in columns">
                   <span v-html="item.label"></span>
                 </el-checkbox>
 
@@ -332,7 +332,7 @@
               </template>
               <template v-else-if="item.type === 'checkbox'">
                 <el-checkbox-group :title="item.placeholder != null ? item.placeholder : ''"  v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled || (!item.is_edit && save_data_type == 'edit')">
-                  <el-checkbox :label="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-checkbox>
+                  <el-checkbox :label="op_val.value" :value="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
@@ -350,7 +350,7 @@
               </template>
               <template v-else-if="item.type === 'checkbox'">
                 <el-checkbox-group :title="item.placeholder != null ? item.placeholder : ''"  :disabled="item.is_disabled || (!item.is_edit && save_data_type == 'edit')" v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-checkbox :label=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-checkbox>
+                  <el-checkbox :label=" op_val.value " :value="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-checkbox>
                 </el-checkbox-group>
               </template>
               <template v-else>
@@ -465,9 +465,9 @@
 
 <script lang="ts" setup>
 import Service from './Service'
-import {toRefs, defineProps, defineEmits} from "vue"
-import {VuecmfTable} from "./typings/VuecmfTable";
-import AnyObject = VuecmfTable.AnyObject;
+import {toRefs} from "vue"
+import {AnyObject} from "./typings/VuecmfTable";
+
 
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable', 'beforeLoadData', 'afterLoadData'])
@@ -828,7 +828,7 @@ export default defineComponent({
 .table-tools {
   text-align: right;
   .el-input--small, .el-input--default{
-    width: calc(100% - 166px);
+    width: calc(100% - 170px);
   }
   .el-input--large{
     width: calc(100% - 260px);

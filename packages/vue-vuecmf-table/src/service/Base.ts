@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------------
-// | Copyright (c) 2020~2022 http://www.vuecmf.com All rights reserved.
+// | Copyright (c) 2020~2024 http://www.vuecmf.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
 // +----------------------------------------------------------------------
@@ -8,8 +8,7 @@
 
 import axios from "axios";
 import qs from "qs"
-import {VuecmfTable} from "../typings/VuecmfTable";
-import AnyObject = VuecmfTable.AnyObject;
+import {AnyObject} from "../typings/VuecmfTable";
 
 /**
  * 服务基类
@@ -17,7 +16,7 @@ import AnyObject = VuecmfTable.AnyObject;
 export default abstract class Base {
 
     constructor(token: string, timeout: number) {
-        axios.defaults.baseURL = process.env.VUE_APP_BASE_API
+        axios.defaults.baseURL = ''
         axios.defaults.timeout = timeout
         //允许跨域携带cookie信息
         axios.defaults.withCredentials = true

@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------------
-// | Copyright (c) 2020~2022 http://www.vuecmf.com All rights reserved.
+// | Copyright (c) 2020~2024 http://www.vuecmf.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/emei8/vuecmf/blob/master/LICENSE )
 // +----------------------------------------------------------------------
@@ -7,8 +7,7 @@
 // +----------------------------------------------------------------------
 
 import { jsonExport } from "../Utils";
-import {VuecmfTable} from "../typings/VuecmfTable";
-import AnyObject = VuecmfTable.AnyObject;
+import {AnyObject} from "../typings/VuecmfTable";
 import {BookType} from "xlsx";
 
 /**

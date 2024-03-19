@@ -164,7 +164,9 @@ export default defineComponent({
     const dialogVisible = ref(false) //上传弹窗
     const fromEditor = ref(false) //是否来自编辑器上传
     //上传动作，触发打开自定义的上传弹窗
-    const uploadAction = (data: any, field: any): void => {
+    //uploadAction为函数时，则调用的自定义上传表单，否则为默认上传表单
+    const uploadAction = null
+    /*const uploadAction = (data: any, field: any): void => {
       fileData.value = data
       dialogVisible.value = true
 
@@ -175,7 +177,7 @@ export default defineComponent({
 
       console.log('值：',data)
       console.log('字段：', field)
-    }
+    }*/
     //保存文件信息，如可将文件管理器中选择的文件信息保存
     const saveFile = ():void => {
        if(fromEditor.value){
