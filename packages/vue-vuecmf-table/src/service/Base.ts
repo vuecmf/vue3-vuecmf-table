@@ -8,7 +8,7 @@
 
 import axios from "axios";
 import qs from "qs"
-import {AnyObject} from "../typings/VuecmfTable";
+import type {AnyObject} from "../typings/VuecmfTable";
 
 /**
  * 服务基类

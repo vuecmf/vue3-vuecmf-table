@@ -7,7 +7,7 @@
 // +----------------------------------------------------------------------
 
 import { jsonImport, jsonExport, dateFormat } from "../Utils"
-import {AnyObject} from "../typings/VuecmfTable"
+import type {AnyObject} from "../typings/VuecmfTable"
 import Base from "./Base"
 import { ElMessage } from 'element-plus'
 

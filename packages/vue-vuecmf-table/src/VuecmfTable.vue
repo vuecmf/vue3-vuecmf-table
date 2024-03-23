@@ -444,7 +444,7 @@
           <td class="detail-content">
             <template v-if="item['code'] != null && item['code'] === true">
               <el-button type="info" size="small" class="copy-btn" @click="copyClipboard(formatter(item.field_id, detail_data[item.prop]))">复制</el-button>
-              <highlightjs :code="formatter(item.field_id, detail_data[item.prop])" />
+              <pre v-highlight><code>{{ formatter(item.field_id, detail_data[item.prop]) }}</code></pre>
             </template>
             <template v-else-if="item.form_type === 'color_picker'">
               <el-color-picker  :model-value="formatter(item.field_id, detail_data[item.prop])" />
@@ -467,7 +467,10 @@
 import Service from './Service'
 import {toRefs} from "vue"
 import {AnyObject} from "./typings/VuecmfTable";
+import Highlight from "@qingbing/ts-vue3-highlight";
 
+
+const vHighlight = Highlight; //代码高亮指令
 
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable', 'beforeLoadData', 'afterLoadData'])
@@ -801,17 +804,10 @@ import {
 
 import { ElCard } from 'element-plus'
 
-//引入高亮插件
-import 'highlight.js/styles/github-dark.css'
-import  'highlight.js/lib/common';
-import hljsVuePlugin from "@highlightjs/vue-plugin";
-
-
 export default defineComponent({
   name: 'vuecmf-table',
   components: {
-    ElCard, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, More, IconMenu,
-    highlightjs: hljsVuePlugin.component
+    ElCard, Download, Upload, Grid, IconRefresh, QuestionFilled, Plus, Tickets, More, IconMenu
   }
 });
 </script>

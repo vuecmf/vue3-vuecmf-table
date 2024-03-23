@@ -20,10 +20,9 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "@highlightjs/vue-plugin": "^2.1.0",
+    "@qingbing/ts-vue3-highlight": "^2.0.2",
     "@soerenmartius/vue3-clipboard": "^0.1.2",
     "@types/file-saver": "^2.0.7",
-    "@types/highlight.js": "^10.1.0",
     "@vuemap/amap-jsapi-loader": "^1.0.4",
     "axios": "^1.6.8",
     "core-js": "^3.36.0",

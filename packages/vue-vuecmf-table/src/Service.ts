@@ -6,13 +6,14 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import {ref, onMounted, reactive, toRefs, toRaw, Ref, ToRefs} from "vue"
+import {ref, onMounted, reactive, toRefs, toRaw} from "vue"
+import type {Ref, ToRefs} from "vue"
 import LoadData from "./service/LoadData";
 import Download from "./service/Download";
 import UploadData from "./service/UploadData";
-import {BookType} from "xlsx";
+import type {BookType} from "xlsx";
 import {getFileExt} from "./Utils";
-import {AnyObject} from "./typings/VuecmfTable"
+import type {AnyObject} from "./typings/VuecmfTable"
 import {ElMessage, ElMessageBox} from "element-plus";
 import {toClipboard} from "@soerenmartius/vue3-clipboard";
 

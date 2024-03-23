@@ -7,8 +7,8 @@
 // +----------------------------------------------------------------------
 
 import { jsonExport } from "../Utils";
-import {AnyObject} from "../typings/VuecmfTable";
-import {BookType} from "xlsx";
+import type {AnyObject} from "../typings/VuecmfTable";
+import type {BookType} from "xlsx";
 
 /**
  * 列表导出数据相关服务类
@@ -24,11 +24,11 @@ export default class Download{
 
     export_config: AnyObject;   //导出配置信息
     //拉取回调函数
-    pullData: (current_page: number, page_size: number, callback: (arg: VuecmfTable.AnyObject) => (VuecmfTable.AnyObject | boolean), action?: string) => VuecmfTable.AnyObject;
+    pullData: (current_page: number, page_size: number, callback: (arg: AnyObject) => (AnyObject | boolean), action?: string) => AnyObject;
 
     constructor(
-        export_config: VuecmfTable.AnyObject,
-        pullData: (current_page: number, page_size: number, callback: (arg: VuecmfTable.AnyObject) => (VuecmfTable.AnyObject | boolean), action?: string) => VuecmfTable.AnyObject
+        export_config: AnyObject,
+        pullData: (current_page: number, page_size: number, callback: (arg: AnyObject) => (AnyObject | boolean), action?: string) => AnyObject
     ) {
         this.export_data = []
         this.current_page = 0

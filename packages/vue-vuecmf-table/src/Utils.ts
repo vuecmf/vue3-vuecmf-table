@@ -6,9 +6,10 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import FileSaver from 'file-saver'
-import {BookType, read, utils, WorkBook, WorkSheet, write, WritingOptions} from 'xlsx'
-import {AnyObject} from "./typings/VuecmfTable";
+import { saveAs } from 'file-saver'
+import {read, utils, write} from 'xlsx'
+import type {BookType, WorkBook, WorkSheet, WritingOptions} from 'xlsx'
+import type {AnyObject} from "./typings/VuecmfTable";
 
 
 
@@ -64,7 +65,7 @@ const sheet2blob = (sheet:WorkSheet, file_type:BookType, sheet_name?: string) =>
 export function jsonExport(dataList: AnyObject[],file_type:BookType,fileName: string):void {
     const cur_date = new Date()
     const sheet = utils.json_to_sheet(dataList)
-    FileSaver.saveAs(sheet2blob(sheet,file_type), fileName + '_' + cur_date.toLocaleString() + '.' + file_type)
+    saveAs(sheet2blob(sheet,file_type), fileName + '_' + cur_date.toLocaleString() + '.' + file_type)
 }
 
 /**
@@ -73,7 +74,7 @@ export function jsonExport(dataList: AnyObject[],file_type:BookType,fileName: st
  * @param callback  回调函数， 处理上传的数据
  * @returns {boolean}
  */
-export function jsonImport(fileEvent: Event, callback: (file_data: VuecmfTable.AnyObject[]) => boolean):void | boolean {
+export function jsonImport(fileEvent: Event, callback: (file_data: AnyObject[]) => boolean):void | boolean {
     if(fileEvent.target == null || fileEvent.target.files == undefined) {
         return false
     }

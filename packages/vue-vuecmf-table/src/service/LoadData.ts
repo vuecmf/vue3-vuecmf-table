@@ -7,7 +7,7 @@
 // +----------------------------------------------------------------------
 
 import Base from "./Base"
-import {AnyObject} from "../typings/VuecmfTable"
+import type {AnyObject} from "../typings/VuecmfTable"
 import {ElLoading} from "element-plus";
 
 
