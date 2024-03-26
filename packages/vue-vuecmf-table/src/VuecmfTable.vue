@@ -444,7 +444,7 @@
           <td class="detail-content">
             <template v-if="item['code'] != null && item['code'] === true">
               <el-button type="info" size="small" class="copy-btn" @click="copyClipboard(formatter(item.field_id, detail_data[item.prop]))">复制</el-button>
-              <pre v-highlight><code>{{ formatter(item.field_id, detail_data[item.prop]) }}</code></pre>
+              <pre><code>{{ formatter(item.field_id, detail_data[item.prop]) }}</code></pre>
             </template>
             <template v-else-if="item.form_type === 'color_picker'">
               <el-color-picker  :model-value="formatter(item.field_id, detail_data[item.prop])" />
@@ -467,10 +467,6 @@
 import Service from './Service'
 import {toRefs} from "vue"
 import {AnyObject} from "./typings/VuecmfTable";
-import Highlight from "@qingbing/ts-vue3-highlight";
-
-
-const vHighlight = Highlight; //代码高亮指令
 
 //异常错误提示回调处理函数
 const emit = defineEmits(['exception', 'beforeLoadTable', 'afterLoadTable', 'beforeLoadData', 'afterLoadData'])

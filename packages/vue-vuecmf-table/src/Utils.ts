@@ -6,7 +6,7 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
-import { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver-es';
 import {read, utils, write} from 'xlsx'
 import type {BookType, WorkBook, WorkSheet, WritingOptions} from 'xlsx'
 import type {AnyObject} from "./typings/VuecmfTable";
@@ -93,7 +93,7 @@ export function jsonImport(fileEvent: Event, callback: (file_data: AnyObject[]) 
         callback(utils.sheet_to_json(sheet))
     }
 
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
 }
 
 
