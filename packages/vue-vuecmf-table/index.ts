@@ -6,8 +6,9 @@
 // | Author: emei8 <2278667823@qq.com>
 // +----------------------------------------------------------------------
 
+// @ts-ignore
 import VuecmfTable from './src/VuecmfTable.vue'
-import {App, Component} from 'vue'
+import type {App, Component} from 'vue'
 import 'element-plus/dist/index.css'
 import { components } from './src/element'
 
@@ -18,7 +19,7 @@ import { components } from './src/element'
 VuecmfTable.install = (app: App):void => {
   if(VuecmfTable.installed) return
   VuecmfTable.installed = true
-  app.component(VuecmfTable.name, VuecmfTable)
+  app.component(VuecmfTable.name as string, VuecmfTable)
 
   //按需导入Element Plus组件
   components.forEach((component:Component) => {

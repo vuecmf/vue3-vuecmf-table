@@ -327,7 +327,7 @@
             <template v-if=" typeof field_options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
                 <el-radio-group :title="item.placeholder != null ? item.placeholder : ''"  v-model="current_select_row[item.field_name]"  :disabled="item.is_disabled || (!item.is_edit && save_data_type == 'edit')">
-                  <el-radio :label="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-radio>
+                  <el-radio :value="op_val.value" :key="op_idx" v-for="(op_val,op_idx) in field_options[item.field_id]">{{ op_val.label }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
@@ -345,7 +345,7 @@
             <template v-else-if=" typeof relation_info.options == 'object' && typeof relation_info.options[item.field_id] != 'undefined' ">
               <template v-if="item.type === 'radio'">
                 <el-radio-group :title="item.placeholder != null ? item.placeholder : ''"  :disabled="item.is_disabled || (!item.is_edit && save_data_type == 'edit')" v-model="current_select_row[item.field_name]" @change="((sel_val) => { if(typeof relation_info.linkage == 'object' && typeof relation_info.linkage[item.field_id] == 'object') changeEvent(item.field_name, sel_val) })">
-                  <el-radio :label=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-radio>
+                  <el-radio :value=" op_val.value " :key="op_idx" v-for="(op_val,op_idx) in relation_info.options[item.field_id]">{{ op_val.label }}</el-radio>
                 </el-radio-group>
               </template>
               <template v-else-if="item.type === 'checkbox'">
